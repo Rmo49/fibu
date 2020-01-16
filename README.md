@@ -1,2 +1,2 @@
-# fibu
+# Fibu
 Buchhaltung mit Kontorahmen nach Käfer.
