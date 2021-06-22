@@ -53,6 +53,7 @@ public class DoubleRenderer extends DefaultTableCellRenderer {
 	 *  Wenn der Wert 0 ist, wird nichts ausgegeben, sonst der formatierte Wert.
 	 *  Wenn ein String in der Zelle enthalten ist, wird dieser ausgegeben.
 	 */
+	@Override
 	public Component getTableCellRendererComponent(
 		JTable table, Object value,
 		boolean isSelected, boolean hasFocus,

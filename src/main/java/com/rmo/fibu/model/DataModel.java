@@ -30,16 +30,19 @@ public abstract class DataModel implements BeanContextChild {
 	}
 
 	/** add a change listener */
+	@Override
 	public void addPropertyChangeListener(String name, PropertyChangeListener pcl) {
 		pcSupport.addPropertyChangeListener(name, pcl);
 	}
 
 	/** add a vetoable change listener */
+	@Override
 	public void addVetoableChangeListener(String name, VetoableChangeListener vcl) {
 	  vcSupport.addVetoableChangeListener(name, vcl);
 	}
 
 	/** Der BeanContext aller Model-Beans */
+	@Override
 	public BeanContext getBeanContext() {
 		return mBeanContext;
 	}
@@ -64,6 +67,7 @@ public abstract class DataModel implements BeanContextChild {
 	/**
 	 * remove a property change listener
 	 */
+	@Override
 	public void removePropertyChangeListener(String name, PropertyChangeListener pcl) {
 		pcSupport.removePropertyChangeListener(name, pcl);
 	}
@@ -71,12 +75,14 @@ public abstract class DataModel implements BeanContextChild {
 	/**
 	 * remove a vetoable change listener
 	 */
+	@Override
 	public void removeVetoableChangeListener(String name, VetoableChangeListener vcl) {
 		vcSupport.removeVetoableChangeListener(name, vcl);
 	}
 
 	/** Sets the bean context for this Object
 	 */
+	@Override
 	public void setBeanContext(BeanContext bc) throws PropertyVetoException {
 		mBeanContext = bc;
 		pcSupport.firePropertyChange("beanContext", null, bc);

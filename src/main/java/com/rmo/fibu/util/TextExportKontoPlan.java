@@ -80,7 +80,7 @@ public class TextExportKontoPlan extends ExcelExport {
 	private void addRow(int rowNr) throws IOException {
 		StringBuffer zeile = new StringBuffer(128);
 		// set date and format date
-		zeile.append((Integer) mTableModel.getValueAt(rowNr, 0));
+		zeile.append(mTableModel.getValueAt(rowNr, 0));
 		zeile.append(mTrennZeichen);
 		zeile.append((String) mTableModel.getValueAt(rowNr, 1));
 		zeile.append(mTrennZeichen);

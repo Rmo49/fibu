@@ -207,6 +207,7 @@ public class BuchungView extends JFrame  {
 		// Listener, wenn etwas selektiert wird in der KontoListe
 		ListSelectionModel rowSM = mKontoListe.getTable().getSelectionModel();
 		rowSM.addListSelectionListener(new ListSelectionListener() {
+			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (mHasKontoLostFocus) {
 					ListSelectionModel lsm = (ListSelectionModel)e.getSource();
@@ -329,6 +330,7 @@ public class BuchungView extends JFrame  {
 	private void initListenersDatum() {
 		// wenn cursor in Feld und wenn verlassen wird, Eingabe prüfen
 		mTfDatum.addFocusListener( new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				focusGainedEnterField(mTfDatum, mTempBuchung.getDatumAsString());
 				hideKontoListe();
@@ -338,12 +340,14 @@ public class BuchungView extends JFrame  {
 				//gehe zum letzten Eintrag in der Buchungsliste
 				mBuchungListe.scrollToLastEntry();
 			}
+			@Override
 			public void focusLost(FocusEvent e) {
 				datumFocusLost();
 			}
 		});
 		// wenn Enter-Taste gedrückt
 		mTfDatum.addActionListener( new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				mTfBeleg.requestFocus();
 			}
@@ -355,15 +359,18 @@ public class BuchungView extends JFrame  {
 	private void initListenersBeleg() {
 		// wenn cursor in Feld und wenn verlassen wird, Eingabe prüfen
 		mTfBeleg.addFocusListener( new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				belegFocusGained();
 			}
+			@Override
 			public void focusLost(FocusEvent e) {
 				belegFocusLost();
 			}
 		});
 		// wenn Enter-Taste gedrückt
 		mTfBeleg.addActionListener( new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				mTfText.requestFocus();
 			}
@@ -373,10 +380,12 @@ public class BuchungView extends JFrame  {
 	/** Listeners für das Eingabefeld Text */
 	private void initListenersText() {
 		mTfText.addFocusListener( new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				focusGainedEnterField(mTfText, mTempBuchung.getBuchungText());
 				hideKontoListe();
 			}
+			@Override
 			public void focusLost(FocusEvent e) {
 				focusLostEnterField(mTfText);
 				// nix
@@ -385,6 +394,7 @@ public class BuchungView extends JFrame  {
 		
 		// wenn Enter-Taste gedrückt
 		mTfText.addActionListener( new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				mTfSoll.requestFocus();
 			}
@@ -394,6 +404,7 @@ public class BuchungView extends JFrame  {
 	/** Listeners für das Eingabefeld Soll */
 	private void initListenersSoll() {
 		mTfSoll.addFocusListener( new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				if ( !e.isTemporary() ) {
 					focusGainedEnterField(mTfSoll, mTempBuchung.getSollAsString());
@@ -405,6 +416,7 @@ public class BuchungView extends JFrame  {
 					catch (KontoNotFoundException ex) {}
 				}
 			}
+			@Override
 			public void focusLost(FocusEvent e) {
 				if ( !e.isTemporary() ) {
 					focusLostEnterField(mTfSoll);
@@ -414,12 +426,15 @@ public class BuchungView extends JFrame  {
 		});
 		// überwachung der Tastatur-Eingabe 
 		mTfSoll.addKeyListener ( new KeyListener() {
+			@Override
 			public void keyTyped (KeyEvent e) {
 				kontoKeyTyped(e, mTfSoll, mTfHaben);
 			}
+			@Override
 			public void keyReleased (KeyEvent e) {
 				// nix tun
 			}
+			@Override
 			public void keyPressed (KeyEvent e) {
 				kontoKeyPressed(e);
 			}
@@ -428,6 +443,7 @@ public class BuchungView extends JFrame  {
 		mTfSoll.addMouseListener(new KontoMouseAdapter(mTfSoll));
 		// wenn Enter-Taste gedrückt
 		mTfSoll.addActionListener( new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				mTfHaben.requestFocus();
 			}
@@ -437,6 +453,7 @@ public class BuchungView extends JFrame  {
 	/** Listeners für das Eingabefeld Haben */
 	private void initListenersHaben() {
 		mTfHaben.addFocusListener( new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				if ( ! e.isTemporary() ) {
 					if ( ! e.isTemporary() ) {
@@ -450,6 +467,7 @@ public class BuchungView extends JFrame  {
 					}
 				}
 			}
+			@Override
 			public void focusLost(FocusEvent e) {
 				if ( ! e.isTemporary() ) {
 					focusLostEnterField(mTfHaben);
@@ -459,12 +477,15 @@ public class BuchungView extends JFrame  {
 		});
 		// überwachung der Tastatur-Eingabe 
 		mTfHaben.addKeyListener ( new KeyListener() {
+			@Override
 			public void keyTyped (KeyEvent e) {
 				kontoKeyTyped(e, mTfHaben, mTfBetrag);
 			}
+			@Override
 			public void keyReleased (KeyEvent e) {
 				// nix tun
 			}
+			@Override
 			public void keyPressed (KeyEvent e) {
 				kontoKeyPressed(e);
 			}
@@ -473,6 +494,7 @@ public class BuchungView extends JFrame  {
 		mTfHaben.addMouseListener(new KontoMouseAdapter(mTfHaben));
 		// wenn Enter-Taste gedrückt
 		mTfHaben.addActionListener( new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				mTfBetrag.requestFocus();
 			}
@@ -482,6 +504,7 @@ public class BuchungView extends JFrame  {
 	/** Listeners für das Eingabefeld Betrag */
 	private void initListenersBetrag() {
 		mTfBetrag.addFocusListener( new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				if ( ! e.isTemporary() ) {
 					focusGainedEnterField(mTfBetrag, mTempBuchung.getBetragAsString());
@@ -489,6 +512,7 @@ public class BuchungView extends JFrame  {
 					mTfBetrag.selectAll();
 				}
 			}
+			@Override
 			public void focusLost(FocusEvent e) {
 				if ( ! e.isTemporary() ) {
 					focusLostEnterField(mTfBetrag);
@@ -497,6 +521,7 @@ public class BuchungView extends JFrame  {
 		});		
 		// wenn Enter-Taste gedrückt
 		mTfBetrag.addActionListener( new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				mButtonOk.requestFocus();
 			}
@@ -513,12 +538,14 @@ public class BuchungView extends JFrame  {
 		mButtonOk.setFont(Config.fontTextBold);
 		lPanel.add(mButtonOk);
 		mButtonOk.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				okActionPerformed();
 			}
 		});
 		// der Button muss requestFocus haben (siehe FoucusListener)
 		mButtonOk.addKeyListener(new KeyAdapter() {
+			@Override
 			public void keyTyped(KeyEvent e) {
 				if ( e.getKeyChar() == KeyEvent.VK_ENTER ) {
 					e.consume();
@@ -528,9 +555,11 @@ public class BuchungView extends JFrame  {
 		});
 		// ist nötig, damit der Ok-Button den Focus erhält, um Enter abzufangen ???
 		mButtonOk.addFocusListener(new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				//mButtonOk.requestFocus();
 			}
+			@Override
 			public void focusLost(FocusEvent e) {
 				// nothing
 				mBuchungListe.scrollToLastEntry();
@@ -542,6 +571,7 @@ public class BuchungView extends JFrame  {
 		mButtonSave.setFont(Config.fontTextBold);
 		lPanel.add(mButtonSave);
 		mButtonSave.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				saveActionPerformed();
 			}
@@ -552,6 +582,7 @@ public class BuchungView extends JFrame  {
 		mButtonCancel.setFont(Config.fontTextBold);
 		lPanel.add(mButtonCancel);
 		mButtonCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				cancelActionPerformed(e);
 			}
@@ -574,15 +605,19 @@ public class BuchungView extends JFrame  {
 			mKontoListe = new KontoListFrame();
 		}
 		this.addComponentListener (new ComponentListener() {
+			@Override
 			public void componentResized(ComponentEvent e) {
 				changeKontoListPosition();
 			}
+			@Override
 			public void componentMoved(ComponentEvent e) {
 					
 			}
+			@Override
 			public void componentHidden(ComponentEvent e) {
 					
 			}
+			@Override
 			public void componentShown(ComponentEvent e) {
 				changeKontoListPosition();
 			}
@@ -936,6 +971,7 @@ public class BuchungView extends JFrame  {
 	
 	/** Die überschriebene Methode hide, prüft zuerst ob noch gespeichert
 	 *  werden muss */
+	@Override
 	public void setVisible(boolean visible) {
 		Trace.println(1, "BuchungView.setVisible(" + visible +")");
 		if (visible) {
@@ -1111,9 +1147,9 @@ public class BuchungView extends JFrame  {
 			lErrorFeld = "Buchungstext";
 			lBuchung.setBuchungText(mTfText.getText());
 			lErrorFeld = "Soll-Konto";
-			lBuchung.setSoll( Integer.valueOf((String)mTfSoll.getText()).intValue() );
+			lBuchung.setSoll( Integer.valueOf(mTfSoll.getText()).intValue() );
 			lErrorFeld = "Haben-Konto";
-			lBuchung.setHaben( Integer.valueOf((String)mTfHaben.getText()).intValue() );
+			lBuchung.setHaben( Integer.valueOf(mTfHaben.getText()).intValue() );
 			lErrorFeld = "Betrag";
 			mTfBetrag.commitEdit();
 			double betrag = ((Number)mTfBetrag.getValue()).doubleValue();

@@ -45,6 +45,7 @@ public class ColumnRenderer extends DefaultTableCellRenderer  {
 	 *  Wird aufgerufen, wenn eine Zelle dargestellt werden soll.
 	 *  @see javax.swing.table.TableCellRenderer#getTableCellRendererComponent(javax.swing.JTable, java.lang.Object, boolean, boolean, int, int)
 	 */
+	@Override
 	public Component getTableCellRendererComponent(
 		JTable table,
 		Object value,

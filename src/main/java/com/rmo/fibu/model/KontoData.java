@@ -231,6 +231,7 @@ public class KontoData extends DataModel implements BeanContextServicesListener,
 			}
 		}
 
+		@Override
 		public boolean hasNext() {
 			try {
 				if (mReadSet.next()) {
@@ -245,6 +246,7 @@ public class KontoData extends DataModel implements BeanContextServicesListener,
 			}
 		}
 
+		@Override
 		public Konto next() throws NoSuchElementException {
 			try {
 				Konto lKonto = new Konto();
@@ -255,6 +257,7 @@ public class KontoData extends DataModel implements BeanContextServicesListener,
 			}
 		}
 
+		@Override
 		public void remove() {
 			// not implemented
 		}
@@ -412,9 +415,11 @@ public class KontoData extends DataModel implements BeanContextServicesListener,
 	}
 
 	// ------- Bean Support ---------------------
+	@Override
 	public void serviceAvailable(BeanContextServiceAvailableEvent bcsae) {
 	}
 
+	@Override
 	public void serviceRevoked(BeanContextServiceRevokedEvent bcsre) {
 	}
 

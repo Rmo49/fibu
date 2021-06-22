@@ -18,6 +18,7 @@ public abstract class DataModelFrom extends DataModel {
 	}
 
 	/** Die Connection zu der DB */
+	@Override
 	protected Connection getConnection() throws FibuRuntimeException {
 		return DbConnectionFrom.getConnection();
 	}

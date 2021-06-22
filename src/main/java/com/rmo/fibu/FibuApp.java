@@ -15,7 +15,7 @@ import com.rmo.fibu.view.FibuView;
  */
 public class FibuApp {
 
-	private static final String sVersion = "FibuLocal V3.2 (20.6.21)";
+	private static final String sVersion = "FibuLocal V3.3 (23.6.21)";
 	private static FibuView mFibu;
    
 	/********************************

@@ -29,6 +29,7 @@ public class IntegerRenderer extends DefaultTableCellRenderer {
 	 *  soll.
 	 *  Wenn der Wert 0 ist, wird nichts ausgegeben, sonst der formatierte Wert.
 	 */
+	@Override
 	public Component getTableCellRendererComponent(
 		JTable table, Object value,
 		boolean isSelected, boolean hasFocus,

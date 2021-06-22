@@ -31,6 +31,7 @@ public class CsvParserCs extends CsvParserBase {
 	/**
 	 * Die Spalten-Nummer des Datums
 	 */
+	@Override
 	protected int getDateCol() {
 		return mDateCol;
 	}
@@ -38,6 +39,7 @@ public class CsvParserCs extends CsvParserBase {
 	/**
 	 * Das verwendete Datumsformat.
 	 */
+	@Override
 	protected DateFormat getDateFormat() {
 		return mDateFormat;
 	}
@@ -46,6 +48,7 @@ public class CsvParserCs extends CsvParserBase {
 	 * Buchungstest lesen, diesen evt. anpassen.
 	 * @param buchung
 	 */
+	@Override
 	protected void readBuchungsText(BuchungCsv buchung) {
 		if (lineValues[mTextCol] != null && lineValues[mTextCol].length() > 0) {
 			buchung.setText(checkText(lineValues[mTextCol]));
@@ -56,6 +59,7 @@ public class CsvParserCs extends CsvParserBase {
 	 * Erster Teil bis zum ersten Komma entfernen, wenn bestimmte Werte enthält.
 	 * Sonst Leezeichen entfernen
 	 */
+	@Override
 	protected String checkText(String text) {
 		int komma = text.indexOf(",", 0);
 		String firstText = null;
@@ -96,6 +100,7 @@ public class CsvParserCs extends CsvParserBase {
 	 * Betrag, weiss ober Gut oder Lastschrift setzt auch ob Soll oder Haben
 	 * @param buchung
 	 */
+	@Override
 	protected void readBetrag(BuchungCsv buchung) {
 		// könnte auch "-" enthalten, dann leer
 		if (lineValues[mBetragCol] != null && lineValues[mBetragCol].length() > 1) {
@@ -113,6 +118,7 @@ public class CsvParserCs extends CsvParserBase {
 	/**
 	 * Die ID der Company
 	 */
+	@Override
 	protected int getCompanyId() {
 		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
 		try {
@@ -127,6 +133,7 @@ public class CsvParserCs extends CsvParserBase {
 	/**
 	 * Die standard KontoNr
 	 */
+	@Override
 	protected String getKontoNrDefault() {
 		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
 		try {
@@ -144,6 +151,7 @@ public class CsvParserCs extends CsvParserBase {
 	 * Wenn null zurückgegeben, dann ist Windows-Standard.
 	 * @return
 	 */
+	@Override
 	protected String getEncoding() {
 		return UTF_CODE;
 	}

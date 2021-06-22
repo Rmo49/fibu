@@ -77,6 +77,7 @@ public class Datum extends Date {
 	}
 
 	/** Gibt das Datum in String-Format zurück */
+	@Override
 	public String toString () {
 		StringBuffer sb = new StringBuffer(12);
 		sb = DatumFormat.getDatumInstance().format(this, sb, new FieldPosition(DateFormat.SHORT));

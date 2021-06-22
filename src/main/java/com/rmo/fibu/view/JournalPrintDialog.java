@@ -53,7 +53,8 @@ private void jbInit() throws Exception {
         btnCancel.setText("Abbrechen");
     btnCancel.setBounds(new Rectangle(113, 43, 98, 34));
         btnCancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 btnCancel_actionPerformed(e);
             }
         });
@@ -61,7 +62,8 @@ private void jbInit() throws Exception {
         btnPrint.setText("drucken");
     btnPrint.setBounds(new Rectangle(10, 43, 98, 34));
         btnPrint.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 btnPrint_actionPerformed(e);
             }
         });
@@ -115,27 +117,32 @@ private class JournalPrinterModel implements TablePrinterModel
 	}
 
 	/** Die Tabelle, die gedruckt werden soll */
+	@Override
 	public JTable getTableToPrint() {
 		return mBuchungTable;
 	}
 
 	/** Die Anzahl Kopfzeilen */
+	@Override
 	public int getHeaderCount() {
 		return 1;
 	}
 
 	/** Die Kopfzeile, wir linksbündig angezeigt.
 	 *  Die Seitenzahl wird automatisch rechts generiert */
+	@Override
 	public String getHeader(int number) {
 		return "Journal " + Config.sFibuTitel;
 	}
 
 	/** Die Anzahl Spalten */
+	@Override
 	public int getColCount() {
 		return 6;
 	}
 
 	/** Die relative Spaltenbreiten, diese werden der Seitenbreite angepasst. */
+	@Override
 	public int getColSize(int columnIndex) {
 		switch (columnIndex) {
 			case 0: return 16;
@@ -147,6 +154,7 @@ private class JournalPrinterModel implements TablePrinterModel
 	}
 
 	/** Die Spalten-Nummern, die eine Summen enthalten sollen. */
+	@Override
 	public boolean getColSumme(int columnIndex) {
 		if (columnIndex == 5) return true;
 		else return false;
@@ -155,6 +163,7 @@ private class JournalPrinterModel implements TablePrinterModel
 	/** Die Spalten, die rechtsbündig gedruckt werden.
 	 *  Zahlen werden automatisch rechtsbündig gedruckt,
 	 *  hier angeben, wenn Ueberschrift auch rechtsbündig sein soll */
+	@Override
 	public boolean getColRight(int columnIndex) {
 		if (columnIndex == 1) return true;
 		if (columnIndex >= 3) return true;
@@ -162,6 +171,7 @@ private class JournalPrinterModel implements TablePrinterModel
 	}
 
 	/** Die überschrift einer Spalte der Liste. */
+	@Override
 	public String getColName(int columnIndex) {
 		return mBuchungTable.getModel().getColumnName(columnIndex);
 	}

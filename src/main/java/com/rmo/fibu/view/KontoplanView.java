@@ -129,6 +129,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 		jButtonClose.setText("Schliessen");
 		jButtonClose.setFont(Config.fontTextBold);
 		jButtonClose.addActionListener(new java.awt.event.ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				jButtonClose_actionPerformed(e);
 			}
@@ -136,6 +137,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 		jButtonCancel.setText("Abbrechen");
 		jButtonCancel.setFont(Config.fontTextBold);
 		jButtonCancel.addActionListener(new java.awt.event.ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				jButtonCancel_actionPerformed(e);
 			}
@@ -143,6 +145,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 		jButtonSave.setText("Speichern");
 		jButtonSave.setFont(Config.fontTextBold);
 		jButtonSave.addActionListener(new java.awt.event.ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				jButtonSave_actionPerformed(e);
 			}
@@ -150,6 +153,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 		jButtonRefresh.setText("Refresh");
 		jButtonRefresh.setFont(Config.fontTextBold);
 		jButtonRefresh.addActionListener(new java.awt.event.ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				jButtonRefresh_actionPerformed(e);
 			}
@@ -157,6 +161,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 		jButtonDelete.setText("Löschen");
 		jButtonDelete.setFont(Config.fontTextBold);
 		jButtonDelete.addActionListener(new java.awt.event.ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				jButtonDelete_actionPerformed(e);
 			}
@@ -165,6 +170,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 		jButtonChange.setText("ändern");
 		jButtonChange.setFont(Config.fontTextBold);
 		jButtonChange.addActionListener(new java.awt.event.ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				jButtonChange_actionPerformed(e);
 			}
@@ -173,6 +179,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 		btnExcelExport.setText("Export");
 		btnExcelExport.setFont(Config.fontTextBold);
 		btnExcelExport.addActionListener(new java.awt.event.ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				btnExcelExport_actionPerformed(e);
 			}
@@ -181,6 +188,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 		btnExcelImport.setText("Import");
 		btnExcelImport.setFont(Config.fontTextBold);
 		btnExcelImport.addActionListener(new java.awt.event.ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				btnExcelImport_actionPerformed(e);
 			}
@@ -255,6 +263,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 		jKontoTable.setDefaultRenderer(Integer.class, new IntegerRenderer());
 	}
 
+	@Override
 	public void dispose() {
 		super.dispose();
 	}
@@ -276,15 +285,18 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 
 		private static final long serialVersionUID = -4384615067091089292L;
 
+		@Override
 		public int getColumnCount() {
 			return 5;
 		}
 
+		@Override
 		public int getRowCount() {
 			return mKontoData.getRowCount();
 		}
 
 		/** Die Bezeichnung der Spalten */
+		@Override
 		public String getColumnName(int col) {
 			switch (col) {
 			case 0:
@@ -302,6 +314,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 		}
 
 		/** Steuert das aussehen einer Spalte */
+		@Override
 		public Class<?> getColumnClass(int col) {
 			return getValueAt(0, col).getClass();
 			/*
@@ -313,6 +326,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 		/**
 		 * Gibt den Wert an der Koordinate row / col zurück.
 		 */
+		@Override
 		public Object getValueAt(int row, int col) {
 			Trace.println(7, "KontoModel.getValueAt(" + row + ',' + col + ')');
 			try {

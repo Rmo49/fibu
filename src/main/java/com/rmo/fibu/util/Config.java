@@ -692,7 +692,7 @@ public class Config {
 	public static void deleteFibuFromList(String fibuName) {
 		String element = null;
 		for (int index = 0; index < sFibuNames.getSize(); index++) {
-			element = (String) sFibuNames.getElementAt(index);
+			element = sFibuNames.getElementAt(index);
 			if (element != null && element.compareTo(fibuName) == 0) {
 				sFibuNames.removeElementAt(index);
 			}

@@ -53,7 +53,8 @@ public class Buchung {
 
     /** Vergleicht 2 Buchungen, sind gleich, wenn ID gleich ist,
      *  oder alle Felder gleich sind.  */
-    public boolean equals(Object pObject) {
+    @Override
+	public boolean equals(Object pObject) {
         if (pObject instanceof Buchung) {
             // wenn beide ID's gesetzt, dann entscheidet diese
             if (mID >= 0 && ((Buchung) pObject).getID() >= 0) {
@@ -229,6 +230,7 @@ public class Buchung {
 
 	/** gibt die Buchung in Stringform aus
 	 */
+	@Override
 	public String toString() {
 		StringBuffer lStr = new StringBuffer();
 		lStr.append("ID:");

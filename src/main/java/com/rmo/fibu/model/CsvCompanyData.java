@@ -344,6 +344,7 @@ public class CsvCompanyData extends DataModel {
 		 * Iterator, auf nächsten Eintrag setzen.
 		 * return true wenn Eintrag vorhanden, sonst false.
 		 */
+		@Override
 		public boolean hasNext() {
 			try {
 				if (mReadSet.next()) {
@@ -362,6 +363,7 @@ public class CsvCompanyData extends DataModel {
 		 * Iterator, gibt den nächsten Eintrag zurück.
 		 * mReadSet muss mit hasNext auf diesen zeigen.
 		 */
+		@Override
 		public CsvCompany next() throws NoSuchElementException {
 			try {
 				CsvCompany lCompany = new CsvCompany();
@@ -375,6 +377,7 @@ public class CsvCompanyData extends DataModel {
 			}
 		}
 
+		@Override
 		public void remove() {
 			// not implemented
 		}

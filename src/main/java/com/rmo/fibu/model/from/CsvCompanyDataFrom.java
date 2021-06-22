@@ -55,6 +55,7 @@ public class CsvCompanyDataFrom extends DataModelFrom {
 			}
 		}
 
+		@Override
 		public boolean hasNext() {
 			try {
 				if (mReadSet.next()) {
@@ -69,6 +70,7 @@ public class CsvCompanyDataFrom extends DataModelFrom {
 			}
 		}
 
+		@Override
 		public CsvCompany next() throws NoSuchElementException {
 			try {
 				CsvCompany lPdfCompay = new CsvCompany();
@@ -79,6 +81,7 @@ public class CsvCompanyDataFrom extends DataModelFrom {
 			}
 		}
 
+		@Override
 		public void remove() {
 			// not implemented
 		}

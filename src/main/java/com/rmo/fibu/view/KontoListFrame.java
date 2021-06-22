@@ -131,7 +131,7 @@ import com.rmo.fibu.util.Trace;
 		
 		int i =0;
 		while (i<mKontoNr.size()) {
-			String lStr = (String) mKontoNr.get(i);
+			String lStr = mKontoNr.get(i);
 			if (lStr.startsWith(ktoNr)) {
 				return i;
 			}
@@ -178,6 +178,7 @@ import com.rmo.fibu.util.Trace;
 	}
 	
 	/** Beenden der Anzeige */
+	@Override
 	public void dispose() {
 	  super.dispose();
 	  //@todo close
@@ -201,15 +202,18 @@ import com.rmo.fibu.util.Trace;
 
 		private static final long serialVersionUID = 8961852084923312241L;
 
+		@Override
 		public int getColumnCount() {
 			return 2;
 		}
 
+		@Override
 		public int getRowCount() {
 			return mKontoData.getRowCount();
 		}
 
 		/** Die Bezeichnung der Spalten */
+		@Override
 		public String getColumnName(int col) {
 			switch (col) {
 				case 0: return "Nummer";
@@ -219,12 +223,14 @@ import com.rmo.fibu.util.Trace;
 		}
 
 		/** Steuert das aussehen einer Spalte */
+		@Override
 		public Class<?> getColumnClass(int col) {
 			return getValueAt(0, col).getClass();
 		}
 
 		/** Gibt den Wert an der Koordinate row / col zurück.
 		 */
+		@Override
 		public Object getValueAt(int row, int col) {
 			Trace.println(7, "KontoModel.getValueAt(" +row +',' + col +')');
 			try {

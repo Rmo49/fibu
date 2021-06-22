@@ -57,7 +57,8 @@ private void jbInit() throws Exception {
         btnCancel.setText("Abbrechen");
     btnCancel.setBounds(new Rectangle(113, 43, 98, 34));
         btnCancel.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 btnCancel_actionPerformed(e);
             }
         });
@@ -65,7 +66,8 @@ private void jbInit() throws Exception {
         btnPrint.setText("drucken");
     btnPrint.setBounds(new Rectangle(10, 43, 98, 34));
         btnPrint.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            @Override
+			public void actionPerformed(ActionEvent e) {
                 btnPrint_actionPerformed(e);
             }
         });
@@ -128,6 +130,7 @@ private class KontoPrinterModel implements KontoListPrinterModel
 
 
 	/** Die Anzahl Kopfzeilen */
+	@Override
 	public int getHeaderCount() {
 		return 1;
 	}
@@ -136,6 +139,7 @@ private class KontoPrinterModel implements KontoListPrinterModel
 	 * @param kontoNr die gewählte Kontonummer
 	 *  @param number die Zeilennummer 
 	 * */
+	@Override
 	public String getHeader(int kontoNr, int number) {
 		Konto lKonto = null;
 		try {
@@ -148,11 +152,13 @@ private class KontoPrinterModel implements KontoListPrinterModel
 	}
 
 	/** Die Anzahl Spalten */
+	@Override
 	public int getColCount() {
 		return 7;
 	}
 
 	/** Die relative Spaltenbreiten, diese werden der Seitenbreite angepasst. */
+	@Override
 	public int getColSize(int columnIndex) {
 		switch (columnIndex) {
 			case 0: return 16;
@@ -164,6 +170,7 @@ private class KontoPrinterModel implements KontoListPrinterModel
 	}
 
 	/** Die Spalten-Nummern, die eine Summen enthalten sollen. */
+	@Override
 	public boolean getColSumme(int columnIndex) {
 		if (columnIndex == 4 || columnIndex == 5) return true;
 		else return false;
@@ -172,6 +179,7 @@ private class KontoPrinterModel implements KontoListPrinterModel
 	/** Die Spalten, die rechtsbündig gedruckt werden.
 	 *  Zahlen werden automatisch rechtsbündig gedruckt,
 	 *  hier angeben, wenn Ueberschrift auch rechtsbündig sein soll */
+	@Override
 	public boolean getColRight(int columnIndex) {
 		if (columnIndex == 1) return true;
 		if (columnIndex >= 4) return true;
@@ -179,6 +187,7 @@ private class KontoPrinterModel implements KontoListPrinterModel
 	}
 
 	/** Die überschrift einer Spalte der Liste. */
+	@Override
 	public String getColName(int columnIndex) {
 		return mBuchungTable.getColumnName(columnIndex);
 	}
@@ -186,6 +195,7 @@ private class KontoPrinterModel implements KontoListPrinterModel
 	/** Die Anzahl Zeilen eines Kontos
 	 * @param kontoNr die gewählte Kontonummer
 	*/
+	@Override
 	public int getRowCount(int kontoNr) {
 		return getBuchungTable(kontoNr).getRowCount();
 	}
@@ -194,6 +204,7 @@ private class KontoPrinterModel implements KontoListPrinterModel
 	 * @param row Zeile
 	 * @param col Spalte
 	 * @return Wert der Zelle */
+	@Override
 	public Object getValueAt(int kontoNr, int row, int col) {
 		return getBuchungTable(kontoNr).getValueAt(row, col);
 	}

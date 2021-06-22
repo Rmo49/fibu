@@ -33,6 +33,7 @@ public class CsvParserPost extends CsvParserBase {
 	 * Buchungstest lesen, diesen evt. anpassen.
 	 * @param buchung
 	 */
+	@Override
 	protected void readBuchungsText(BuchungCsv buchung) {
 		if (lineValues[mTextCol] != null && lineValues[mTextCol].length() > 0) {
 			buchung.setText(checkText(lineValues[mTextCol]));
@@ -43,6 +44,7 @@ public class CsvParserPost extends CsvParserBase {
 	/**
 	 * Buchungstext optimieren
 	 */
+	@Override
 	protected String checkText(String text) {
 		// Kartennummer ausblenen
 		int posX = text.indexOf("XXXX", 0);
@@ -56,6 +58,7 @@ public class CsvParserPost extends CsvParserBase {
 	/**
 	 * Die Spalten-Nummer des Datums
 	 */
+	@Override
 	protected int getDateCol() {
 		return mDateCol;
 	}
@@ -63,6 +66,7 @@ public class CsvParserPost extends CsvParserBase {
 	/**
 	 * Das verwendete Datumsformat.
 	 */
+	@Override
 	protected DateFormat getDateFormat() {
 		return mDateFormat;
 	}
@@ -71,6 +75,7 @@ public class CsvParserPost extends CsvParserBase {
 	 * Betrag, weiss ober Gut oder Lastschrift setzt auch ob Soll oder Haben
 	 * @param buchung
 	 */
+	@Override
 	protected void readBetrag(BuchungCsv buchung) {
 		if (lineValues[mBetragCol] != null && lineValues[mBetragCol].length() > 0) {
 			buchung.setBetrag(removeTrennzeichen(lineValues[mBetragCol]));
@@ -86,6 +91,7 @@ public class CsvParserPost extends CsvParserBase {
 	/**
 	 * Die ID der Company
 	 */
+	@Override
 	protected int getCompanyId() {
 		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
 		try {
@@ -100,6 +106,7 @@ public class CsvParserPost extends CsvParserBase {
 	/**
 	 * Die standard KontoNr
 	 */
+	@Override
 	protected String getKontoNrDefault() {
 		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
 		try {
@@ -117,6 +124,7 @@ public class CsvParserPost extends CsvParserBase {
 	 * Wenn null zurückgegeben, dann ist Windows-Standard.
 	 * @return
 	 */
+	@Override
 	protected String getEncoding() {
 		return ANSI_CODE;
 	}

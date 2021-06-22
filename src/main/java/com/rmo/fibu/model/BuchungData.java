@@ -129,7 +129,7 @@ public class BuchungData extends DataModel implements BeanContextMembershipListe
 			// aus New-Array lesen
 			int positionInNew = position - getRowCountTable();
 			if (positionInNew < mNewBuchung.size()) {
-				return (Buchung) mNewBuchung.elementAt(positionInNew);
+				return mNewBuchung.elementAt(positionInNew);
 			}
 			throw new BuchungNotFoundException("Buchung an Position: " + position + " nicht vorhanden");
 		}
@@ -173,7 +173,7 @@ public class BuchungData extends DataModel implements BeanContextMembershipListe
 		// Buchung wurde geändert, alte Buchung zurückschreiben
 		int i;
 		for (i=0; i < mNewBuchung.size(); i++) {
-			if (((Buchung)mNewBuchung.elementAt(i)).getID() == pBuchung.getID()) {
+			if (mNewBuchung.elementAt(i).getID() == pBuchung.getID()) {
 				break;
 			}
 		}
@@ -202,7 +202,7 @@ public class BuchungData extends DataModel implements BeanContextMembershipListe
 		saveNewBookings();
 		// prüfen ob keine Fehler, wenn nicht entfernen aus der Liste
 		for (int i = 0; i < mNewBuchung.size(); i++) {
-			if ( !((Buchung) mNewBuchung.elementAt(i)).isFehler()) {
+			if ( !mNewBuchung.elementAt(i).isFehler()) {
 				mNewBuchung.removeElementAt(i);
 			}
 		}
@@ -214,7 +214,7 @@ public class BuchungData extends DataModel implements BeanContextMembershipListe
 	private void saveNewBookings() throws FibuException {
 		Trace.println(2, "BuchungData.saveNewBookings()");
 		for (int i = 0; i < mNewBuchung.size(); i++) {
-			save((Buchung) mNewBuchung.elementAt(i));
+			save(mNewBuchung.elementAt(i));
 		}
 	}
 
@@ -242,7 +242,7 @@ public class BuchungData extends DataModel implements BeanContextMembershipListe
 		}
 		//
 		for (int i = 0; i < mNewBuchung.size(); i++) {
-			if ( ((Buchung)mNewBuchung.elementAt(i)).getID() == pID) {
+			if ( mNewBuchung.elementAt(i).getID() == pID) {
 				mNewBuchung.removeElementAt(i);
 				return;
 			}
@@ -424,13 +424,16 @@ public class BuchungData extends DataModel implements BeanContextMembershipListe
 
 	/** Listeners dazufügen
 	 */
+	@Override
 	protected void initContextListener() {
 		mBeanContext.addBeanContextMembershipListener(this);
 		// rmo: probleme inVA mit inner classes
 		mBeanContext.addBeanContextMembershipListener(new BeanContextMembershipListener() {
+			@Override
 			public void childrenAdded(BeanContextMembershipEvent bcme) {
 				System.out.println("Another bean has been added to the context.");
 			}
+			@Override
 			public void childrenRemoved(BeanContextMembershipEvent bcme) {
 				System.out.println("Another bean has been removed from the context.");
 			}
@@ -541,6 +544,7 @@ public class BuchungData extends DataModel implements BeanContextMembershipListe
 			catch (SQLException ex) {}
 		}
 
+		@Override
 		public boolean hasNext() {
 			try {
 				if (mReadSet.next()) {
@@ -557,6 +561,7 @@ public class BuchungData extends DataModel implements BeanContextMembershipListe
 			}
 		}
 
+		@Override
 		public Buchung next() throws NoSuchElementException {
 			try {
 				Buchung lBuchung = copyToBuchung(mReadSet);
@@ -570,6 +575,7 @@ public class BuchungData extends DataModel implements BeanContextMembershipListe
 			}
 		}
 
+		@Override
 		public void remove() {
 			try {
 				Buchung lBuchung = copyToBuchung(mReadSet);
@@ -696,6 +702,7 @@ public class BuchungData extends DataModel implements BeanContextMembershipListe
 	/**
 	 * Andere Context-Member dazugefügt. (nicht impl.)
 	 */
+	@Override
 	public void childrenAdded(BeanContextMembershipEvent bcme) {
 		Trace.println(4, "BuchungData.childrenAdded() called, not impl.");
 	}
@@ -703,6 +710,7 @@ public class BuchungData extends DataModel implements BeanContextMembershipListe
 	/**
 	 * Andere Context-Member entfernen. (nicht impl.)
 	 */
+	@Override
 	public void childrenRemoved(BeanContextMembershipEvent bcme) {
 		Trace.println(4, "BuchungData.childrenRemoved) called, not impl.");
 	}

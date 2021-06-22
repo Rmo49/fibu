@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Trace;
@@ -83,14 +84,14 @@ public class BuchungSelectDialog extends JDialog {
 		JLabel lLabel;
 		lLabel = new JLabel("Soll Konto");
 		lLabel.setFont(Config.fontTextBold);
-		lLabel.setHorizontalTextPosition(JLabel.RIGHT);
+		lLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
 		c.weightx = 0.2;
 		c.gridx = 0;
 		c.gridy = 0;
 		lPanel.add(lLabel, c);		
 		lLabel = new JLabel("Haben Konto");
 		lLabel.setFont(Config.fontTextBold);
-		lLabel.setHorizontalTextPosition(JLabel.RIGHT);
+		lLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
 		c.gridx = 0;
 		c.gridy = 1;
 		lPanel.add(lLabel, c);
@@ -130,29 +131,35 @@ public class BuchungSelectDialog extends JDialog {
 
 	private void initListeners() {
 		mSollKonto.addFocusListener(new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				// do nothing
 			}
 			/** Es wurde etwas im Feld eingegeben */
+			@Override
 			public void focusLost(FocusEvent e) {
 				mSerachRow = -1;
 			}
 		});
 		mHabenKonto.addFocusListener(new FocusListener() {
+			@Override
 			public void focusGained(FocusEvent e) {
 				// do nothing
 			}
 			/** Es wurde etwas im Feld eingegeben */
+			@Override
 			public void focusLost(FocusEvent e) {
 				mSerachRow = -1;
 			}
 		});
 		mButtonSelect.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				selectActionPerformed();
 			}
 		});
 		mButtonCancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				setVisible(false);
 			}

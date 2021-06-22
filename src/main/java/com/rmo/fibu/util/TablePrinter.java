@@ -85,6 +85,7 @@ public void doPrint() throws PrinterException {
  * @param pageIndex Seite die gedruckt werden soll
  * @return Printable.PAGE_EXISTS wenn gedruckt, sonst Printable.NO_SUCH_PAGE
  */
+@Override
 public int print(Graphics g, PageFormat pf, int pageIndex) throws PrinterException
 {
 	Trace.println(3, "TablePrinter.print(page: " + pageIndex +")");
@@ -257,7 +258,7 @@ private void printCelleText(Graphics2D g, int colNr, String text, boolean printR
 		Rectangle2D rect = g.getFontMetrics().getStringBounds(text, g);
 		xPos = colStartX[colNr+1] - rect.getWidth() - Config.printerColAbstand;
 	}
-	g.drawString(text, (float)xPos, (float)yPos);
+	g.drawString(text, (float)xPos, yPos);
 }
 
 /** Eine Line in der Zelle drucken */

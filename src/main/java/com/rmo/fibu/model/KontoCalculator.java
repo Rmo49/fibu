@@ -40,7 +40,7 @@ public class KontoCalculator {
 		Iterator<Konto> kontoIterator = mKontoData.getIterator();
 		// Vektor aufbauen
 		while (kontoIterator.hasNext()) {
-			Konto lKonto = (Konto) kontoIterator.next();
+			Konto lKonto = kontoIterator.next();
 			Trace.println(8, "Konto: " + lKonto.getKontoNr());
 			// notifyObservers(lKonto.getKontoNrAsString());
 			lKonto.setSaldo(lKonto.getStartSaldo());
@@ -55,7 +55,7 @@ public class KontoCalculator {
 				.getDataBean(BuchungData.class);
 		Iterator<Buchung> buchungIter = lBuchungData.getIterator();
 		while (buchungIter.hasNext()) {
-			Buchung lBuchung = (Buchung) buchungIter.next();
+			Buchung lBuchung = buchungIter.next();
 			Trace.println(8, "Beleg: " + lBuchung.getBeleg());
 			// notifyObservers(lBuchung.getBeleg());
 			verbuche(lBuchung.getBetrag(), lBuchung.getSollAsString(), true);
@@ -74,7 +74,7 @@ public class KontoCalculator {
 	private void verbuche(double pBetrag, String pKontoNr, boolean pSoll)
 			throws KontoNotFoundException {
 		// Konto lesen, check ob Soll- oder Haben-Konto
-		Konto lKonto = (Konto) mKonti.get(pKontoNr);
+		Konto lKonto = mKonti.get(pKontoNr);
 		if (lKonto == null) {
 			throw new KontoNotFoundException("Konto nicht gesetzt");
 		}
@@ -99,8 +99,8 @@ public class KontoCalculator {
 		Trace.println(3, "KontoCalculator.saveHashMap()");
 		Iterator<String> iter = mKonti.keySet().iterator();
 		while (iter.hasNext()) {
-			String key = (String) iter.next();
-			Konto lKonto = (Konto) mKonti.get(key);
+			String key = iter.next();
+			Konto lKonto = mKonti.get(key);
 			mKontoData.add(lKonto);
 		}
 		Trace.println(3, "KontoCalculator.saveHashMap() <=== end");

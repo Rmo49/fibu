@@ -26,6 +26,7 @@ public class FormattedDocument extends PlainDocument {
 	/** Ueberschriebene Methode, das erwartete Resultat wird zuerst geparst
 	 *  durch das beim Konstruktor angegebene Format-Objekt
 	 */
+	@Override
 	public void insertString(int offs, String str, AttributeSet a)
 		throws BadLocationException {
 
@@ -46,6 +47,7 @@ public class FormattedDocument extends PlainDocument {
 	/** Ueberschriebene Methode
 	 *  @see insertString()
 	 */
+	@Override
 	public void remove(int offs, int len) throws BadLocationException {
 		String currentText = getText(0, getLength());
 		String beforeOffset = currentText.substring(0, offs);

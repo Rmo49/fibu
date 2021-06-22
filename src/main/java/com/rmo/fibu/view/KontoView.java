@@ -140,6 +140,7 @@ public class KontoView extends JFrame
 		mButtonShow.setFont(Config.fontTextBold);
 		lPanel.add(mButtonShow);
 		mButtonShow.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				actionShowPerformed();
 			}
@@ -149,6 +150,7 @@ public class KontoView extends JFrame
 		mButtonSort.setFont(Config.fontTextBold);
 		lPanel.add(mButtonSort);
 		mButtonSort.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				actionSortPerformed();
 			}
@@ -158,6 +160,7 @@ public class KontoView extends JFrame
 		mButtonExcel.setFont(Config.fontTextBold);
 		lPanel.add(mButtonExcel);
 		mButtonExcel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				actionExcelPerformed();
 			}
@@ -167,6 +170,7 @@ public class KontoView extends JFrame
 		mButtonPrint.setFont(Config.fontTextBold);
 		lPanel.add(mButtonPrint);
 		mButtonPrint.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				actionPrintPerformed();
 			}
@@ -176,6 +180,7 @@ public class KontoView extends JFrame
 		mButtonClose.setFont(Config.fontTextBold);
 		lPanel.add(mButtonClose);
 		mButtonClose.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				actionClosePerformed();
 			}
@@ -224,6 +229,7 @@ public class KontoView extends JFrame
 		lScrollPane.setPreferredSize(new Dimension(KTOTEXT_WIDTH * Config.windowTextSize, 100));
 		lScrollPane.setMinimumSize(new Dimension(KTONR_WIDTH * Config.windowTextSize, 100));
 		mKontoTable.addMouseListener(new java.awt.event.MouseAdapter() {
+			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					actionShowPerformed();
@@ -281,11 +287,13 @@ public class KontoView extends JFrame
 	// ----- Implementierung des TablePrinterModels -------------------
 
 	/** Die Tabelle, die gedruckt werden soll */
+	@Override
 	public JTable getTableToPrint() {
 		return mBuchungTable;
 	}
 
 	/** Die Anzahl Kopfzeilen */
+	@Override
 	public int getHeaderCount() {
 		return 1;
 	}
@@ -293,6 +301,7 @@ public class KontoView extends JFrame
 	/**
 	 * Die Kopfzeile, wird linksbündig angezeigt, Seitenzahl rechts
 	 */
+	@Override
 	public String getHeader(int nr) {
 		try {
 			Konto lKonto = mKontoData.read(mKontoNrShow);
@@ -303,6 +312,7 @@ public class KontoView extends JFrame
 	}
 
 	/** Die max. Anzahl Spalten */
+	@Override
 	public int getColCount() {
 		return 7;
 	}
@@ -312,6 +322,7 @@ public class KontoView extends JFrame
 	 * Spaltenbreiten werden relativ angegeben, diese werden der Seitenbreite
 	 * angepasst.
 	 */
+	@Override
 	public int getColSize(int columnIndex) {
 		switch (columnIndex) {
 		case 0:
@@ -328,6 +339,7 @@ public class KontoView extends JFrame
 	}
 
 	/** Die Spalten, die eine Summen enthalten sollen */
+	@Override
 	public boolean getColSumme(int columnIndex) {
 		if (columnIndex == 4 || columnIndex == 5)
 			return true;
@@ -340,6 +352,7 @@ public class KontoView extends JFrame
 	 * rechtsbündig gedruckt, hier angeben, wenn Ueberschrift auch rechtsbündig
 	 * sein soll
 	 */
+	@Override
 	public boolean getColRight(int columnIndex) {
 		if (columnIndex == 1)
 			return true;
@@ -349,6 +362,7 @@ public class KontoView extends JFrame
 	}
 
 	/** Die überschrift einer Spalte der Liste */
+	@Override
 	public String getColName(int columnIndex) {
 		switch (columnIndex) {
 		case 0:
@@ -518,14 +532,17 @@ public class KontoView extends JFrame
 
 		private static final long serialVersionUID = -3805602970105237582L;
 
+		@Override
 		public int getColumnCount() {
 			return 2;
 		}
 
+		@Override
 		public int getRowCount() {
 			return mKontoData.getRowCount();
 		}
 
+		@Override
 		public String getColumnName(int col) {
 			switch (col) {
 			case 0:
@@ -537,6 +554,7 @@ public class KontoView extends JFrame
 		}
 
 		/** Steuert das aussehen einer Spalte */
+		@Override
 		public Class<?> getColumnClass(int col) {
 			return getValueAt(0, col).getClass();
 		}
@@ -549,6 +567,7 @@ public class KontoView extends JFrame
 		/**
 		 * Gibt den Wert an der Koordinate row / col zurück.
 		 */
+		@Override
 		public Object getValueAt(int row, int col) {
 			Trace.println(7, "KontoModel.getValueAt(" + row + ',' + col + ')');
 			try {

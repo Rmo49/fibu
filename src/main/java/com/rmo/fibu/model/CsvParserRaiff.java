@@ -15,8 +15,6 @@ public class CsvParserRaiff extends CsvParserBase {
 	private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 	// die Spalte des Buchungtextes
 	private final int mTextCol = 2;
-	// Buchnungstext löschen
-	private String[] textToDelete = {"Vergütung", "Maestro", "Dauerauftrag", "Einzug"};
 	// die Spalte des Betrages
 	private final int mBetragCol = 3;
 	
@@ -32,6 +30,7 @@ public class CsvParserRaiff extends CsvParserBase {
 	/**
 	 * Die Spalten-Nummer des Datums
 	 */
+	@Override
 	protected int getDateCol() {
 		return mDateCol;
 	}
@@ -39,6 +38,7 @@ public class CsvParserRaiff extends CsvParserBase {
 	/**
 	 * Das verwendete Datumsformat.
 	 */
+	@Override
 	protected DateFormat getDateFormat() {
 		return mDateFormat;
 	}
@@ -47,6 +47,7 @@ public class CsvParserRaiff extends CsvParserBase {
 	 * Buchungstest lesen, diesen evt. anpassen.
 	 * @param buchung
 	 */
+	@Override
 	protected void readBuchungsText(BuchungCsv buchung) {
 		if (lineValues[mTextCol] != null && lineValues[mTextCol].length() > 0) {
 			buchung.setText(checkText(lineValues[mTextCol]));
@@ -56,6 +57,7 @@ public class CsvParserRaiff extends CsvParserBase {
 	/**
 	 * Buchungstext anpassen
 	 */
+	@Override
 	protected String checkText(String text) {
 		// Kartennummer ausblenen
 		int posX = text.indexOf("XXXX", 0);
@@ -70,6 +72,7 @@ public class CsvParserRaiff extends CsvParserBase {
 	 * Betrag, weiss ober Gut oder Lastschrift setzt auch ob Soll oder Haben
 	 * @param buchung
 	 */
+	@Override
 	protected void readBetrag(BuchungCsv buchung) {
 		if (lineValues[mBetragCol] != null && lineValues[mBetragCol].length() > 0) {
 			if (lineValues[mBetragCol].startsWith("-")) {
@@ -85,6 +88,7 @@ public class CsvParserRaiff extends CsvParserBase {
 	/**
 	 * Die ID der Company
 	 */
+	@Override
 	protected int getCompanyId() {
 		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
 		try {
@@ -99,6 +103,7 @@ public class CsvParserRaiff extends CsvParserBase {
 	/**
 	 * Die standard KontoNr
 	 */
+	@Override
 	protected String getKontoNrDefault() {
 		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
 		try {
@@ -116,6 +121,7 @@ public class CsvParserRaiff extends CsvParserBase {
 	 * Wenn null zurückgegeben, dann ist Windows-Standard.
 	 * @return
 	 */
+	@Override
 	protected String getEncoding() {
 		return ANSI_CODE;
 	}

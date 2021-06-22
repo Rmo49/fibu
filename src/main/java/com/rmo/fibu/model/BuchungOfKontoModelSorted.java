@@ -24,6 +24,7 @@ public class BuchungOfKontoModelSorted extends BuchungOfKontoModel {
 public BuchungOfKontoModelSorted() {
 }
 
+@Override
 public int getRowCount() {
 	return mBuchungen.size();
 }
@@ -32,15 +33,17 @@ public int getRowCount() {
  * Die Liste aller Buchungen des Kontos
  * @return
  */
+@Override
 protected List<BuchungRow> getBuchungen() {
 	return mBuchungen;
 }
 
 /** Gibt den Wert an der Koordinate row / col zurück.
  */
+@Override
 public Object getValueAt(int row, int col) {
 	Trace.println(7, "KontoView.BuchungModel.getValueAt(" +row +',' + col +')');
-	BuchungRow lRow = (BuchungRow)mBuchungen.get(row);		
+	BuchungRow lRow = mBuchungen.get(row);		
 	switch (col) {
 		case 0: return lRow.datum;
 		case 1: return lRow.beleg;
@@ -57,6 +60,7 @@ public Object getValueAt(int row, int col) {
  *  @param int konto die kontonummer, die angezeigt werden soll
  *  @param Date from ab diesem Datum Buchungen anzeigen
  */
+@Override
 public void setup(int kontoNr, Date from) {
 	Trace.println(3, "KontoView.BuchungModel.setup(" +kontoNr +"  " +from.toString() +")");
 

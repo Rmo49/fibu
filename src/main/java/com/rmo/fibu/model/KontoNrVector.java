@@ -28,7 +28,7 @@ public class KontoNrVector extends Vector<String> {
         for (int i = 0; i < max; i++) {
             try {
                 lKonto = lKontoData.readAt(i);
-                add((String) lKonto.getKontoNrAsString());
+                add(lKonto.getKontoNrAsString());
             }
             catch (KontoNotFoundException e) {
                 Trace.println(1, "KontoNrVecor.init(): " + e.getMessage());
@@ -38,11 +38,11 @@ public class KontoNrVector extends Vector<String> {
     
     /** Die Kontonummer einer Zeile als String */
     public String getAsString(int rowNr) {
-    	return (String) this.get(rowNr);
+    	return this.get(rowNr);
     }
     
 	/** Die Kontonummer einer Zeile als int */
     public int getAsInt(int rowNr) {
-    	return Integer.valueOf((java.lang.String)this.get(rowNr)).intValue();
+    	return Integer.valueOf(this.get(rowNr)).intValue();
     }
 }

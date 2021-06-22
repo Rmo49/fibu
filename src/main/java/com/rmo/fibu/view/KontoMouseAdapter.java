@@ -22,6 +22,7 @@ public class KontoMouseAdapter extends MouseAdapter {
 		mKontoField = kontoField;
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 		Trace.println(4, "KontoMouseAdapter.mouseClicked()");
 		e.consume();

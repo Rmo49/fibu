@@ -31,6 +31,7 @@ public Konto (int pKontoNr, String pText, double pStartSaldo, double pSaldo, boo
 
 /** Vergleicht 2 Konto
  */
+@Override
 public boolean equals(Object anObject) {
 	if (anObject instanceof Konto) {
 		Konto otherKonto = (Konto) anObject;

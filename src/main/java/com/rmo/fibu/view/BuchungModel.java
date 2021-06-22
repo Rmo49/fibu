@@ -24,15 +24,18 @@ public BuchungModel(BuchungData buchungen) {
 }
 
 /** Nur die ersten 6 Cols anzeigen (keine ID) */
+@Override
 public int getColumnCount() {
 	return 6;
 }
 
 /** Anzahl Zeilen in der Tabelle */
+@Override
 public int getRowCount() {
 	return mBuchungData.getRowCount();
 }
 
+@Override
 public String getColumnName(int col) {
 	switch (col) {
 		case 0: return "Datum";
@@ -47,6 +50,7 @@ public String getColumnName(int col) {
 }
 
 /** Steuert das aussehen einer Spalte */
+@Override
 public Class<?> getColumnClass(int col) {
 	return getValueAt(0, col).getClass();
 }
@@ -63,6 +67,7 @@ public Class<?> getColumnClass(int col) {
  * 6 = ID (Long)
  * @return Den Wert, oder LeerString wenn nichts gefunden
  */
+@Override
 public Object getValueAt(int row, int col) {
 	Trace.println(7, "BuchungModel.getValueAt(" +row +',' + col +')');
 	try {
