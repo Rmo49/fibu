@@ -1,0 +1,8 @@
+
+Check:
+Wenn neue Fibu: pdfkeyword kontrollieren
+
+- Eingabe Buchungen mit Liste
+- Auch Raiffeisen mit CVS
+- Kontoplan kein refresh nach Datenspeicherung (2x Speichern drücken)
+- Wenn Buchung eingegeben, noch blau, kann nicht ändern

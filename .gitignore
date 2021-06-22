@@ -1,0 +1,6 @@
+/target
+/bin
+.classpath
+Trace.txt
+FibuConfig.txt
+/.gradle/
