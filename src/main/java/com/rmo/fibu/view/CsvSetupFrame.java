@@ -167,7 +167,7 @@ public class CsvSetupFrame extends JFrame {
 		btnSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				saveAction();
+//				saveAction();
 			}
 		});
 		flow1.add(btnSave);
@@ -213,6 +213,7 @@ public class CsvSetupFrame extends JFrame {
 	/**
 	 * Die Keywords in der DB speichern.
 	 */
+	/* wird nicht gebraucht, da nach Enter-Taste, die Daten bereits gespeichert sind.
 	private void saveAction() {
 		CsvCompany lCompany = null;
 
@@ -226,6 +227,7 @@ public class CsvSetupFrame extends JFrame {
 			Trace.println(1, "Fehler in PdfKeywordPanel.saveAction: " + e.getMessage());
 		}
 	}
+	*/
 	
 	/** wenn Fenster geschlossen */
 	@Override	
@@ -330,7 +332,7 @@ public class CsvSetupFrame extends JFrame {
 		/**
 		 * Den Eintrag an der Stelle position (0..x) zurückgeben.
 		 * 
-		 * @return Konto an der position, null wenn nicht vorhanden
+		 * @return Company an der position, null wenn nicht vorhanden
 		 */
 		public CsvCompany readAt(int row) throws FibuException {
 			Trace.println(7, "CsvCompany.readAt()");

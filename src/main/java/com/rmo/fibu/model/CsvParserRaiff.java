@@ -59,10 +59,10 @@ public class CsvParserRaiff extends CsvParserBase {
 	 */
 	@Override
 	protected String checkText(String text) {
-		// Kartennummer ausblenen
-		int posX = text.indexOf("XXXX", 0);
+		// nach erstem Komma ausblenden
+		int posX = text.indexOf(",", 0);
 		if (posX > 0) {
-			text = text.substring(posX + 9, text.length());
+			text = text.substring(0, posX);
 		}
 		text = setGrossKlein(text.trim());
 		return text;
