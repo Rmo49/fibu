@@ -21,7 +21,7 @@ public class KontoNrVector extends Vector<String> {
 
     /** Initialisiert die Daten, liest alle ein */
     private void init() {
-		Trace.println(3, "KontoNrVecor.init()");
+		Trace.println(4, "KontoNrVecor.init()");
         KontoData lKontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
         Konto lKonto = null;
         int max = lKontoData.getRowCount();
@@ -34,6 +34,29 @@ public class KontoNrVector extends Vector<String> {
                 Trace.println(1, "KontoNrVecor.init(): " + e.getMessage());
             }
         }
+    }
+    
+    /** Auf die gewünsche Nummer setzen */
+    public int getIndex(String kontoNummer) {
+       KontoData lKontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
+        Konto lKonto = null;
+        int max = lKontoData.getRowCount();
+        int ktoNr = Integer.parseInt(kontoNummer);
+        int index = 0;
+        
+        while (index < max) {
+            try {
+                lKonto = lKontoData.readAt(index);
+                if (lKonto.getKontoNr() == ktoNr) {
+                	break;
+                }
+            }
+            catch (KontoNotFoundException e) {
+                Trace.println(1, "KontoNrVecor.init(): " + e.getMessage());
+            }
+            index++;
+        }
+    	return index;
     }
     
     /** Die Kontonummer einer Zeile als String */

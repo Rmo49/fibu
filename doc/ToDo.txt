@@ -1,6 +1,4 @@
 
-Check:
-Wenn neue Fibu: pdfkeyword kontrollieren
 
 - Eingabe Buchungen mit Liste
 - Auch Raiffeisen mit CVS

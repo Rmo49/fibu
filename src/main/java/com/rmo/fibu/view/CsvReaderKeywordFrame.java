@@ -66,6 +66,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 	private CsvCompanyData 		mCompanyData = null;
 
 	private JComboBox<String>	mKtoNrDefault;
+	private KontoNrVector		mKtoNr;
 	private JTextField 			mDirPath;
 	// view elemente
 
@@ -225,9 +226,14 @@ public class CsvReaderKeywordFrame extends JFrame {
 
 		flow2.add(label1);
 		mKtoNrDefault = new JComboBox<String>();
-		mKtoNrDefault.setModel(new DefaultComboBoxModel<String>(new KontoNrVector()));
+		mKtoNr = new KontoNrVector();
+		mKtoNrDefault.setModel(new DefaultComboBoxModel<String>(mKtoNr));
 		mKtoNrDefault.setPreferredSize(ktoNrDefaultSize);
 		mKtoNrDefault.setFont(Config.fontText);
+		
+		// setzt die gewählte Kontonummer
+		int ktoIndex = mKtoNr.getIndex(mCompany.getKontoNrDefault());
+		mKtoNrDefault.setSelectedIndex(ktoIndex);
 		
 		flow2.add(mKtoNrDefault);
 		lPanel.add(flow2);
