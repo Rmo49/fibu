@@ -605,7 +605,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 //		}
 
 		/**
-		 * Wenn eine Zelle edititer wurde, diesen Wert in der Liste speichern
+		 * Wenn eine Zelle editiert wurde, diesen Wert in der Liste speichern
 		 */
 		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {

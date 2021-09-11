@@ -11,7 +11,7 @@ public class CsvParserRaiff extends CsvParserBase {
 	
 	// die Spalte des Datums
 	private final int mDateCol = 1;
-	// das Format der Post
+	// das Format der Raiffeisen
 	private final SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
 	// die Spalte des Buchungtextes
 	private final int mTextCol = 2;
@@ -92,7 +92,7 @@ public class CsvParserRaiff extends CsvParserBase {
 	protected int getCompanyId() {
 		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
 		try {
-			return companyData.readData(CsvParserBase.companyNamePost).getCompanyID();
+			return companyData.readData(CsvParserBase.companyNameRaiff).getCompanyID();
 		}
 		catch (FibuException ex){
 			// do nothing
@@ -107,7 +107,7 @@ public class CsvParserRaiff extends CsvParserBase {
 	protected String getKontoNrDefault() {
 		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
 		try {
-			return companyData.readData(CsvParserBase.companyNamePost).getKontoNrDefault();
+			return companyData.readData(CsvParserBase.companyNameRaiff).getKontoNrDefault();
 		}
 		catch (FibuException ex){
 			// do nothing
@@ -116,7 +116,7 @@ public class CsvParserRaiff extends CsvParserBase {
 	}
 
 	/**
-	 * Den encoding string, muss von CS oder Postfinance gesetzt werden.
+	 * Den encoding string, muss von detail Implementation gesetzt werden.
 	 * Siehe auch encoding standard strings
 	 * Wenn null zurückgegeben, dann ist Windows-Standard.
 	 * @return
