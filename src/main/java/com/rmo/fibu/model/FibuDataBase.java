@@ -33,6 +33,7 @@ public class FibuDataBase {
 			 + "`SuchWort` varchar(20) NOT NULL, "
 			 + " `KontoNr` varchar(6) DEFAULT NULL, "
 			 + " `SH` varchar(2) DEFAULT NULL, "
+			 + " `TextNeu` varchar(30) DEFAULT NULL, "
 			 + " PRIMARY KEY (`ID`,`CompanyID`) );";
 //			 + " FOREIGN KEY (CompanyID) REFERENCES pdfcompany(CompanyID) );";
 			

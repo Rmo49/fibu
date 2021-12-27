@@ -26,8 +26,8 @@ import com.rmo.fibu.exception.FibuRuntimeException;
 import com.rmo.fibu.exception.KontoNotFoundException;
 import com.rmo.fibu.model.CsvCompany;
 import com.rmo.fibu.model.CsvCompanyData;
-import com.rmo.fibu.model.CsvKeyword;
-import com.rmo.fibu.model.CsvKeywordData;
+import com.rmo.fibu.model.CsvKeyKonto;
+import com.rmo.fibu.model.CsvKeyKontoData;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.DbConnection;
 import com.rmo.fibu.model.FibuData;
@@ -41,32 +41,31 @@ import com.rmo.fibu.model.from.KontoDataFrom;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Trace;
 
-
-
-/** 
- * Initialisiert das Frame und die entsprechenden Komponenten.
- * Zeigt die Liste der Fibus an und Buttons für den übertrag von Kontodaten.
+/**
+ * Initialisiert das Frame und die entsprechenden Komponenten. Zeigt die Liste
+ * der Fibus an und Buttons für den übertrag von Kontodaten.
+ *
  * @author Ruedi
  *
  */
 public class FibuCopyFrom extends JFrame implements ComponentListener {
 
 	private static final long serialVersionUID = -1244023781986600652L;
-	private final int			FENSTER_BREITE = 300;
-	private final int			FENSTER_HOEHE = 400;
-	
+	private final int FENSTER_BREITE = 300;
+	private final int FENSTER_HOEHE = 400;
+
 	// view elementes
-	private JLabel				message;
-	private JList<String>		fibuListView;
-	private String 				fibuName;
-	private JButton 			btnSelektieren;
-	private JButton 			btnKopieren;
+	private JLabel message;
+	private JList<String> fibuListView;
+	private String fibuName;
+	private JButton btnSelektieren;
+	private JButton btnKopieren;
 
 	public FibuCopyFrom() {
 		this.setTitle("Konto Saldo kopieren");
 		init();
 	}
-	
+
 	/**
 	 * Initialisierung des panels, Grösse, Listeners
 	 */
@@ -90,28 +89,31 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 		getContentPane().add(initFibuList(), BorderLayout.CENTER);
 		getContentPane().add(initButtons(), BorderLayout.LINE_END);
 	}
-	
+
 	private JPanel initMessage() {
 		JPanel lPanel = new JPanel();
 		message = new JLabel();
-		message.setText("");
+		message.setFont(Config.fontTextBold);
+		message.setText("Ziel Fibu: " + Config.sFibuDbName);
 		lPanel.add(message);
 		return lPanel;
 	}
-	
+
 	/** Intialisierung der Fibu-Liste */
 	private Container initFibuList() {
 		Box box = Box.createVerticalBox();
-		box.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+		box.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
 		// convert to ArrayList
 		DefaultListModel<String> fibuNames = Config.getFibuList();
 		// die View der Liste
-		fibuListView = new JList<String>(fibuNames); 
+		fibuListView = new JList<>(fibuNames);
 		fibuListView.setFont(Config.fontTextBold);
 		fibuListView.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		fibuListView.setSelectedIndex(0);
 		fibuListView.setVisibleRowCount(10);
+
+		// Config.sFibuDbName;
 
 		JScrollPane scrollPane = new JScrollPane(fibuListView);
 		int breite = (int) (FENSTER_BREITE * Config.windowTextMultiplikator);
@@ -124,17 +126,19 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 
 	/**
 	 * Buttons initialisieren
+	 *
 	 * @return
 	 */
 	private Container initButtons() {
 		JPanel lPanel = new JPanel();
 		lPanel.setLayout(new BoxLayout(lPanel, BoxLayout.PAGE_AXIS));
-		lPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-		
+		lPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
 		btnSelektieren = new JButton("selektieren");
+		btnSelektieren.setFont(Config.fontTextBold);
 		int breite = (int) (100 * Config.windowTextMultiplikator);
 		int hoehe = (int) (20 * Config.windowTextMultiplikator);
-		btnSelektieren.setPreferredSize (new Dimension (breite, hoehe));
+		btnSelektieren.setPreferredSize(new Dimension(breite, hoehe));
 		btnSelektieren.addActionListener(new java.awt.event.ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -142,12 +146,13 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 			}
 		});
 		lPanel.add(btnSelektieren);
-		lPanel.add(Box.createRigidArea(new Dimension(5,5)));
-		
+		lPanel.add(Box.createRigidArea(new Dimension(5, 5)));
+
 		btnKopieren = new JButton("kopieren");
-		btnKopieren.setPreferredSize(new Dimension (breite, hoehe));
+		btnKopieren.setFont(Config.fontTextBold);
+		btnKopieren.setPreferredSize(new Dimension(breite, hoehe));
 		btnKopieren.setEnabled(false);
-		
+
 		btnKopieren.addActionListener(new java.awt.event.ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -157,13 +162,13 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 		lPanel.add(btnKopieren);
 		return lPanel;
 	}
-	
+
 	/**
 	 * Konto übertragen, wenn nicht vorhanden, sonst Start-Saldo setzen.
 	 */
-	private void actionSelect(){
+	private void actionSelect() {
 		message.setText("");
-		if (! DbConnection.isFibuOpen()) {
+		if (!DbConnection.isFibuOpen()) {
 			message.setText("Keine Fibu geöffnet");
 			return;
 		}
@@ -176,12 +181,12 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 			message.setText("Zu dieser Fibu wird kopiert, andere wählen");
 			return;
 		}
-		message.setText("kopiere Saldi von: " + fibuName);
+		message.setText("kopiere Daten von: " + fibuName + " nach: " + Config.sFibuDbName);
 		btnSelektieren.setEnabled(false);
 		fibuListView.setEnabled(false);
 		btnKopieren.setEnabled(true);
 	}
-	
+
 	/**
 	 * Alle daten kopieren
 	 */
@@ -198,7 +203,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 		copyFibuTitel();
 		copyKonto();
 		copyCsvCompany();
-		copyCvsKeyword();
+		copyCvsKeywords();
 
 		btnKopieren.setEnabled(false);
 		message.setText("Alles kopiert");
@@ -214,13 +219,11 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 			String fibuTitel = fibuDataOld.readFibuTitel();
 			fibuData.writeFibuName(fibuTitel);
 			Config.sFibuTitel = fibuTitel;
-		}
-		catch (FibuException ex) {
+		} catch (FibuException ex) {
 			message.setText("Fehler bei copyFibuTitel: " + ex.getMessage());
 		}
-		
+
 	}
-	
 
 	/**
 	 * Kopiert alle Konto daten, wenn nicht gefunden wird neues Konto angelegt.
@@ -234,8 +237,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 			Konto lKontoOld = iterOld.next();
 			try {
 				lKonto = kontoData.read(lKontoOld.getKontoNr());
-			}
-			catch (KontoNotFoundException ex) {
+			} catch (KontoNotFoundException ex) {
 				// wenn nicht gefunden, neue Anlegen
 				lKonto.setKontoNr(lKontoOld.getKontoNr());
 				lKonto.setText(lKontoOld.getText());
@@ -244,27 +246,27 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 			if (lKontoOld.getKontoNr() < Config.sERStart) {
 				lKonto.setStartSaldo(lKontoOld.getSaldo());
 				lKonto.setSaldo(lKontoOld.getSaldo());
-			}
-			else {
+			} else {
 				lKonto.setStartSaldo(0);
 				lKonto.setSaldo(1);
 			}
 			try {
 				kontoData.add(lKonto);
-			}
-			catch (KontoNotFoundException ex) {
+			} catch (KontoNotFoundException ex) {
 				// do nothing
 			}
 		}
 	}
-	
+
 	/**
 	 * Kopiert die Company daten für CSV.
 	 */
 	private void copyCsvCompany() {
-		CsvCompanyDataFrom mPdfCompanyDataOld = (CsvCompanyDataFrom) DataBeanContext.getContext().getDataBean(CsvCompanyDataFrom.class);
+		CsvCompanyDataFrom mPdfCompanyDataOld = (CsvCompanyDataFrom) DataBeanContext.getContext()
+				.getDataBean(CsvCompanyDataFrom.class);
 		Iterator<CsvCompany> iterOld = mPdfCompanyDataOld.getIterator();
-		CsvCompanyData mPdfCompanyData = (CsvCompanyData) DataBeanContext.getContext().getDataBean(CsvCompanyData.class);
+		CsvCompanyData mPdfCompanyData = (CsvCompanyData) DataBeanContext.getContext()
+				.getDataBean(CsvCompanyData.class);
 		CsvCompany lPdfCompany = new CsvCompany();
 		while (iterOld.hasNext()) {
 			CsvCompany lPdfCompanyOld = iterOld.next();
@@ -274,43 +276,47 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 			lPdfCompany.setKontoNrDefault(lPdfCompanyOld.getKontoNrDefault());
 			try {
 				mPdfCompanyData.addData(lPdfCompany);
-			}
-			catch (FibuException ex) {
+			} catch (FibuException ex) {
 				message.setText("Fehler bei PdfCompany anlegen: " + ex.getMessage());
 			}
 		}
 	}
-	
+
 	/**
 	 * Kopiert die Keywords für CSV.
 	 */
-	private void copyCvsKeyword() {
-		CsvKeywordDataFrom mPdfKeywordDataFrom = (CsvKeywordDataFrom) DataBeanContext.getContext().getDataBean(CsvKeywordDataFrom.class);
-		Iterator<CsvKeyword> iterFrom = mPdfKeywordDataFrom.getIterator();
-		CsvKeywordData mPdfKeywordData = (CsvKeywordData) DataBeanContext.getContext().getDataBean(CsvKeywordData.class);
-		CsvKeyword lPdfKeyword = new CsvKeyword();
+	private void copyCvsKeywords() {
+		CsvKeywordDataFrom mPdfKeywordDataFrom = (CsvKeywordDataFrom) DataBeanContext.getContext()
+				.getDataBean(CsvKeywordDataFrom.class);
+		Iterator<CsvKeyKonto> iterFrom = mPdfKeywordDataFrom.getIterator();
+		CsvKeyKontoData mCsvKeywordData = (CsvKeyKontoData) DataBeanContext.getContext()
+				.getDataBean(CsvKeyKontoData.class);
+		CsvKeyKonto lCvsKeyword = new CsvKeyKonto();
 		while (iterFrom.hasNext()) {
-			CsvKeyword lPdfKeywordFrom = iterFrom.next();		
-			lPdfKeyword.setCompanyId(lPdfKeywordFrom.getCompanyId());
-			lPdfKeyword.setKontoNr(lPdfKeywordFrom.getKontoNr());
-			lPdfKeyword.setSh(lPdfKeywordFrom.getSh());
-			lPdfKeyword.setSuchWort(lPdfKeywordFrom.getSuchWort());
-			try {
-				mPdfKeywordData.add(lPdfKeyword);
+			CsvKeyKonto lCvsKeywordFrom = iterFrom.next();
+			lCvsKeyword.setCompanyId(lCvsKeywordFrom.getCompanyId());
+			lCvsKeyword.setKontoNr(lCvsKeywordFrom.getKontoNr());
+			lCvsKeyword.setSh(lCvsKeywordFrom.getSh());
+			lCvsKeyword.setSuchWort(lCvsKeywordFrom.getSuchWort());
+			if (lCvsKeywordFrom.getTextNeu() == null) {
+				lCvsKeyword.setTextNeu("");
+			} else {
+				lCvsKeyword.setTextNeu(lCvsKeywordFrom.getTextNeu());
 			}
-			catch (FibuException ex) {
+			try {
+				mCsvKeywordData.add(lCvsKeyword);
+			} catch (FibuException ex) {
 				// do nothing
 			}
 		}
 	}
 
-	
-	//--- Component Listener
+	// --- Component Listener
 	@Override
 	public void componentShown(ComponentEvent e) {
-		
+
 	}
-	
+
 	/**
 	 * zurücksetzen wenn abgebrochen
 	 */
@@ -319,18 +325,19 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 		btnSelektieren.setEnabled(true);
 		btnKopieren.setEnabled(false);
 		fibuListView.setEnabled(true);
-		//message.setText(" ");
+		// message.setText(" ");
 	}
-	
-	/** wird nicht aufgerufen, wenn window verändert
+
+	/**
+	 * wird nicht aufgerufen, wenn window verändert
 	 */
 	@Override
-	public void componentResized(ComponentEvent e){
+	public void componentResized(ComponentEvent e) {
 		Dimension d = e.getComponent().getSize();
 		this.setSize(d);
 	}
-	
+
 	@Override
-	public void componentMoved(ComponentEvent e){
+	public void componentMoved(ComponentEvent e) {
 	}
 }

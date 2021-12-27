@@ -156,6 +156,7 @@ public abstract class CsvParserBase {
 		}
 		catch (Exception ex) {
 			Trace.println(0, "CsvParser, Fehler: " + ex.getMessage());
+			hasNext = false;
 		}
 		if (!hasNext) {
 			lBuchungCsv = null;

@@ -70,7 +70,7 @@ private void setup() {
 		add(new KontoDataFrom());
 		add(new CsvCompanyData());
 		add(new CsvCompanyDataFrom());
-		add(new CsvKeywordData());
+		add(new CsvKeyKontoData());
 		add(new CsvKeywordDataFrom());
 
 		//addBeanContextServicesListener(mKontoM);

@@ -7,7 +7,7 @@ import java.sql.Statement;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import com.rmo.fibu.model.CsvKeyword;
+import com.rmo.fibu.model.CsvKeyKonto;
 
 /**
  * Model der gespeicherten keywords für CSV.
@@ -28,14 +28,14 @@ public class CsvKeywordDataFrom extends DataModelFrom {
 	// ----- Iterator ---------------------------------------------
 
 	/** Gibt einen Iterator zurück */
-	public Iterator<CsvKeyword> getIterator() {
+	public Iterator<CsvKeyKonto> getIterator() {
 		return new PdfKeywordIterator();
 	}
 
 	
 	
 	/** Iterator über alle Keywords */
-	private class PdfKeywordIterator implements Iterator<CsvKeyword> {
+	private class PdfKeywordIterator implements Iterator<CsvKeyKonto> {
 		private Statement mReadStmt;
 		private ResultSet mReadSet;
 		private int mAnzahlCols = 0;
@@ -75,9 +75,9 @@ public class CsvKeywordDataFrom extends DataModelFrom {
 		}
 
 		@Override
-		public CsvKeyword next() throws NoSuchElementException {
+		public CsvKeyKonto next() throws NoSuchElementException {
 			try {
-				CsvKeyword lPdfKeyword = new CsvKeyword();
+				CsvKeyKonto lPdfKeyword = new CsvKeyKonto();
 				copyToKeyword(mReadSet, lPdfKeyword);
 				return lPdfKeyword;
 			} catch (SQLException ex) {
@@ -88,7 +88,7 @@ public class CsvKeywordDataFrom extends DataModelFrom {
 		/**
 		 * Kopiert die Attribute vom ResultSet in das Objekt Keyword
 		 */
-		private void copyToKeyword(ResultSet pResult, CsvKeyword pKeyword) throws SQLException {
+		private void copyToKeyword(ResultSet pResult, CsvKeyKonto pKeyword) throws SQLException {
 			int i = 0;
 			if (mAnzahlCols == 4) {
 				i = 1;

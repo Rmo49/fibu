@@ -116,7 +116,7 @@ public class Config {
 	public static Point winCsvReaderBuchungLoc;
 	public static Dimension winCsvReaderBuchungDim;
 	public static final String sPdfTextLenToken = "fibu.pdf.buchungText.length";
-	public static int sPdfTextLen = 30;
+	public static int sCsvTextLen = 30;
 	
 
 	// --- die Grösse des Textes
@@ -197,12 +197,12 @@ public class Config {
 			sPdfFileName="form: f:/doc/Postfinance151001.pdf";
 			mProperties.setProperty(sPdfFileNameToken, "form: f:/doc/Postfinance151001.pdf");
 		}
-		temp = sPdfTextLen;
+		temp = sCsvTextLen;
 		temp = readInt(sPdfTextLenToken);
 		if (temp > 0) {
-			sPdfTextLen = temp;
+			sCsvTextLen = temp;
 		}
-		mProperties.setProperty(sPdfTextLenToken, Integer.toString(sPdfTextLen));
+		mProperties.setProperty(sPdfTextLenToken, Integer.toString(sCsvTextLen));
 		
 		sFibuNames = readList(mProperties.getProperty(sFibuNamesToken), ",");
 		if (sFibuNames == null) {

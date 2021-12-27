@@ -5,22 +5,24 @@ package com.rmo.fibu.model;
  * @author Ruedi
  *
  */
-public class CsvKeyword {
+public class CsvKeyKonto {
 
 	private int Id;
 	private int companyId;
 	private String suchWort;
 	private String kontoNr;
 	private String sh;
+	private String textNeu;
 
-	public CsvKeyword() {
+	public CsvKeyKonto() {
 	}
 
-	public CsvKeyword(int companyId, String suchWort, String kontoNr, String sh) {
+	public CsvKeyKonto(int companyId, String suchWort, String kontoNr, String sh, String textNeu) {
 		this.companyId = companyId;
 		this.suchWort = suchWort;
 		this.kontoNr = kontoNr;
 		this.sh = sh;
+		this.textNeu = textNeu;
 	}
 
 	// ---- setter und getter
@@ -65,4 +67,11 @@ public class CsvKeyword {
 		this.sh = sh;
 	}
 
+	public String getTextNeu() {
+		return textNeu;
+	}
+
+	public void setTextNeu(String textNeu) {
+		this.textNeu = textNeu;
+	}
 }

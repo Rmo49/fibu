@@ -86,15 +86,18 @@ public class JsonFile {
 	
 	/** Die Buchungen in einer Json-Datei speichern
 	 */
-	public static void saveInFile(String companyName, List<BuchungCsv> buchungList) {
+	public static String saveInFile(String companyName, List<BuchungCsv> buchungList) {
+		StringBuffer antwort = new StringBuffer(100);
 		// file öffnen
 		FileWriter fileOut = null;
 		try {
 			fileOut = new FileWriter(getJsonFileName());
 		} catch (FileNotFoundException ex) {
 			Trace.println(4, ex.getMessage());
+			antwort.append(ex.getMessage());
 		} catch (IOException ex) {
 			Trace.println(4, ex.getMessage());
+			antwort.append(ex.getMessage());
 		}
 		
 		BufferedWriter bw = new BufferedWriter(fileOut);
@@ -111,10 +114,13 @@ public class JsonFile {
 				bw.newLine();
 			}
 			bw.flush();
+			antwort.append(getJsonFileName());
 			fileOut.close();
 		} catch (IOException ex) {
 			Trace.println(4, ex.getMessage());
+			antwort.append(ex.getMessage());
 		}
+		return antwort.toString();
 	}
 
 }

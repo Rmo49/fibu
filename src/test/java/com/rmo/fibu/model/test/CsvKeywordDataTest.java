@@ -9,8 +9,8 @@ import org.junit.Test;
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.model.CsvCompany;
 import com.rmo.fibu.model.CsvCompanyData;
-import com.rmo.fibu.model.CsvKeyword;
-import com.rmo.fibu.model.CsvKeywordData;
+import com.rmo.fibu.model.CsvKeyKonto;
+import com.rmo.fibu.model.CsvKeyKontoData;
 import com.rmo.fibu.model.CsvParserBase;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.DbConnection;
@@ -25,7 +25,7 @@ public class CsvKeywordDataTest {
 	private static CsvCompany mCompany = null;
 	private static CsvCompanyData mCompanyData = null;
 
-	private CsvKeywordData mKeywordData = null;
+	private CsvKeyKontoData mKeywordData = null;
 
 
 	/** Setup Database
@@ -55,8 +55,8 @@ public class CsvKeywordDataTest {
 	@Test
 	public void testAddEmptyRow() {
 		try {
-			mKeywordData = (CsvKeywordData) DataBeanContext.getContext().getDataBean(CsvKeywordData.class);
-			mKeywordData.addEmptyRow(new CsvKeyword());
+			mKeywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
+			mKeywordData.addEmptyRow(new CsvKeyKonto());
 		} catch (FibuException ex) {
 			fail(ex.getMessage());
 		}		
@@ -65,8 +65,8 @@ public class CsvKeywordDataTest {
 	@Test
 	public void readEmptyRow() {
 		try {
-			mKeywordData = (CsvKeywordData) DataBeanContext.getContext().getDataBean(CsvKeywordData.class);
-			mKeywordData.addEmptyRow(new CsvKeyword());
+			mKeywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
+			mKeywordData.addEmptyRow(new CsvKeyKonto());
 //			assertNotNull("Keyword nicht gefunden", lKeyword.getSuchWort());  
 		} catch (FibuException ex) {
 			fail(ex.getMessage());

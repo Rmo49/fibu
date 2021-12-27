@@ -33,8 +33,8 @@ import com.rmo.fibu.model.BuchungCsv;
 import com.rmo.fibu.model.BuchungData;
 import com.rmo.fibu.model.CsvCompany;
 import com.rmo.fibu.model.CsvCompanyData;
-import com.rmo.fibu.model.CsvKeyword;
-import com.rmo.fibu.model.CsvKeywordData;
+import com.rmo.fibu.model.CsvKeyKonto;
+import com.rmo.fibu.model.CsvKeyKontoData;
 import com.rmo.fibu.model.CsvParserBase;
 import com.rmo.fibu.model.CsvParserCs;
 import com.rmo.fibu.model.CsvParserPost;
@@ -75,6 +75,11 @@ public class CsvReaderBuchungFrame extends JFrame {
 	private BuchungData mBuchungData = null;
 	private String nextBelegNr = null;
 	private int returnValue = 0;
+	/** Damit die Version von Csv gelesen werden kann */
+	private CsvKeyKontoData mKeywordData = null;
+	/** mit diesem Tag wird der Anfang und Ende der anzahl Worte angezeigt */
+	private String tagStart = "/";
+	private char tagWort = 'w';
 
 	/**
 	 * Konstruktor für einlesen von jsonFile
@@ -104,6 +109,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 */
 	private void init() {
 		Trace.println(4, "CsvReaderBuchungFrame.init()");
+		mKeywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
 		// wenn Company nicht gesetzt, dann von json einlesen
 		if (mCompanyName.length() < 1) {
 			mBuchungList = JsonFile.readFromFile();
@@ -218,68 +224,130 @@ public class CsvReaderBuchungFrame extends JFrame {
 		btnSaveFile.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JsonFile.saveInFile(mCompanyName, mBuchungList);
-//				mBuchungModel.fireTableDataChanged();
+				saveInDatei();
 			}
 		});
 		flow.add(btnSaveFile);
+
 		return flow;
 	}
 
 	/**
-	 * Alle Buchungstexte anpassen mit keywords
+	 * Alle Buchungen anpassen Buchungstext und Konto falls Tag gefunden in Keyword.
 	 */
 	private void changeAction() {
 		Iterator<BuchungCsv> iter = mBuchungList.iterator();
 		while (iter.hasNext()) {
-			changeBuchungsText(iter.next());
+			buchungAnpassen(iter.next());
 		}
 		mTableView.repaint();
 	}
 	
-	/** prüft Buchungstext, wenn search-text gefunden, wird das entsprechende Konto gesetzt
+	/** prüft Buchungstext, wenn tag in Keywords gefunden, wird das entsprechende Konto gesetzt
 	 */
-	protected void changeBuchungsText(BuchungCsv buchungPdf) {
-		if (buchungPdf == null) {
+	protected void buchungAnpassen(BuchungCsv buchungCsv) {
+		if (buchungCsv == null) {
 			return;
 		}
-		CsvKeywordData keywordData = (CsvKeywordData) DataBeanContext.getContext().getDataBean(CsvKeywordData.class);
-		Iterator<CsvKeyword> lIter = keywordData.getIterator(getCompanyId());	
+		CsvKeyKontoData keywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
+		Iterator<CsvKeyKonto> lIter = keywordData.getIterator(getCompanyId());	
 		int pos = -1;
 		while (lIter.hasNext()) {
-			CsvKeyword keyword = lIter.next();
-			pos = buchungPdf.getText().toUpperCase().indexOf(keyword.getSuchWort().toUpperCase());
+			// suchen nach Keyword
+			CsvKeyKonto keyword = lIter.next();
+			pos = buchungCsv.getText().toUpperCase().indexOf(keyword.getSuchWort().toUpperCase());
+			// Tag gefunden
 			if (pos >= 0) {
-				setKonto(buchungPdf, keyword);
-				changeText(buchungPdf, pos);
+				setKonto(buchungCsv, keyword);
+				if (mKeywordData.getVersion() <= 2) {
+					changeText(buchungCsv, pos);
+				}
+				else {
+					buchungCsv.setText(changeText(buchungCsv.getText(), keyword.getTextNeu(), pos));
+				}
 				return;
 			}
 		}
+		changeText(buchungCsv, 0);
 	}
 
 	/** Die Kontonummer setzen wenn etwas gefunden im Text.
 	 */
-	private void setKonto(BuchungCsv buchungPdf, CsvKeyword keyword) {	
+	private void setKonto(BuchungCsv buchungCsv, CsvKeyKonto keyword) {	
 		if (keyword.getSh().equalsIgnoreCase("H")) {
-			buchungPdf.setHaben(keyword.getKontoNr());
+			buchungCsv.setHaben(keyword.getKontoNr());
 		}
 		else {
-			buchungPdf.setSoll(keyword.getKontoNr());
+			buchungCsv.setSoll(keyword.getKontoNr());
 		}
 	}
 
 	/**
 	 * Den Text kürzen, falls sehr Lang
 	 */
-	private void changeText(BuchungCsv buchungPdf, int pos) {
-		int maxLength = buchungPdf.getText().length();
-		if (maxLength > pos+Config.sPdfTextLen) {
-			maxLength = pos+Config.sPdfTextLen;
+	private void changeText(BuchungCsv buchungCsv, int pos) {
+		int maxLength = buchungCsv.getText().length();
+		if (maxLength > pos+Config.sCsvTextLen) {
+			maxLength = pos+Config.sCsvTextLen;
 		}
-		buchungPdf.setText(buchungPdf.getText().substring(pos, maxLength));
+		buchungCsv.setText(buchungCsv.getText().substring(pos, maxLength));
 	}
 	
-	
+	/**
+	 * Den Text ersetzen, gemäss angeaben im CsvKeyKonto.
+	 */
+	private String changeText(String buchungText, String keywordText, int pos) {
+		StringBuffer textNew = new StringBuffer(50);
+		// tag für next words lesen, also den "/"
+		int posTag = keywordText.indexOf(tagStart);
+		int anzWorte = 0;
+		if (posTag >= 0) {
+			for (int i = posTag; i < keywordText.length(); i++) {
+				if (keywordText.charAt(i) == tagWort) {
+					anzWorte++;
+				}
+			}
+		}
+		if (posTag < 0) {
+			// kein Tag gefunden
+			int maxLength = buchungText.length();
+			if (maxLength > pos+Config.sCsvTextLen) {
+				maxLength = pos+Config.sCsvTextLen;
+			}
+			textNew.append(buchungText.substring(pos, maxLength));
+		}
+		else if (posTag == 0) {
+			// Wurde kein Text vor dem Tag eingegeben, dann das erste Wort von der Buchung kopieren 
+			int posSpace = buchungText.indexOf(" ", pos);
+			textNew.append(buchungText.substring(pos, posSpace+1));
+			pos = posSpace;
+		}
+		else if (posTag > 1) {
+			// ein Text wurde eingegeben, diese in den Text kopieren
+			textNew.append(keywordText.substring(0, posTag));
+			// Tag in der Buchung überspringen
+			pos = buchungText.indexOf(" ", pos+1);
+		}
+		if (anzWorte > 0) {
+			// Leezeichen suchen		
+			int p = pos+1;
+			while (p < buchungText.length()) {
+				p = buchungText.indexOf(" ", p);
+				if (p == -1) {
+					p = buchungText.length()-1;
+				}
+				anzWorte--;
+				if (anzWorte <= 0) {
+					break;
+				}
+				p++;
+			}
+			
+			textNew.append(buchungText.substring(pos+1, p));
+		}
+		return textNew.toString();
+	}
+
 	
 	/**
 	 * Die ID der Company
@@ -336,7 +404,14 @@ public class CsvReaderBuchungFrame extends JFrame {
 		// das backup-file löschen
 		JsonFile.delete();
 	}
-		
+	
+	/** In einen Json-File speichern.
+	 */
+	private void saveInDatei() {
+		String antwort = JsonFile.saveInFile(mCompanyName, mBuchungList);
+//		mBuchungModel.fireTableDataChanged();
+		JOptionPane.showMessageDialog(this, antwort, "Sichern in Datei", JOptionPane.INFORMATION_MESSAGE);
+	}
 
 	/**
 	 * @param buchungCsv
