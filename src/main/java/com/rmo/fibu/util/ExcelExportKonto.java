@@ -90,7 +90,7 @@ public class ExcelExportKonto {
 		mCreateHelper = mWorkbook.getCreationHelper();
 		// init some formats
 		mDateFormat = mWorkbook.createCellStyle();
-		mDateFormat.setDataFormat(mCreateHelper.createDataFormat().getFormat("dd.mm.yyyy"));
+		mDateFormat.setDataFormat(mCreateHelper.createDataFormat().getFormat(Config.sDatumFormat1));
 		mNumberStyle = mWorkbook.createCellStyle();
 		DataFormat lFormat = mWorkbook.createDataFormat();
 		mNumberFormat = lFormat.getFormat("#,##0.00");
@@ -205,7 +205,7 @@ public class ExcelExportKonto {
 //		mCreateHelper = mWorkbook.getCreationHelper();
 //		// init some formats
 //		mDateFormat = mWorkbook.createCellStyle();
-//		mDateFormat.setDataFormat(mCreateHelper.createDataFormat().getFormat("dd.mm.yyyy"));
+//		mDateFormat.setDataFormat(mCreateHelper.createDataFormat().getFormat(Config.sdatumFormat1));
 //		mNumberStyle = mWorkbook.createCellStyle();
 //		DataFormat lFormat = mWorkbook.createDataFormat();
 //		mNumberFormat = lFormat.getFormat("#,##0.00");

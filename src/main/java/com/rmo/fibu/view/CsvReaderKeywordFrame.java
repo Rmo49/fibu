@@ -5,6 +5,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -298,11 +299,13 @@ public class CsvReaderKeywordFrame extends JFrame {
 		lKeyword.setCompanyId(mCompany.getCompanyID());
 		lKeyword.setKontoNr(" ");
 		lKeyword.setSh("S");
-		lKeyword.setSuchWort("TEXT EINGEBEN");
+		lKeyword.setSuchWort("AA => Text eingeben");
 		lKeyword.setTextNeu(" ");
 		try {
 			mKeywordData.addEmptyRow(lKeyword);
 			mKeywordModel.fireTableDataChanged();
+			mTableView.getSelectionModel().setSelectionInterval(0, 0);
+			mTableView.scrollRectToVisible(new Rectangle(mTableView.getCellRect(0, 0, true)));
 		} catch (FibuException ex2) {
 			JOptionPane.showMessageDialog(this, ex2.getMessage(), "\"Fehler in DB", JOptionPane.ERROR_MESSAGE);
 			return;

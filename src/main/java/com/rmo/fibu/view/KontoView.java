@@ -61,14 +61,14 @@ public class KontoView extends JFrame
 	/** Die Models zu dieser View */
 	// private BuchungData mBuchungData = null;
 	private KontoData mKontoData = null;
+	/** Das Model zur Konto-Tabelle */
+	private KontoModel mKontoModel;
+	/** Tabelle für die Anzeige der Konti */
+	private JTable mKontoTable;
 	/** Tabelle für die Anzeige der Buchungen eines Konto */
 	private JTable mBuchungTable;
 	/** Das Model zu allen Buchungen eines Kontos */
 	private BuchungOfKontoModel mBuchungModel = null;
-	/** Das Model zur Konto-Tabelle */
-	private KontoModel mKontoModel;
-	/** Tabelle für die Anzeige der Buchungen */
-	private JTable mKontoTable;
 	/** der Container aller Buchungen */
 	private JScrollPane mScrollPaneBuchung = null;
 

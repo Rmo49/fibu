@@ -45,21 +45,20 @@ import com.rmo.fibu.model.KontoNrVector;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Trace;
 
-
 /**
- * Wird über CsvReaderKeywordFrame gestartet, oder direkt von MainFrame aufgerufen.
- * Das ausgewählte file wird im Konstruktur übergeben.
- * Liest Buchungen von CSV ein siehe datenEinlesen, schreibt in Tabelle.
- * Wenn "Buchungstext anpassen" dann wird Belegnummer und die Kontonummern eingetragen => changeAction
- * Wenn "Speichern" dann saveAction
+ * Wird über CsvReaderKeywordFrame gestartet, oder direkt von MainFrame
+ * aufgerufen. Das ausgewählte file wird im Konstruktur übergeben. Liest
+ * Buchungen von CSV ein siehe datenEinlesen, schreibt in Tabelle. Wenn
+ * "Buchungstext anpassen" dann wird Belegnummer und die Kontonummern
+ * eingetragen => changeAction Wenn "Speichern" dann saveAction
  */
 public class CsvReaderBuchungFrame extends JFrame {
 	private static final long serialVersionUID = 1201522139173678122L;
-	
+
 	/** Die Grösse der Spalten */
 	private static final int TEXT_WIDTH = 30;
 	private static final int DEFAULT_WIDTH = 4;
-	
+
 	// der Name des Institus von dem pdf-buchungen eingelesen werden.
 	private String mCompanyName = null;
 	// file von dem gelesen werden soll
@@ -83,25 +82,24 @@ public class CsvReaderBuchungFrame extends JFrame {
 
 	/**
 	 * Konstruktor für einlesen von jsonFile
+	 * 
 	 * @param companyName
 	 */
 	public CsvReaderBuchungFrame(String companyName) {
 		super("CSV Buchungen noch nicht gespeichert");
 		this.mCompanyName = companyName;
-		init();	
+		init();
 	}
-	
-	
+
 	/**
-	 * Construtor
-	 * needs filename with CSV-data
+	 * Construtor needs filename with CSV-data
 	 */
 	public CsvReaderBuchungFrame(File file, CsvCompany company) {
 		super("CSV Buchungen anpassen");
-		Trace.println(3,"CsvReaderBuchungFrame(file: " + file.getAbsolutePath() +")");
+		Trace.println(3, "CsvReaderBuchungFrame(file: " + file.getAbsolutePath() + ")");
 		this.mFile = file;
 		this.mCompanyName = company.getCompanyName();
-		init();		
+		init();
 	}
 
 	/**
@@ -116,19 +114,19 @@ public class CsvReaderBuchungFrame extends JFrame {
 			if (mBuchungList.size() > 0) {
 				mCompanyName = mBuchungList.get(0).getCompanyName();
 			}
-		}
-		else {
+		} else {
 			csvEinlesen();
 		}
 		initView();
 	}
 
-	
-	/** Setup view elements.
+	/**
+	 * Setup view elements.
+	 * 
 	 * @return the border pane
 	 */
 	private void initView() {
-		Trace.println(5,"CsvReaderBuchungFrame.initView()");
+		Trace.println(4, "CsvReaderBuchungFrame.initView()");
 		getContentPane().add(initTable(), BorderLayout.CENTER);
 		getContentPane().add(initBottom(), BorderLayout.PAGE_END);
 		setSize(Config.winCsvReaderBuchungDim);
@@ -164,7 +162,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 			switch (i) {
 			case 2:
 				column.setPreferredWidth(TEXT_WIDTH * Config.windowTextSize);
-				break;				
+				break;
 			case 5:
 				cellRenderer.setHorizontalAlignment(SwingConstants.RIGHT);
 				column.setCellRenderer(cellRenderer);
@@ -181,26 +179,25 @@ public class CsvReaderBuchungFrame extends JFrame {
 		JComboBox<String> kontoNummern = new JComboBox<String>();
 		kontoNummern.setModel(new DefaultComboBoxModel<String>(new KontoNrVector()));
 		kontoNummern.setFont(Config.fontText);
-		
+
 		TableColumn sollColumn = mTableView.getColumnModel().getColumn(3);
 		sollColumn.setCellEditor(new DefaultCellEditor(kontoNummern));
 		sollColumn = mTableView.getColumnModel().getColumn(4);
 		sollColumn.setCellEditor(new DefaultCellEditor(kontoNummern));
 	}
 
-	
 	/**
 	 * Buttons setzen
 	 * 
 	 * @return
 	 */
 	private Container initBottom() {
-		JPanel flow = new JPanel(new FlowLayout());	
+		JPanel flow = new JPanel(new FlowLayout());
 
 		JButton btnChange = new JButton("Buchungstext anpassen");
 		btnChange.setFont(Config.fontTextBold);
-		
-		btnChange.addActionListener(new ActionListener() {				
+
+		btnChange.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				changeAction();
@@ -242,27 +239,29 @@ public class CsvReaderBuchungFrame extends JFrame {
 		}
 		mTableView.repaint();
 	}
-	
-	/** prüft Buchungstext, wenn tag in Keywords gefunden, wird das entsprechende Konto gesetzt
+
+	/**
+	 * prüft Buchungstext, wenn tag in Keywords gefunden, wird das entsprechende
+	 * Konto gesetzt
 	 */
 	protected void buchungAnpassen(BuchungCsv buchungCsv) {
+		Trace.println(4, "CsvReaderBuchungFrame.buchungAnpassen()");
 		if (buchungCsv == null) {
 			return;
 		}
 		CsvKeyKontoData keywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
-		Iterator<CsvKeyKonto> lIter = keywordData.getIterator(getCompanyId());	
+		Iterator<CsvKeyKonto> lIter = keywordData.getIterator(getCompanyId());
 		int pos = -1;
 		while (lIter.hasNext()) {
 			// suchen nach Keyword
 			CsvKeyKonto keyword = lIter.next();
-			pos = buchungCsv.getText().toUpperCase().indexOf(keyword.getSuchWort().toUpperCase());
-			// Tag gefunden
+			pos = posSuchWort(buchungCsv.getText(), keyword.getSuchWort());
+			// Suchwort gefunden
 			if (pos >= 0) {
 				setKonto(buchungCsv, keyword);
 				if (mKeywordData.getVersion() <= 2) {
 					changeText(buchungCsv, pos);
-				}
-				else {
+				} else {
 					buchungCsv.setText(changeText(buchungCsv.getText(), keyword.getTextNeu(), pos));
 				}
 				return;
@@ -271,13 +270,46 @@ public class CsvReaderBuchungFrame extends JFrame {
 		changeText(buchungCsv, 0);
 	}
 
-	/** Die Kontonummer setzen wenn etwas gefunden im Text.
+	/**
+	 * Wort Suchen im Text gibt position zurück. Wenn nur ein Wort gesucht wird,
+	 * startet bei ganzen Wörtern. Wenn SuchWort aus mehreren Wörtern, dann wird der
+	 * gesamte String durchsucht.
+	 * 
+	 * @param buchungText
+	 * @param suchWort
+	 * @return
 	 */
-	private void setKonto(BuchungCsv buchungCsv, CsvKeyKonto keyword) {	
+	private int posSuchWort(String buchungText, String suchWort) {
+		if (suchWort.indexOf(" ") > 0) {
+			return buchungText.indexOf(suchWort);
+		}
+		int pos = 0;
+		int wortStart = 0;
+		boolean found = false;
+		String text = new String();
+		while (pos < buchungText.length()) {
+			if (buchungText.charAt(pos) == 32) {
+				text = buchungText.substring(wortStart, pos).toUpperCase();
+				found = text.startsWith(suchWort.toUpperCase());
+				if (!found) {
+					wortStart = ++pos;
+					
+				} else {
+					return wortStart;
+				}
+			}
+			pos++;
+		}
+		return -1;
+	}
+
+	/**
+	 * Die Kontonummer setzen wenn etwas gefunden im Text.
+	 */
+	private void setKonto(BuchungCsv buchungCsv, CsvKeyKonto keyword) {
 		if (keyword.getSh().equalsIgnoreCase("H")) {
 			buchungCsv.setHaben(keyword.getKontoNr());
-		}
-		else {
+		} else {
 			buchungCsv.setSoll(keyword.getKontoNr());
 		}
 	}
@@ -287,19 +319,22 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 */
 	private void changeText(BuchungCsv buchungCsv, int pos) {
 		int maxLength = buchungCsv.getText().length();
-		if (maxLength > pos+Config.sCsvTextLen) {
-			maxLength = pos+Config.sCsvTextLen;
+		if (maxLength > pos + Config.sCsvTextLen) {
+			maxLength = pos + Config.sCsvTextLen;
 		}
 		buchungCsv.setText(buchungCsv.getText().substring(pos, maxLength));
 	}
-	
+
 	/**
-	 * Den Text ersetzen, gemäss angeaben im CsvKeyKonto.
+	 * Den Text ersetzen, gemäss angaben im CsvKeyKonto. Für Version 3 und höher.
 	 */
 	private String changeText(String buchungText, String keywordText, int pos) {
 		StringBuffer textNew = new StringBuffer(50);
 		// tag für next words lesen, also den "/"
-		int posTag = keywordText.indexOf(tagStart);
+		int posTag = -1;
+		if (keywordText != null) {
+			posTag = keywordText.indexOf(tagStart);
+		}
 		int anzWorte = 0;
 		if (posTag >= 0) {
 			for (int i = posTag; i < keywordText.length(); i++) {
@@ -309,32 +344,32 @@ public class CsvReaderBuchungFrame extends JFrame {
 			}
 		}
 		if (posTag < 0) {
-			// kein Tag gefunden
-			int maxLength = buchungText.length();
-			if (maxLength > pos+Config.sCsvTextLen) {
-				maxLength = pos+Config.sCsvTextLen;
+			// kein Tag gefunden, wenn Eintrag in keyword dann diesen eingeben
+			if ((keywordText != null) && (keywordText.length() > 0)) {
+				textNew.append(keywordText);
 			}
-			textNew.append(buchungText.substring(pos, maxLength));
-		}
-		else if (posTag == 0) {
-			// Wurde kein Text vor dem Tag eingegeben, dann das erste Wort von der Buchung kopieren 
+			else {
+				textNew.append(buchungText.substring(pos));
+			}
+		} else if (posTag == 0) {
+			// Wurde kein Text vor dem Tag eingegeben, dann das erste Wort von der Buchung
+			// kopieren
 			int posSpace = buchungText.indexOf(" ", pos);
-			textNew.append(buchungText.substring(pos, posSpace+1));
+			textNew.append(buchungText.substring(pos, posSpace + 1));
 			pos = posSpace;
-		}
-		else if (posTag > 1) {
+		} else if (posTag > 1) {
 			// ein Text wurde eingegeben, diese in den Text kopieren
 			textNew.append(keywordText.substring(0, posTag));
 			// Tag in der Buchung überspringen
-			pos = buchungText.indexOf(" ", pos+1);
+			pos = buchungText.indexOf(" ", pos + 1);
 		}
 		if (anzWorte > 0) {
-			// Leezeichen suchen		
-			int p = pos+1;
+			// Leezeichen suchen
+			int p = pos + 1;
 			while (p < buchungText.length()) {
 				p = buchungText.indexOf(" ", p);
 				if (p == -1) {
-					p = buchungText.length()-1;
+					p = buchungText.length();
 				}
 				anzWorte--;
 				if (anzWorte <= 0) {
@@ -342,13 +377,14 @@ public class CsvReaderBuchungFrame extends JFrame {
 				}
 				p++;
 			}
-			
-			textNew.append(buchungText.substring(pos+1, p));
+			textNew.append(buchungText.substring(pos + 1, p));
+		}
+		if (textNew.length() > Config.sCsvTextLen) {
+			textNew.delete(Config.sCsvTextLen, textNew.length());
 		}
 		return textNew.toString();
 	}
 
-	
 	/**
 	 * Die ID der Company
 	 */
@@ -356,8 +392,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
 		try {
 			return companyData.readData(mCompanyName).getCompanyID();
-		}
-		catch (FibuException ex){
+		} catch (FibuException ex) {
 			// do nothing
 		}
 		return 0;
@@ -370,28 +405,28 @@ public class CsvReaderBuchungFrame extends JFrame {
 		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
 		try {
 			return companyData.readData(mCompanyName).getKontoNrDefault();
-		}
-		catch (FibuException ex){
+		} catch (FibuException ex) {
 			// do nothing
 		}
 		return "";
 	}
 
-	/** Die Buchungen in der DB speichern.
+	/**
+	 * Die Buchungen in der DB speichern.
 	 */
 	private void saveInFibu() {
 		mBuchungData = (BuchungData) DataBeanContext.getContext().getDataBean(BuchungData.class);
 		BuchungCsv buchungCsv = null;
-		Buchung buchungNew =  new Buchung();
+		Buchung buchungNew = new Buchung();
 		Iterator<BuchungCsv> iter = mBuchungList.iterator();
 		while (iter.hasNext()) {
 			buchungCsv = iter.next();
-			returnValue = copyToBuchung(buchungCsv, buchungNew);			
+			returnValue = copyToBuchung(buchungCsv, buchungNew);
 			if (returnValue > 0) {
 				returnValue = IsBuchungInDb(buchungNew);
 				if (returnValue == 0) {
 					iter.remove();
-				}			
+				}
 				if (returnValue > 0) {
 					returnValue = saveBuchung(buchungNew);
 					iter.remove();
@@ -404,8 +439,9 @@ public class CsvReaderBuchungFrame extends JFrame {
 		// das backup-file löschen
 		JsonFile.delete();
 	}
-	
-	/** In einen Json-File speichern.
+
+	/**
+	 * In einen Json-File speichern.
 	 */
 	private void saveInDatei() {
 		String antwort = JsonFile.saveInFile(mCompanyName, mBuchungList);
@@ -416,24 +452,23 @@ public class CsvReaderBuchungFrame extends JFrame {
 	/**
 	 * @param buchungCsv
 	 * @param buchung
-	 * @return -1: Fehler und abbrechen, 0: Fehler, nicht abbrechen 1: alles ok  
+	 * @return -1: Fehler und abbrechen, 0: Fehler, nicht abbrechen 1: alles ok
 	 */
 	private int copyToBuchung(BuchungCsv buchungCsv, Buchung buchung) {
 		buchung.setID(-1);
 		try {
 			buchung.setDatum(buchungCsv.getDatum());
-		}
-		catch (ParseException ex) {
-			int reply = JOptionPane.showConfirmDialog(this, 
-					makeMessage(buchungCsv.getDatum(), buchungCsv.getText(), ex.getMessage()),
-					"Datum falsch", JOptionPane.OK_CANCEL_OPTION);
+		} catch (ParseException ex) {
+			int reply = JOptionPane.showConfirmDialog(this,
+					makeMessage(buchungCsv.getDatum(), buchungCsv.getText(), ex.getMessage()), "Datum falsch",
+					JOptionPane.OK_CANCEL_OPTION);
 			if (reply == JOptionPane.OK_OPTION) {
 				returnValue = 0;
 			} else {
-			    return -1;
+				return -1;
 			}
 		}
-		
+
 		// damit exist ohne beleg funktioniert
 		buchung.setBeleg(null);
 
@@ -441,42 +476,41 @@ public class CsvReaderBuchungFrame extends JFrame {
 		try {
 			buchung.setSoll(buchungCsv.getSoll());
 			buchung.setHaben(buchungCsv.getHaben());
-		} 
-		catch (BuchungValueException ex) {
-			int reply = JOptionPane.showConfirmDialog(this, 
-					makeMessage(buchungCsv.getDatum(), buchungCsv.getText(), ex.getMessage()),
-					"KontoNr falsch", JOptionPane.OK_CANCEL_OPTION);
+		} catch (BuchungValueException ex) {
+			int reply = JOptionPane.showConfirmDialog(this,
+					makeMessage(buchungCsv.getDatum(), buchungCsv.getText(), ex.getMessage()), "KontoNr falsch",
+					JOptionPane.OK_CANCEL_OPTION);
 			if (reply == JOptionPane.OK_OPTION) {
 				return 0;
 			} else {
-			    return -1;
+				return -1;
 			}
 		}
-		
+
 		try {
 			double betrag = parseBetrag(buchungCsv.getBetrag());
 			buchung.setBetrag(betrag);
-		}
-		catch (NumberFormatException ex) {
-			int reply = JOptionPane.showConfirmDialog(this, 
-					makeMessage(buchungCsv.getDatum(), buchungCsv.getText(), ex.getMessage()),
-					"Betrag falsch", JOptionPane.OK_CANCEL_OPTION);
+		} catch (NumberFormatException ex) {
+			int reply = JOptionPane.showConfirmDialog(this,
+					makeMessage(buchungCsv.getDatum(), buchungCsv.getText(), ex.getMessage()), "Betrag falsch",
+					JOptionPane.OK_CANCEL_OPTION);
 			if (reply == JOptionPane.OK_OPTION) {
 				return 0;
 			} else {
-			    return -1;
+				return -1;
 			}
 		}
 		return 1;
 	}
-	
+
 	/**
 	 * Prüft, ob Buchung in der DB ist.
+	 * 
 	 * @return 1: trotzdem speichern, 0: nicht speichern, -1: Abbrechen
 	 */
 	private int IsBuchungInDb(Buchung buchungNew) {
 		Buchung buchungIst = mBuchungData.isInDb(buchungNew);
-		if (buchungIst != null) {				
+		if (buchungIst != null) {
 			StringBuffer sb = new StringBuffer(100);
 			sb.append(buchungIst.getDatum());
 			sb.append(", ");
@@ -491,15 +525,13 @@ public class CsvReaderBuchungFrame extends JFrame {
 			sb.append("\n Buchung neu: ");
 			sb.append(buchungNew.getBuchungText());
 			sb.append("\n\n Trotzdem übernehmen?");
-			int reply = JOptionPane.showConfirmDialog(this, sb.toString(),
-					"Buchung schon vorhanden", JOptionPane.YES_NO_CANCEL_OPTION);
+			int reply = JOptionPane.showConfirmDialog(this, sb.toString(), "Buchung schon vorhanden",
+					JOptionPane.YES_NO_CANCEL_OPTION);
 			if (reply == JOptionPane.YES_OPTION) {
 				return 1;
-			}
-			else if (reply == JOptionPane.NO_OPTION) {
+			} else if (reply == JOptionPane.NO_OPTION) {
 				return 0;
-			}
-			else {
+			} else {
 				return -1;
 			}
 		}
@@ -508,14 +540,14 @@ public class CsvReaderBuchungFrame extends JFrame {
 
 	/**
 	 * Speichern der Buchung in der DB
+	 * 
 	 * @param buchungNew
 	 * @return 1: gespeichert, -1: Abbrechen
 	 */
 	private int saveBuchung(Buchung buchungNew) {
 		if (nextBelegNr == null) {
 			nextBelegNr = mBuchungData.getNextBelegNr();
-		}
-		else {
+		} else {
 			nextBelegNr = Config.addOne(nextBelegNr);
 		}
 		buchungNew.setBeleg(nextBelegNr);
@@ -523,18 +555,17 @@ public class CsvReaderBuchungFrame extends JFrame {
 		mBuchungData.add(buchungNew);
 		try {
 			mBuchungData.saveNew();
-		}
-		catch (FibuException ex) {
+		} catch (FibuException ex) {
 			StringBuffer sb = new StringBuffer(100);
 			sb.append("Buchung: ");
 			sb.append(buchungNew.getDatum());
 			sb.append(" ");
 			sb.append(buchungNew.getBuchungText());
 			sb.append("\n Exception: ");
-			sb.append(ex.getMessage());						
-			int reply = JOptionPane.showConfirmDialog(this, sb.toString(),
-					"Fehler beim sichern", JOptionPane.OK_CANCEL_OPTION);						
-			if (reply == JOptionPane.OK_OPTION){
+			sb.append(ex.getMessage());
+			int reply = JOptionPane.showConfirmDialog(this, sb.toString(), "Fehler beim sichern",
+					JOptionPane.OK_CANCEL_OPTION);
+			if (reply == JOptionPane.OK_OPTION) {
 				return 1;
 			} else {
 				return -1;
@@ -543,9 +574,9 @@ public class CsvReaderBuchungFrame extends JFrame {
 		return 1;
 	}
 
-	
 	/**
 	 * Den Betrag in double zurückgeben
+	 * 
 	 * @param betrag
 	 * @return
 	 * @throws NumberFormatException
@@ -555,7 +586,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 		betrag = betrag.trim();
 		int pos = betrag.indexOf(" ");
 		if (pos > 0) {
-			betrag = betrag.substring(0, pos) + betrag.substring(pos+1);
+			betrag = betrag.substring(0, pos) + betrag.substring(pos + 1);
 		}
 		double betrag2 = 0;
 		betrag2 = Double.parseDouble(betrag);
@@ -564,6 +595,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 
 	/**
 	 * Die Error-Message zusammenstellen
+	 * 
 	 * @return
 	 */
 	private String makeMessage(String datum, String text, String message) {
@@ -578,24 +610,20 @@ public class CsvReaderBuchungFrame extends JFrame {
 		}
 		return sb.toString();
 	}
-	
-	
+
 	/**
 	 * Einlesen alle Daten vom CSV file, Zeile um Zeile.
 	 */
 	private void csvEinlesen() {
-		Trace.println(5,"CsvReaderBuchungFrame.csvEinlesen()");
+		Trace.println(5, "CsvReaderBuchungFrame.csvEinlesen()");
 		CsvParserBase parser = null;
 		if (mCompanyName.equalsIgnoreCase(CsvParserBase.companyNamePost)) {
 			parser = new CsvParserPost(mFile);
-			}
-		else if (mCompanyName.equalsIgnoreCase(CsvParserBase.companyNameCS)) {
+		} else if (mCompanyName.equalsIgnoreCase(CsvParserBase.companyNameCS)) {
 			parser = new CsvParserCs(mFile);
-		}
-		else if (mCompanyName.equalsIgnoreCase(CsvParserBase.companyNameRaiff)) {
+		} else if (mCompanyName.equalsIgnoreCase(CsvParserBase.companyNameRaiff)) {
 			parser = new CsvParserRaiff(mFile);
-		}
-		else {
+		} else {
 			StringBuffer sb = new StringBuffer(100);
 			sb.append("Kein Setup für: ");
 			sb.append(mCompanyName);
@@ -603,15 +631,15 @@ public class CsvReaderBuchungFrame extends JFrame {
 			sb.append(CsvParserBase.companyNamePost);
 			sb.append(", ");
 			sb.append(CsvParserBase.companyNameCS);
-			sb.append(", ");			
+			sb.append(", ");
 			sb.append(CsvParserBase.companyNameRaiff);
-			sb.append(" gefunden");			
+			sb.append(" gefunden");
 			JOptionPane.showMessageDialog(this, sb.toString(), "CSV Datei selektieren", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-			
+
 		// hier werden die Daten eingelesen, Zeile um Zeile
-		Trace.println(5,"CsvReaderBuchungFrame.datenEinlesen() => start Parsing");
+		Trace.println(5, "CsvReaderBuchungFrame.datenEinlesen() => start Parsing");
 		mBuchungList = parser.startParsing();
 //		BuchungCsv buchungCvs = parser.nextBuchung();
 //		while (buchungCvs != null) {
@@ -620,12 +648,11 @@ public class CsvReaderBuchungFrame extends JFrame {
 //			}
 //			buchungCvs = parser.nextBuchung();
 //		}
-		Trace.println(5,"CsvReaderBuchungFrame.csvEinlesen() => end Parsing");		
+		Trace.println(5, "CsvReaderBuchungFrame.csvEinlesen() => end Parsing");
 	}
 
-
 	/** wenn Fenster geschlossen */
-	@Override	
+	@Override
 	public void setVisible(boolean b) {
 		if (!b) {
 			Config.winCsvReaderBuchungDim = getSize();
@@ -633,14 +660,12 @@ public class CsvReaderBuchungFrame extends JFrame {
 		}
 		super.setVisible(b);
 	}
-	
-	
-	
+
 	// ----- Model der Buchung-Tabelle --------------------------------------
 	private class CsvBuchungModel extends AbstractTableModel {
 
 		private static final long serialVersionUID = -3805602970105237582L;
-				
+
 		public CsvBuchungModel() {
 		}
 
@@ -687,21 +712,16 @@ public class CsvReaderBuchungFrame extends JFrame {
 			BuchungCsv lBuchung = mBuchungList.get(rowIndex);
 			if (columnIndex == 0) {
 				lBuchung.setDatum((Date) aValue);
-			}
-			else if (columnIndex == 1) {
+			} else if (columnIndex == 1) {
 				lBuchung.setBeleg((String) aValue);
-			}
-			else if (columnIndex == 2) {
-				lBuchung.setText((String) aValue);				
-			}
-			else if (columnIndex == 3) {
-				lBuchung.setSoll((String) aValue);				
-			}
-			else if (columnIndex == 4) {
-				lBuchung.setHaben((String) aValue);				
-			}
-			else if (columnIndex == 5) {
-				lBuchung.setBetrag((String) aValue);				
+			} else if (columnIndex == 2) {
+				lBuchung.setText((String) aValue);
+			} else if (columnIndex == 3) {
+				lBuchung.setSoll((String) aValue);
+			} else if (columnIndex == 4) {
+				lBuchung.setHaben((String) aValue);
+			} else if (columnIndex == 5) {
+				lBuchung.setBetrag((String) aValue);
 			}
 			mBuchungList.set(rowIndex, lBuchung);
 		}
@@ -738,5 +758,5 @@ public class CsvReaderBuchungFrame extends JFrame {
 			return "";
 		}
 	}
-	
+
 }

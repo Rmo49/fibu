@@ -85,6 +85,7 @@ public class Config {
 	// die Grenze der geöffneten Buchhaltung
 	public static Datum sDatumVon = new Datum();
 	public static Datum sDatumBis = new Datum();
+	public static String sDatumFormat1 = "dd.MM.yyyy";
 
 	// ----- View --------------------------------------------------------------
 	// ---- Windows Grösse und Positon

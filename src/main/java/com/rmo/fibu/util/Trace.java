@@ -9,7 +9,7 @@ import java.util.Date;
 
 /** Trace-Output for debugging.
 	Level 1: Struktur-Methoden
-	Level 2: Wichtige Methoden von Model, View (Ablauf) 
+	Level 2: Wichtige Methoden von Model, View (Ablauf)
 	Level 3: allg. Methoden, Variable (detailierter Ablauf)
 	Level 4: Kontroll-Output (mit Einstellungen)
 	Level 5: viel aufgerufenen Methoden der View-Schicht
