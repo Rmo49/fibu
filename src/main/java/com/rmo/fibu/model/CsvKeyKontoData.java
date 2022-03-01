@@ -83,7 +83,7 @@ public class CsvKeyKontoData extends DataModel {
 	public void add(CsvKeyKonto pKeyword) throws FibuException {
 		try {
 			if (findRow(pKeyword)) {
-//				updateRow(pKeyword);
+				updateRow(pKeyword);
 			} else {
 				// wenn nicht gefunden, neues anlegen
 				addRow(pKeyword);
@@ -180,6 +180,31 @@ public class CsvKeyKontoData extends DataModel {
 	}
 
 	/**
+	 * Das Tupel CsvKeyword ändern, der ResultSet steht bereits auf der richtigen Position
+	 * CompanyId und Suchwort stimmen.
+	 */
+	public void updateRow(CsvKeyKonto pKeyword) throws FibuException {
+		Trace.println(7, "CsvKeyKontoData.update()");
+		
+		try {
+			int i = 1;
+			if (mVersion >= 2) {
+				i++;
+			}
+			mResultSet.updateInt(i, pKeyword.getCompanyId());
+			mResultSet.updateString(++i, pKeyword.getSuchWort());
+			mResultSet.updateString(++i, pKeyword.getKontoNr());
+			mResultSet.updateString(++i, pKeyword.getSh());
+			if (mVersion >= 3) {
+				mResultSet.updateString(++i, pKeyword.getTextNeu());
+			}
+			mResultSet.updateRow();
+		} catch (java.sql.SQLException e) {
+			throw new FibuException("Keyword ändern, Message: " + e.getMessage());
+		}
+	}
+
+	/**
 	 * Das Tupel mit der ID löschen
 	 */
 	public void deleteRow(int id) throws SQLException {
@@ -237,7 +262,7 @@ public class CsvKeyKontoData extends DataModel {
 	}
 
 	/**
-	 * Den Wert einer Zeile zurückgeben.
+	 * Einen Csv Eintrag suchen
 	 * 
 	 * @param pKeyword
 	 * @return

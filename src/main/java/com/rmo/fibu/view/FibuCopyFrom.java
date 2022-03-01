@@ -156,7 +156,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 		btnKopieren.addActionListener(new java.awt.event.ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				actionKopieren();
+				copyFibu();
 			}
 		});
 		lPanel.add(btnKopieren);
@@ -190,7 +190,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 	/**
 	 * Alle daten kopieren
 	 */
-	private void actionKopieren() {
+	private void copyFibu() {
 		try {
 			FibuDataBaseFrom.openFibu(fibuName);
 		} catch (FibuException ex) {
@@ -229,9 +229,22 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 	 * Kopiert alle Konto daten, wenn nicht gefunden wird neues Konto angelegt.
 	 */
 	private void copyKonto() {
+		// zuerst Startsalo aller Konti auf 0 setzen
+		KontoData kontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
+		Iterator<Konto> iter = kontoData.getIterator();
+		while (iter.hasNext()) {
+			Konto lKonto = iter.next();
+			lKonto.setStartSaldo(0);
+			try {
+				kontoData.add(lKonto);
+			}
+			catch (KontoNotFoundException ex) {
+				// nix tun
+			}
+		}
+		
 		KontoDataFrom kontoDataOld = (KontoDataFrom) DataBeanContext.getContext().getDataBean(KontoDataFrom.class);
 		Iterator<Konto> iterOld = kontoDataOld.getIterator();
-		KontoData kontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
 		Konto lKonto = new Konto();
 		while (iterOld.hasNext()) {
 			Konto lKontoOld = iterOld.next();
@@ -248,7 +261,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 				lKonto.setSaldo(lKontoOld.getSaldo());
 			} else {
 				lKonto.setStartSaldo(0);
-				lKonto.setSaldo(1);
+				lKonto.setSaldo(0);
 			}
 			try {
 				kontoData.add(lKonto);

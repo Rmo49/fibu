@@ -97,10 +97,14 @@ public class CsvKeywordDataFrom extends DataModelFrom {
 				// die ID nicht kopieren, da AutoIncrement
 				i = 2;
 			}
+			
 			pKeyword.setCompanyId(pResult.getInt(i));
 			pKeyword.setSuchWort(pResult.getString(++i));
 			pKeyword.setKontoNr(pResult.getString(++i));
 			pKeyword.setSh(pResult.getString(++i));
+			if (mAnzahlCols > 5) {
+				pKeyword.setTextNeu(pResult.getString(++i));
+			}
 		}
 	}
 }
