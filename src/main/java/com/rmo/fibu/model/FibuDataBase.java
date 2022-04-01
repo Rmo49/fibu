@@ -30,10 +30,10 @@ public class FibuDataBase {
 	
 	private final static String CREATE_CSVKEYWORD = "CREATE TABLE `pdfkeyword` ("
 			 + "`ID` int(11) NOT NULL AUTO_INCREMENT, `CompanyID` int, "
-			 + "`SuchWort` varchar(20) NOT NULL, "
+			 + "`SuchWort` varchar(50) NOT NULL, "	
 			 + " `KontoNr` varchar(6) DEFAULT NULL, "
 			 + " `SH` varchar(2) DEFAULT NULL, "
-			 + " `TextNeu` varchar(30) DEFAULT NULL, "
+			 + " `TextNeu` varchar(50) DEFAULT NULL, "
 			 + " PRIMARY KEY (`ID`,`CompanyID`) );";
 //			 + " FOREIGN KEY (CompanyID) REFERENCES pdfcompany(CompanyID) );";
 			
@@ -82,6 +82,7 @@ public class FibuDataBase {
 			statement.execute(CREATE_CSVCOMPANY);
 			statement.execute(CREATE_CSVKEYWORD);
 			statement.close();
+			Config.sFibuTitel = "Fibu Name";
 			vonBisDatumSetzen();
 			getFibuData().writeFibuData();
 			DbConnection.close();

@@ -78,7 +78,7 @@ public class CsvParserCs extends CsvParserBase {
 				text = firstText + " " + text.substring(komma + 1, text.length());
 			}
 		}
-		text = setGrossKlein(text.trim());
+//		text = setGrossKlein(text.trim());
 		return text;
 	}
 	

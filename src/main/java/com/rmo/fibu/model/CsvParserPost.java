@@ -51,7 +51,7 @@ public class CsvParserPost extends CsvParserBase {
 		if (posX > 0) {
 			text = text.substring(posX + 9, text.length());
 		}
-		text = setGrossKlein(text.trim());
+//		text = setGrossKlein(text.trim());
 		return text;
 	}
 

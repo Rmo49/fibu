@@ -64,7 +64,7 @@ public class CsvParserRaiff extends CsvParserBase {
 		if (posX > 0) {
 			text = text.substring(0, posX);
 		}
-		text = setGrossKlein(text.trim());
+//		text = setGrossKlein(text.trim());
 		return text;
 	}
 

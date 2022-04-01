@@ -4,8 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
@@ -58,14 +60,17 @@ public class FibuView extends JFrame
 	private static final long serialVersionUID = -6489792909275868353L;
 
 	private final int	FENSTER_BREITE = 300;
-	private final int	FENSTER_HOEHE = 400;
+	private final int	FENSTER_HOEHE = 420;
+	
+	private final int	FIBU_LIST_BREITE = 150;
+	private final int	FIBU_LIST_HOEHE = 200;
 
 	/** Verbindung zu Data bean */
 	FibuData mFibuData;
 
 	// --- Die anderen Windows
 	private BuchungView mBuchung = null;
-	private  CsvReaderBuchungFrame mCsvBuchung = null;
+	private CsvReaderBuchungFrame mCsvBuchung = null;
 	private FibuCopyFrom mOtherFibu = null;
 	private KontoView mKontoView = null;
 	private KontoplanView mKontoplan = null;
@@ -77,11 +82,20 @@ public class FibuView extends JFrame
 	JButton btnKontoblatt = new JButton();
 	JButton btnBuchung = new JButton();
 	JButton btnClose = new JButton();
+	
+	// --- Die Liste mit allen Fibus
+	JList<String> jListFibu;
+	// --- Button für die Liste Steuerung
+	JButton btnUp = new JButton();
+	JButton btnDown = new JButton();
+	private final String upString = "moveUp";
+	private final String downString = "moveDown";
+
+
 	// --- Textfields
 	JTextField tfFibuTitel = new JTextField();
 	JTextField tfDatumVon = new JTextField();
 	JTextField tfDatumBis = new JTextField();
-	JList<String> jListFibu;
 
 	// --- Menu-einträge die allg. gesteuert werden
 	JMenuItem mnuBilanz = new JMenuItem();
@@ -217,11 +231,27 @@ public class FibuView extends JFrame
 		jListFibu.setVisibleRowCount(10);
 		jListFibu.setToolTipText("Mit Doppelklick eine Fibu auswählen");
 		JScrollPane scrollPane = new JScrollPane(jListFibu);
-		int breite = (int) (150 * Config.windowTextMultiplikator);
-		int hoehe = (int) (200 * Config.windowTextMultiplikator);
+		int breite = (int) (FIBU_LIST_BREITE * Config.windowTextMultiplikator);
+		int hoehe = (int) (FIBU_LIST_HOEHE * Config.windowTextMultiplikator);
 		this.setSize(new Dimension(breite, hoehe));
 		scrollPane.setPreferredSize(new Dimension(breite, hoehe));
 		box.add(scrollPane);
+		
+		final JPanel upPanel = new JPanel();
+		upPanel.setLayout(new FlowLayout());
+		
+		btnUp.setFont(Config.fontTextBold);
+		btnUp.setText("up");
+		btnUp.setActionCommand(upString);
+		btnUp.addActionListener(new UpDownListener());
+		upPanel. add(btnUp);
+
+		btnDown.setFont(Config.fontTextBold);
+		btnDown.setText("down");
+		btnDown.setActionCommand(downString);
+		btnDown.addActionListener(new UpDownListener());
+		upPanel.add(btnDown);
+		box.add(upPanel);
 
 		JPanel lPanel = new JPanel();
 		lPanel.add(box, BorderLayout.CENTER);
@@ -845,5 +875,45 @@ public class FibuView extends JFrame
 		pCons.setConstraint(SpringLayout.SOUTH, y);
 		pCons.setConstraint(SpringLayout.EAST, x);
 	}
+
+	
+    //Listen for clicks on the up and down arrow buttons.
+    class UpDownListener implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            //This method can be called only when
+            //there's a valid selection,
+            //so go ahead and move the list item.
+            int moveMe = jListFibu.getSelectedIndex();
+
+            if (e.getActionCommand().equals(upString)) {
+                //UP ARROW BUTTON
+                if (moveMe >= 0) {
+                    //not already at top
+                    swap(moveMe, moveMe - 1);
+                    jListFibu.setSelectedIndex(moveMe - 1);
+                    jListFibu.ensureIndexIsVisible(moveMe - 1);
+                }
+            } else {
+                //DOWN ARROW BUTTON
+            	if (moveMe < 0) {
+            		return;
+            	}
+                if (moveMe != Config.getFibuList().getSize() - 1) {
+                    //not already at bottom
+                    swap(moveMe, moveMe + 1);
+                    jListFibu.setSelectedIndex(moveMe + 1);
+                    jListFibu.ensureIndexIsVisible(moveMe + 1);
+                }
+            }
+        }
+    }
+    
+    //Swap two elements in the list.
+    private void swap(int a, int b) {
+        String aObject = Config.getFibuList().getElementAt(a);
+        String bObject = Config.getFibuList().getElementAt(b);
+        Config.getFibuList().set(a, bObject);
+        Config.getFibuList().set(b, aObject);
+    }
 
 }// endOfClass

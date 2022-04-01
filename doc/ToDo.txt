@@ -1,9 +1,5 @@
-- Fibu kopieren, der Text Neu bei Buchungen einlesen, wird nicht übernommen
-- Fibu kopieren, muss zuerst bei allen Konti den Startsaldo auf 0 setzen
 
 - Einlesen von Raiffeisen, Text ist delimiter ; nicht Komma, siehe Zeile mit BLT.
-
-- Für Depot ein DB anlegen, alle Wertschriften verwalten
 
 - Eingabe Buchungen mit Liste
 - Kontoplan kein refresh nach Datenspeicherung (2x Speichern drücken)

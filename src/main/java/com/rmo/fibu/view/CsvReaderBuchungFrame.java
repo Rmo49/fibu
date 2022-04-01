@@ -234,6 +234,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 */
 	private void changeAction() {
 		Iterator<BuchungCsv> iter = mBuchungList.iterator();
+		// Iteration über alle Buchungen
 		while (iter.hasNext()) {
 			buchungAnpassen(iter.next());
 		}
@@ -242,7 +243,8 @@ public class CsvReaderBuchungFrame extends JFrame {
 
 	/**
 	 * prüft Buchungstext, wenn tag in Keywords gefunden, wird das entsprechende
-	 * Konto gesetzt
+	 * Konto gesetzt falls dieses gesetzt, wenn kein Konto angegeben, wird nur der
+	 * Text gelöscht, bzw. ersetzt mit dem neuen Text
 	 */
 	protected void buchungAnpassen(BuchungCsv buchungCsv) {
 		Trace.println(4, "CsvReaderBuchungFrame.buchungAnpassen()");
@@ -252,22 +254,25 @@ public class CsvReaderBuchungFrame extends JFrame {
 		CsvKeyKontoData keywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
 		Iterator<CsvKeyKonto> lIter = keywordData.getIterator(getCompanyId());
 		int pos = -1;
+		// Iteration über alle Keywörter
 		while (lIter.hasNext()) {
-			// suchen nach Keyword
 			CsvKeyKonto keyword = lIter.next();
 			pos = posSuchWort(buchungCsv.getText(), keyword.getSuchWort());
 			// Suchwort gefunden
 			if (pos >= 0) {
-				setKonto(buchungCsv, keyword);
-				if (mKeywordData.getVersion() <= 2) {
-					changeText(buchungCsv, pos);
+				// wenn keine KontoNummer gesetzt, nur Text ändern
+				if (keyword.getKontoNr().length() < 2) {
+					// nur Text entfernen
+					buchungCsv.setText(textDelete(buchungCsv.getText(), keyword.getSuchWort().length(), pos));
 				} else {
-					buchungCsv.setText(changeText(buchungCsv.getText(), keyword.getTextNeu(), pos));
+					// Kontonummer einsetzen
+					setKonto(buchungCsv, keyword);
+					buchungCsv.setText(textChange(buchungCsv.getText(), keyword.getTextNeu(), pos));
 				}
-				return;
 			}
 		}
-		changeText(buchungCsv, 0);
+		// zum Schluss Länge noch prüfen
+		textMaxLen(buchungCsv, pos);
 	}
 
 	/**
@@ -293,7 +298,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 				found = text.startsWith(suchWort.toUpperCase());
 				if (!found) {
 					wortStart = ++pos;
-					
+
 				} else {
 					return wortStart;
 				}
@@ -317,8 +322,11 @@ public class CsvReaderBuchungFrame extends JFrame {
 	/**
 	 * Den Text kürzen, falls sehr Lang
 	 */
-	private void changeText(BuchungCsv buchungCsv, int pos) {
+	private void textMaxLen(BuchungCsv buchungCsv, int pos) {
 		int maxLength = buchungCsv.getText().length();
+		if (pos < 0) {
+			pos = 0;
+		}
 		if (maxLength > pos + Config.sCsvTextLen) {
 			maxLength = pos + Config.sCsvTextLen;
 		}
@@ -326,10 +334,29 @@ public class CsvReaderBuchungFrame extends JFrame {
 	}
 
 	/**
+	 * Den Text der länge textLen löschen, falls keine Kontonummer angegeben. Für
+	 * Version 3 und höher.
+	 */
+	private String textDelete(String buchungText, int textLen, int pos) {
+		StringBuffer textNew = new StringBuffer(100);
+		// wenn nicht am Anfang, dann ersten Bereich kopieren
+		if (pos > 0) {
+			textNew.append(buchungText.substring(0, pos));
+		}
+		int posStart = pos + textLen;
+		// Leerzeichen löschen
+		while (posStart < buchungText.length() && buchungText.charAt(posStart) == ' ') {
+			posStart++;
+		}
+		textNew.append(buchungText.substring(posStart));
+		return textNew.toString();
+	}
+
+	/**
 	 * Den Text ersetzen, gemäss angaben im CsvKeyKonto. Für Version 3 und höher.
 	 */
-	private String changeText(String buchungText, String keywordText, int pos) {
-		StringBuffer textNew = new StringBuffer(50);
+	private String textChange(String buchungText, String keywordText, int pos) {
+		StringBuffer textNew = new StringBuffer(100);
 		// tag für next words lesen, also den "/"
 		int posTag = -1;
 		if (keywordText != null) {
@@ -347,8 +374,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 			// kein Tag gefunden, wenn Eintrag in keyword dann diesen eingeben
 			if ((keywordText != null) && (keywordText.length() > 0)) {
 				textNew.append(keywordText);
-			}
-			else {
+			} else {
 				textNew.append(buchungText.substring(pos));
 			}
 		} else if (posTag == 0) {

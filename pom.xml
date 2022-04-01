@@ -4,7 +4,7 @@
 
 	<groupId>com.rmo</groupId>
 	<artifactId>fibu</artifactId>
-	<version>3-8</version>
+	<version>4-0</version>
 	<packaging>jar</packaging>
 	
 	<name>fibu</name>
@@ -69,7 +69,7 @@
 			<build>
 				<defaultGoal>install</defaultGoal>
 				<directory>${basedir}/target</directory>
-				<finalName>${artifactId}-${version}</finalName>
+				<finalName>${project.artifactId}-${project.version}</finalName>
 				<filters>
 					<filter>filters/filter1.properties</filter>
 				</filters>
