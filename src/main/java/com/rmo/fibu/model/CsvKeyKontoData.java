@@ -225,7 +225,7 @@ public class CsvKeyKontoData extends DataModel {
 	 */
 	public int getVersion() {
 		if (mVersion == 0) {
-			int cols = getAnzahlCols();
+//			int cols = getAnzahlCols();
 			if (getAnzahlCols() <=4) {
 				mVersion = 1;
 			}

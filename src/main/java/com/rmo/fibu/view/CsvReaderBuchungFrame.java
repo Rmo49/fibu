@@ -75,7 +75,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	private String nextBelegNr = null;
 	private int returnValue = 0;
 	/** Damit die Version von Csv gelesen werden kann */
-	private CsvKeyKontoData mKeywordData = null;
+//	private CsvKeyKontoData mKeywordData = null;
 	/** mit diesem Tag wird der Anfang und Ende der anzahl Worte angezeigt */
 	private String tagStart = "/";
 	private char tagWort = 'w';
@@ -107,7 +107,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 */
 	private void init() {
 		Trace.println(4, "CsvReaderBuchungFrame.init()");
-		mKeywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
+//		mKeywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
 		// wenn Company nicht gesetzt, dann von json einlesen
 		if (mCompanyName.length() < 1) {
 			mBuchungList = JsonFile.readFromFile();

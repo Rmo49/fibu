@@ -74,7 +74,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 	JButton btnExcelExport = new JButton();
 	JButton btnExcelImport = new JButton();
 	BorderLayout borderLayout1 = new BorderLayout();
-	JScrollPane jScrollTable = new JScrollPane();
+	JScrollPane jKontoScroll = new JScrollPane();
 	JTable jKontoTable = new JTable();
 
 	/**
@@ -224,8 +224,8 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 		jPanelNorth.add(jButtonDelete, null);
 		jPanelNorth.add(jButtonRefresh, null);
 
-		this.getContentPane().add(jScrollTable, BorderLayout.CENTER);
-		jScrollTable.getViewport().add(jKontoTable, null);
+		this.getContentPane().add(jKontoScroll, BorderLayout.CENTER);
+		jKontoScroll.getViewport().add(jKontoTable, null);
 	}
 
 	/**

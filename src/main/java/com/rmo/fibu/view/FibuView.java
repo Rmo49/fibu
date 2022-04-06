@@ -887,7 +887,7 @@ public class FibuView extends JFrame
 
             if (e.getActionCommand().equals(upString)) {
                 //UP ARROW BUTTON
-                if (moveMe >= 0) {
+                if (moveMe > 0) {
                     //not already at top
                     swap(moveMe, moveMe - 1);
                     jListFibu.setSelectedIndex(moveMe - 1);
