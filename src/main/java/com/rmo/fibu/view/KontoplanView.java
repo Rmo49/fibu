@@ -123,7 +123,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 		jTextFieldText.setFont(Config.fontText);
 		jTextFieldStartSaldo.setFont(Config.fontText);
 		jCheckBoxSoll.setFont(Config.fontText);
-		// TODO wie die Grösse setzen abhöngig von TextGrösse
+		// TODO wie die Grösse setzen abhängig von TextGrösse
 		jCheckBoxSoll.setSize(20,20);
 		
 		jButtonClose.setText("Schliessen");
