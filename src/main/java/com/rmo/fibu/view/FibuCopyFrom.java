@@ -275,18 +275,23 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 	 * Kopiert die Company daten für CSV.
 	 */
 	private void copyCsvCompany() {
-		CsvCompanyDataFrom mPdfCompanyDataOld = (CsvCompanyDataFrom) DataBeanContext.getContext()
+		CsvCompanyDataFrom mPdfCompanyDataFrom = (CsvCompanyDataFrom) DataBeanContext.getContext()
 				.getDataBean(CsvCompanyDataFrom.class);
-		Iterator<CsvCompany> iterOld = mPdfCompanyDataOld.getIterator();
+		Iterator<CsvCompany> iterFrom = mPdfCompanyDataFrom.getIterator();
 		CsvCompanyData mPdfCompanyData = (CsvCompanyData) DataBeanContext.getContext()
 				.getDataBean(CsvCompanyData.class);
 		CsvCompany lPdfCompany = new CsvCompany();
-		while (iterOld.hasNext()) {
-			CsvCompany lPdfCompanyOld = iterOld.next();
-			lPdfCompany.setCompanyID(lPdfCompanyOld.getCompanyID());
-			lPdfCompany.setCompanyName(lPdfCompanyOld.getCompanyName());
-			lPdfCompany.setDirPath(lPdfCompanyOld.getDirPath());
-			lPdfCompany.setKontoNrDefault(lPdfCompanyOld.getKontoNrDefault());
+		while (iterFrom.hasNext()) {
+			CsvCompany lPdfCompanyFrom = iterFrom.next();
+			lPdfCompany.setCompanyID(lPdfCompanyFrom.getCompanyID());
+			lPdfCompany.setCompanyName(lPdfCompanyFrom.getCompanyName());
+			lPdfCompany.setDirPath(lPdfCompanyFrom.getDirPath());
+			lPdfCompany.setKontoNrDefault(lPdfCompanyFrom.getKontoNrDefault());
+			lPdfCompany.setTypeOfDoc(lPdfCompanyFrom.getTypeOfDoc());
+			if (lPdfCompany.getTypeOfDoc() == 0) {
+				// das ist der default, wenn nichts gesetzt
+				lPdfCompany.setTypeOfDoc(1);
+			}
 			try {
 				mPdfCompanyData.addData(lPdfCompany);
 			} catch (FibuException ex) {

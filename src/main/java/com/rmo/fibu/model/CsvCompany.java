@@ -7,10 +7,14 @@ package com.rmo.fibu.model;
  */
 public class CsvCompany {
 
+	static final public int docTypeCsv = 1;
+	static final public int docTypePdf = 2;
+	
 	private int companyID;
 	private String companyName;
 	private String kontoNrDefault;
 	private String dirPath;
+	private int typeOfDoc = 1;	// 1=default
 
 	public CsvCompany() {
 	}
@@ -52,6 +56,20 @@ public class CsvCompany {
 
 	public void setDirPath(String dirPath) {
 		this.dirPath = dirPath;
+	}
+
+	/**
+	 * @return the typeOfDoc
+	 */
+	public int getTypeOfDoc() {
+		return typeOfDoc;
+	}
+
+	/**
+	 * @param typeOfDoc the typeOfDoc to set
+	 */
+	public void setTypeOfDoc(int typeOfDoc) {
+		this.typeOfDoc = typeOfDoc;
 	}
 
 

@@ -24,7 +24,7 @@ import com.rmo.fibu.exception.KontoNotFoundException;import com.rmo.fibu.util.Tr
  *  Hat auch einen (internen) Iterator für lesen etc..
 */
 
-public class BuchungData extends DataModel implements BeanContextMembershipListener, Serializable {
+public class BuchungData extends DataBase implements BeanContextMembershipListener, Serializable {
 	private static final long serialVersionUID = -3172925095948099368L;
 
 	/** Die Id der nächsten Buchung */
@@ -71,6 +71,14 @@ public class BuchungData extends DataModel implements BeanContextMembershipListe
 	public BuchungData() throws Exception {
 		super();
 		init();
+	}
+	
+	/**
+	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
+	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
+	 */
+	public void checkTableVersion() {
+		
 	}
 
 	/** Max. Anzahl Zeilen von Buchungen (in der Tabelle und Temporäre).

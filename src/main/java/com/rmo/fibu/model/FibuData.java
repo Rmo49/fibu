@@ -13,7 +13,7 @@ import com.rmo.fibu.util.Trace;
 /**
  * Verwaltet die Steuerdaten der Fibu.
  */
-public class FibuData extends DataModel implements Serializable {
+public class FibuData extends DataBase implements Serializable {
 	private static final long serialVersionUID = -8821885201937153074L;
 	private static FibuData sFibuData = null;
 	private String mFibuTitel = null;
@@ -28,6 +28,16 @@ public class FibuData extends DataModel implements Serializable {
 	private FibuData() throws Exception {
 		super();
 	}
+
+	
+	/**
+	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
+	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
+	 */
+	public void checkTableVersion() {
+		
+	}
+
 
 	/**
 	 * getService
@@ -60,7 +70,7 @@ public class FibuData extends DataModel implements Serializable {
 //	}
 
 	/**
-	 * Liest die allgemeinen Fibu-Daten von der DB.
+	 * Liest die allgemeinen Fibu-Daten wie Titel und Datum von der DB.
 	 */
 	public void readFibuData() throws FibuException {
 		Trace.println(3, "FibuData.readFibuData()");
@@ -105,7 +115,7 @@ public class FibuData extends DataModel implements Serializable {
 			updateFibu.setString(5, "dd.mm.yy");
 			updateFibu.executeUpdate();
 		} catch (java.sql.SQLException e) {
-			throw new FibuException("FibuDaten schreiben \n SQLState: "
+			throw new FibuException("FibuDaten.writeFibuData \n SQLState: "
 					+ e.getSQLState() + " Message: " + e.getMessage());
 		}
 	}
@@ -121,7 +131,7 @@ public class FibuData extends DataModel implements Serializable {
 			updateFibu.setString(1, fibuTitel);
 			updateFibu.executeUpdate();
 		} catch (java.sql.SQLException e) {
-			throw new FibuException("FibuDaten schreiben \n SQLState: "
+			throw new FibuException("FibuDaten.writeFibuName \n SQLState: "
 					+ e.getSQLState() + " Message: " + e.getMessage());
 		}
 	}

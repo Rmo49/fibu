@@ -32,6 +32,13 @@ public class CsvKeywordDataFrom extends DataModelFrom {
 		return new PdfKeywordIterator();
 	}
 
+	/**
+	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
+	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
+	 */
+	public void checkTableVersion() {
+		
+	}
 	
 	
 	/** Iterator über alle Keywords */

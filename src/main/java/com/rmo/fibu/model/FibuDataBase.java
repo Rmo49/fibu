@@ -21,26 +21,19 @@ public class FibuDataBase {
 			+ "FibuTitel varchar(50) DEFAULT NULL, DatumVon date DEFAULT NULL, "
 			+ "DatumBis date DEFAULT NULL, DatumFormat varchar(20) DEFAULT NULL ,"
 			+ "PRIMARY KEY (ID) );";
-	
-	private final static String CREATE_CSVCOMPANY = "CREATE TABLE `pdfcompany` ("
-			 + "`CompanyID` int AUTO_INCREMENT PRIMARY KEY, "
-			 + "`CompanyName` varchar(20) NOT NULL, "
-			 + "`KontoNrDefault` varchar(6) DEFAULT NULL, "
-			 + "`DirPath` varchar(100) DEFAULT NULL );";
-	
-	private final static String CREATE_CSVKEYWORD = "CREATE TABLE `pdfkeyword` ("
-			 + "`ID` int(11) NOT NULL AUTO_INCREMENT, `CompanyID` int, "
-			 + "`SuchWort` varchar(50) NOT NULL, "	
-			 + " `KontoNr` varchar(6) DEFAULT NULL, "
-			 + " `SH` varchar(2) DEFAULT NULL, "
-			 + " `TextNeu` varchar(50) DEFAULT NULL, "
-			 + " PRIMARY KEY (`ID`,`CompanyID`) );";
-//			 + " FOREIGN KEY (CompanyID) REFERENCES pdfcompany(CompanyID) );";
 			
 	private final static String CREATE_KONTORAHMEN = "CREATE TABLE Kontorahmen ("
 			+ "KontoNr int(11) NOT NULL, KontoText varchar(50) DEFAULT NULL, "
 			+ "StartSaldo decimal(12,2) DEFAULT NULL, Saldo decimal(12,2) DEFAULT NULL, "
 			+ "IstSollKto char(1) DEFAULT b'0', PRIMARY KEY (KontoNr) );";
+	
+	private final static String CREATE_CSVKEYWORD = "CREATE TABLE `pdfkeyword` ("
+			+ "`ID` int(11) NOT NULL AUTO_INCREMENT, `CompanyID` int, "
+			+ "`SuchWort` varchar(20) NOT NULL, "
+			+ " `KontoNr` varchar(6) DEFAULT NULL, "
+			+ " `SH` varchar(2) DEFAULT NULL, "
+			+ " PRIMARY KEY (`ID`,`CompanyID`) );";
+//			+ " FOREIGN KEY (CompanyID) REFERENCES pdfcompany(CompanyID) );";
 
 	private final static String CREATE_BUCHUNG = "CREATE TABLE buchungen ("
 			+ "ID int(11) NOT NULL AUTO_INCREMENT, Datum date DEFAULT NULL, "
@@ -70,8 +63,7 @@ public class FibuDataBase {
 		Trace.println(1, "newFibu()");
 		// try to open fibu
 		try {
-			Statement statement = DbConnection.getConnection()
-					.createStatement();
+			Statement statement = DbConnection.getConnection().createStatement();
 			String schemaName = "CREATE SCHEMA " + fibuName + ";";
 			statement.execute(schemaName);
 			String useName = "USE " + fibuName + ";";
@@ -79,7 +71,7 @@ public class FibuDataBase {
 			statement.execute(CREATE_FIBUDATEN);
 			statement.execute(CREATE_KONTORAHMEN);
 			statement.execute(CREATE_BUCHUNG);
-			statement.execute(CREATE_CSVCOMPANY);
+			statement.execute(CsvCompanyData.CREATE_CSVCOMPANY_V2);
 			statement.execute(CREATE_CSVKEYWORD);
 			statement.close();
 			Config.sFibuTitel = "Fibu Name";
@@ -88,12 +80,12 @@ public class FibuDataBase {
 			DbConnection.close();
 			Config.addFibuToList(fibuName);
 		} catch (java.sql.SQLException e) {
-			throw new FibuException("FibuDaten schreiben \n SQLState: "
+			throw new FibuException("FibuDataBase.newFibu \n SQLState: "
 					+ e.getSQLState() + " Message: " + e.getMessage());
 		}
 	}
 
-	/** Eine Fibu öffnen, die connection setzen */
+	/** Die Fibu öffnen, die connection setzen */
 	public static void openFibu(String dbName) throws FibuException {
 		Trace.println(1, "FibuDataBase.openFibu(name: " + dbName + ")");
 		// Connection öffnen
@@ -101,12 +93,18 @@ public class FibuDataBase {
 		Config.setDbName(dbName);
 		// Stammdaten einlesen
 		readFibuData();
+		// ruft alle checks in den Data Klassen
+		DataBeanContext.getContext().checkAllTableVersions();
 		// alle Konti neu berechnen
 		Trace.println(1, "FibuDataBase.openFibu, Konto calculate");
 		KontoCalculator calculator = new KontoCalculator();
 		calculator.calculateSaldo();
 	}
 
+	/**
+	 * Wenn neue Fibu, dann das Datum auf das neue Jahr setzen.
+	 * @throws FibuException
+	 */
 	private static void vonBisDatumSetzen() throws FibuException {
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		try {
@@ -124,6 +122,7 @@ public class FibuDataBase {
 			throw new FibuException(ex.getMessage());
 		}
 	}
+	
 	
 	/** Daten von der DB einlesen. */
 	private static void readFibuData() throws FibuException {
@@ -159,7 +158,7 @@ public class FibuDataBase {
 		}
 	}
 
-	private static FibuData getFibuData() {
+	private static FibuData getFibuData() {	
 		if (mFibuData == null) {
 			mFibuData = (FibuData) DataBeanContext.getContext().getDataBean(FibuData.class);
 		}

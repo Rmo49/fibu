@@ -1,10 +1,12 @@
 package com.rmo.fibu;
 
 import java.awt.Color;
+import java.util.Date;
 
 import javax.swing.UIManager;
 
 import com.rmo.fibu.util.Config;
+import com.rmo.fibu.util.Trace;
 import com.rmo.fibu.view.FibuView;
 
 /**
@@ -25,6 +27,8 @@ public class FibuApp {
 		try {
 			// Die Configuration einlesen
 			Config.checkArgs(args);
+			Date date = new Date();    
+			Trace.println(0, "--- Gestartet: " + date);
 			Config.readProperties();
 //			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 //			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");

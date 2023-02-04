@@ -23,6 +23,15 @@ public class CsvCompanyDataFrom extends DataModelFrom {
 		super();
 	}
 
+	/**
+	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
+	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
+	 */
+	public void checkTableVersion() {
+		
+	}
+
+
 	
 	private void copyToPdfCompany(ResultSet mReadSet, CsvCompany lCompany) throws SQLException {
 		lCompany.setCompanyID(mReadSet.getInt(1));

@@ -8,7 +8,6 @@ import com.rmo.fibu.util.Trace;
 /**
  * Stellt die aktuellen Konotnummern in einem String-Vektor zur Verfügung
  * @author RMO
- * @version 1.0
  * TODO Listener von KontoData wenn add oder removed members
  */
 public class KontoNrVector extends Vector<String> {
@@ -43,11 +42,13 @@ public class KontoNrVector extends Vector<String> {
         int max = lKontoData.getRowCount();
         int ktoNr = Integer.parseInt(kontoNummer);
         int index = 0;
+        boolean found = false;
         
         while (index < max) {
             try {
                 lKonto = lKontoData.readAt(index);
                 if (lKonto.getKontoNr() == ktoNr) {
+                	found = true;
                 	break;
                 }
             }
@@ -55,6 +56,9 @@ public class KontoNrVector extends Vector<String> {
                 Trace.println(1, "KontoNrVecor.init(): " + e.getMessage());
             }
             index++;
+        }
+        if (!found) {
+        	index = -1;
         }
     	return index;
     }

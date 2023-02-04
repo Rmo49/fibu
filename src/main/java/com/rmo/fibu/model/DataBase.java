@@ -12,10 +12,10 @@ import java.sql.Connection;
 import com.rmo.fibu.exception.FibuRuntimeException;
 
 /**
-Basis-Klasse aller Model-Klassen.
+Basis-Klasse aller DB-Model-Klassen, die Zugriff auf DB implementieren,
 Ist zuständig für den Bean-Support aller Model-Klassen.
  */
-public abstract class DataModel implements BeanContextChild {
+public abstract class DataBase implements BeanContextChild {
 	// Bean-Support
 	protected BeanContext mBeanContext;
 	protected PropertyChangeSupport pcSupport;
@@ -24,7 +24,7 @@ public abstract class DataModel implements BeanContextChild {
 	/**
 	 * Model constructor comment.
 	 */
-	public DataModel() throws Exception {
+	public DataBase() throws Exception {
 		super();
 		init();
 	}
@@ -88,4 +88,9 @@ public abstract class DataModel implements BeanContextChild {
 		pcSupport.firePropertyChange("beanContext", null, bc);
 		initContextListener();
 	}
+	
+	/**
+	 * Jede Klasse muss den check implementieren
+	 */
+	public abstract void checkTableVersion();
 }

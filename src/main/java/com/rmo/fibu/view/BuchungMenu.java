@@ -96,7 +96,7 @@ public class BuchungMenu {
 //		mnuCsv.add(mnuCsvRaiff);
 		insertCsvMenu(mnuCsv);
 		
-		mnuCsvSetup = new JMenuItem("Setup_Csv");
+		mnuCsvSetup = new JMenuItem("Setup");
 		mnuCsvSetup.setFont(Config.fontTextBold);
 		menuBar.add(mnuCsvSetup);
 				
@@ -139,6 +139,22 @@ public class BuchungMenu {
 			});	
 			mnuCsv.add(mnuItem);
 		}
+		
+		// zu Test von PDF
+		// TODO löschen wenn PDF funktioniert
+		JMenuItem mnuPdfTest;
+		mnuPdfTest = new JMenuItem("PDF Test");
+		mnuPdfTest.setFont(Config.fontTextBold);
+		mnuCsv.add(mnuPdfTest);
+		
+		mnuPdfTest.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+//				mBuchungView.pdfActionMitBox();
+//				mBuchungView.pdfActionMitBoxCoord();
+				mBuchungView.pdfActionMitBoxWord();
+//				mBuchungView.pdfActionMitSpire();
+			}
+		});	
 		
 //		JMenuItem mnuCsvPost;
 //		mnuCsvPost = new JMenuItem("Post Finance CSV");

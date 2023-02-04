@@ -61,6 +61,17 @@ public Object getDataObject(Object pObject) {
 	return null;
 }
 
+/**
+ * In alle Data Klassen die Methode checkTableVersion() aufrufen.
+ */
+public void checkAllTableVersions() {
+	Iterator<?> lIter = iterator();
+	while (lIter.hasNext()) {
+		DataBase base = (DataBase) lIter.next();
+		base.checkTableVersion();
+	}
+}
+
 /** Setup the Context
  */
 private void setup() {

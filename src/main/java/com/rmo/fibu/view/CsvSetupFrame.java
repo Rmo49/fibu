@@ -56,7 +56,7 @@ public class CsvSetupFrame extends JFrame {
 	 * @param pParent Referenz zu den Buchungen
 	 */
 	public CsvSetupFrame(BuchungView pParent) {
-		super("Setup für CSV einlesen");
+		super("Setup für CSV und PDF einlesen");
 		mParent = pParent;
 		init();
 	}
@@ -139,8 +139,9 @@ public class CsvSetupFrame extends JFrame {
 	private Container initBottom() {
 		JPanel lPanel = new JPanel(new GridLayout(0,1));
 		
-		JPanel flow1 = new JPanel(new FlowLayout());	
-		JButton btnAdd = new JButton("Dazufügen");
+		JPanel flow1 = new JPanel(new FlowLayout());
+		
+		JButton btnAdd = new JButton("Neuer Eintrag");
 		btnAdd.setFont(Config.fontTextBold);
 
 		btnAdd.addActionListener(new ActionListener() {
@@ -150,16 +151,17 @@ public class CsvSetupFrame extends JFrame {
 			}
 		});
 		flow1.add(btnAdd);
-		
-		JButton btnDelete = new JButton("Löschen");
-		btnDelete.setFont(Config.fontTextBold);
-		btnDelete.addActionListener(new ActionListener() {
+
+		JButton btnSetup = new JButton("Einrichten");
+		btnSetup.setFont(Config.fontTextBold);
+
+		btnSetup.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				deleteAction(e);
+				setupAction();
 			}
 		});
-		flow1.add(btnDelete);
+		flow1.add(btnSetup);
 
 		JButton btnSave = new JButton("Speichern");
 		btnSave.setFont(Config.fontTextBold);
@@ -171,7 +173,18 @@ public class CsvSetupFrame extends JFrame {
 		});
 		flow1.add(btnSave);
 		lPanel.add(flow1);
-		
+
+		JButton btnDelete = new JButton("Löschen");
+		btnDelete.setFont(Config.fontTextBold);
+		btnDelete.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				deleteAction(e);
+			}
+		});
+		flow1.add(btnDelete);
+
+
 		return lPanel;
 	}
 
@@ -192,6 +205,26 @@ public class CsvSetupFrame extends JFrame {
 			return;
 		}
 	}
+	
+	/**
+	 * Den Eintrag weiter definieren
+	 */
+	private void setupAction() {
+		CsvCompany lCompany = new CsvCompany();
+		lCompany.setCompanyID(0);
+		lCompany.setCompanyName(" ");
+		lCompany.setKontoNrDefault(" ");
+		lCompany.setDirPath(" ");
+		try {
+			mCompanyData.addData(lCompany);
+			mSetupModel.fireTableDataChanged();
+		} catch (FibuException ex2) {
+			JOptionPane.showMessageDialog(this, ex2.getMessage(), "\"Fehler in DB", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+	}
+	
+	
 
 	/**
 	 * Einen Eintrag löschen
@@ -201,6 +234,13 @@ public class CsvSetupFrame extends JFrame {
 		if (rowNr >= 0) {
 			try {
 				CsvCompany lCompany = mSetupModel.readAt(rowNr);
+				int answer = JOptionPane.showConfirmDialog(
+						this, lCompany.getCompanyName() +" wirklich löschen?", "Eintrag löschen",
+						JOptionPane.YES_NO_OPTION);
+				if (answer == JOptionPane.NO_OPTION) {
+					return;
+				}
+				// hier YES
 				mCompanyData.deleteRow(lCompany);
 				mSetupModel.fireTableDataChanged();
 			} catch (Exception ex) {

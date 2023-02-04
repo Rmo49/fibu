@@ -2,6 +2,7 @@ package com.rmo.fibu.model;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
@@ -16,8 +17,36 @@ import com.rmo.fibu.util.Trace;
  * @author Ruedi
  *
  */
-public class CsvCompanyData extends DataModel {
+public class CsvCompanyData extends DataBase {
 	
+	private final String TABLE_NAME = "pdfcompany";
+	
+	/** 
+	 * Das SQL Statement für die Erstellung
+	 */
+	public final static String CREATE_CSVCOMPANY_V1 = "CREATE TABLE `pdfcompany` ("
+			 + "`CompanyID` int AUTO_INCREMENT PRIMARY KEY, "
+			 + "`CompanyName` varchar(20) NOT NULL, "
+			 + "`KontoNrDefault` varchar(6) DEFAULT NULL, "
+			 + "`DirPath` varchar(100) DEFAULT NULL );";
+	
+	private final static String ADD_COL_CSVCOMPANY = "ALTER TABLE `pdfcompany`"
+			+ " ADD COLUMN `TypeOfDoc` SMALLINT NULL DEFAULT NULL AFTER `DirPath`;";
+	
+	private final static String SET_INIT_VALUE = "UPDATE `pdfcompany` SET `TypeOfDoc`=1 WHERE `TypeOfDoc` is NULL;";
+
+	public final static String CREATE_CSVCOMPANY_V2 = "CREATE TABLE `pdfcompany` ("
+			 + "`CompanyID` int AUTO_INCREMENT PRIMARY KEY, "
+			 + "`CompanyName` varchar(20) NOT NULL, "
+			 + "`KontoNrDefault` varchar(6) DEFAULT NULL, "
+			 + "`DirPath` varchar(100) DEFAULT NULL, "
+			 + "`TypeOfDoc` SMALLINT(6) NULL DEFAULT NULL );";
+			 
+	
+	private final int COLS_V1 = 4;		// Anzahl Cols in der Version 1
+	private final int COLS_V2 = 5;		// Anzahl Cols in der Version 2
+	
+			 
 	/**
 	 * Die Anzahl Rows in der Tabelle. Wird beim Start berechnet, dann immer
 	 * updated, da Probleme bei vielen Zugriffen
@@ -54,6 +83,44 @@ public class CsvCompanyData extends DataModel {
 		super();
 	}
 
+	
+	/**
+	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
+	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
+	 */
+	public void checkTableVersion() {
+		try {
+			int colsAnzahl = getNumberOfCols();
+			if (colsAnzahl < COLS_V2) {
+				addColumnV1();
+			}			
+		} catch (SQLException e) {
+			System.err.println("CsvCompanyData.checkTableVersion: " + e.getMessage());
+		}
+	}
+
+
+	/**
+	 * Max. Anzahl Zeilen in der Tabelle berechnen Werden im mMaxRows
+	 * gespeichert.
+	 */
+	public int getRowCount() {
+		try {
+			Statement stmt = getConnection().createStatement();
+			String lQuery = "SELECT Count(*) FROM " + TABLE_NAME +";";
+			ResultSet lResult = stmt.executeQuery(lQuery);
+			if (lResult.next()) {
+				mMaxRows = lResult.getInt(1);
+				lResult.close();
+			}
+		} catch (SQLException e) {
+			System.err.println("CsvCompanyData.getMaxRows: " + e.getMessage());
+			mMaxRows = 0;
+		}
+		return mMaxRows;
+	}
+	
+
 	/**
 	 * Ein Eintrag für eine Company speichern, falls nicht vorhanden ist, wird
 	 * ein neues Tupel angelegt.
@@ -71,79 +138,7 @@ public class CsvCompanyData extends DataModel {
 		}
 	}
 
-	/**
-	 * Die Daten einer Company lesen
-	 * @param pCompany
-	 * @return true wenn gefunden
-	 * @throws SQLException
-	 */
-	private boolean findRow(String pCompanyName) throws SQLException {
-		mReadSetName = getReadSetName(pCompanyName);
-		mReadSetName.beforeFirst();
-		if (mReadSetName.next()) {
-			return true;
-		}
-		return false;
-	}
 
-	/**
-	 * Die Daten einer Company über die ID
-	 * @param pCompany
-	 * @return true wenn gefunden
-	 * @throws SQLException
-	 */
-	private boolean findRow(int pCompanyId) throws SQLException {
-		mReadSetId = getReadSetId(pCompanyId);
-		mReadSetId.beforeFirst();
-		if (mReadSetId.next()) {
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Eine neue Zeile (Row) in die Tabelle eintragen. Kopiert die Attribute 
-	 * Objekt PdfKeyword in den ResultSet. Der SQL-String wird zusammengestellt.
-	 */
-	private void addRow(CsvCompany pCompany) throws SQLException {
-		Statement stmt = getConnection().createStatement();
-		StringBuffer lQuery = new StringBuffer("INSERT INTO PdfCompany VALUES (");
-		if (pCompany.getCompanyID() == 0) {
-			lQuery.append ("NULL, '");
-		}
-		else {
-			lQuery.append("'");
-			lQuery.append(pCompany.getCompanyID());
-			lQuery.append("', '");
-		}
-		lQuery.append(pCompany.getCompanyName());
-		lQuery.append("', '");
-		lQuery.append(pCompany.getKontoNrDefault());
-		lQuery.append("', '");
-		lQuery.append(pCompany.getDirPath());
-		lQuery.append("')");
-		
-		stmt.executeUpdate(lQuery.toString());
-		stmt.close();
-		mReadSetName = null;
-	}
-
-	/**
-	 * Aendert die Attribute der Company
-	 */
-	private void updateRow(CsvCompany pCompany) throws SQLException {
-		StringBuffer sql = new StringBuffer(200);
-		sql.append("UPDATE PdfCompany SET CompanyName = ?, KontoNrDefault = ?, DirPath = ? WHERE CompanyID = ");
-		sql.append(pCompany.getCompanyID());
-		sql.append(";");
-	
-		PreparedStatement updateCompany = getConnection().prepareStatement(sql.toString());
-		updateCompany.setString(1, pCompany.getCompanyName());
-		updateCompany.setString(2, pCompany.getKontoNrDefault());
-		updateCompany.setString(3, pCompany.getDirPath());
-		updateCompany.executeUpdate();
-	}
-	
 	/**
 	 * Aendert die Attribute der gewählten Zeile.
 	 */
@@ -257,7 +252,111 @@ public class CsvCompanyData extends DataModel {
 		}
 	}
 
+	//----- private Methoden ------------------------------------------
 	
+	/**
+	 * Die Daten einer Company lesen
+	 * @param pCompany
+	 * @return true wenn gefunden
+	 * @throws SQLException
+	 */
+	private boolean findRow(String pCompanyName) throws SQLException {
+		mReadSetName = getReadSetName(pCompanyName);
+		mReadSetName.beforeFirst();
+		if (mReadSetName.next()) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Die Daten einer Company über die ID
+	 * @param pCompany
+	 * @return true wenn gefunden
+	 * @throws SQLException
+	 */
+	private boolean findRow(int pCompanyId) throws SQLException {
+		mReadSetId = getReadSetId(pCompanyId);
+		mReadSetId.beforeFirst();
+		if (mReadSetId.next()) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Eine neue Zeile (Row) in die Tabelle eintragen. Kopiert die Attribute 
+	 * Objekt PdfKeyword in den ResultSet. Der SQL-String wird zusammengestellt.
+	 */
+	private void addRow(CsvCompany pCompany) throws SQLException {
+		Statement stmt = getConnection().createStatement();
+		StringBuffer lQuery = new StringBuffer("INSERT INTO PdfCompany VALUES (");
+		if (pCompany.getCompanyID() == 0) {
+			lQuery.append ("NULL, '");
+		}
+		else {
+			lQuery.append("'");
+			lQuery.append(pCompany.getCompanyID());
+			lQuery.append("', '");
+		}
+		lQuery.append(pCompany.getCompanyName());
+		lQuery.append("', '");
+		lQuery.append(pCompany.getKontoNrDefault());
+		lQuery.append("', '");
+		lQuery.append(pCompany.getDirPath());
+		lQuery.append("', '");
+		lQuery.append(pCompany.getTypeOfDoc());
+		lQuery.append("')");
+		
+		stmt.executeUpdate(lQuery.toString());
+		stmt.close();
+		mReadSetName = null;
+	}
+
+	/**
+	 * Aendert die Attribute der Company
+	 */
+	private void updateRow(CsvCompany pCompany) throws SQLException {
+		StringBuffer sql = new StringBuffer(200);
+		sql.append("UPDATE PdfCompany SET CompanyName = ?, KontoNrDefault = ?, DirPath = ? WHERE CompanyID = ");
+		sql.append(pCompany.getCompanyID());
+		sql.append(";");
+	
+		PreparedStatement updateCompany = getConnection().prepareStatement(sql.toString());
+		updateCompany.setString(1, pCompany.getCompanyName());
+		updateCompany.setString(2, pCompany.getKontoNrDefault());
+		updateCompany.setString(3, pCompany.getDirPath());
+		updateCompany.executeUpdate();
+	}
+	
+	
+	//----- Tabelle migrieren -----------------------------
+
+	/**
+	 * Die Anzahl Spalten der Tabelle.
+	 * @return
+	 */
+	private int getNumberOfCols() throws SQLException {
+		Statement stmt = getConnection().createStatement();
+//		String lQuery = "SELECT count(*) AS NUMBEROFCOLUMNS FROM information_schema.columns "
+//				+ "WHERE table_name = '"
+//				+ TABLE_NAME
+//				+ "';";
+		String lQuery = "SELECT * from " + TABLE_NAME + ";";
+		ResultSet lResult = stmt.executeQuery(lQuery);
+		ResultSetMetaData rsmd = lResult.getMetaData();
+		int columnsNumber = rsmd.getColumnCount();
+		return columnsNumber;
+	}
+
+	private void addColumnV1() throws SQLException {
+		Statement stmt = getConnection(). createStatement();
+		stmt.execute(ADD_COL_CSVCOMPANY);
+		stmt.execute(SET_INIT_VALUE);
+		stmt.close();
+	}
+	
+	//--- SQL Statements ---------------------------------------------------
 	/**
 	 * Setzt das Statement (Connection zur DB) und den Scroll-Set, der für
 	 * Insert oder update verwendet werden kann.
@@ -293,26 +392,6 @@ public class CsvCompanyData extends DataModel {
 		return mReadStmt.executeQuery("SELECT * FROM PdfCompany WHERE CompanyId = '" + pCompanyId + "'");
 	}
 
-
-	/**
-	 * Max. Anzahl Zeilen in der Tabelle berechnen Werden im mMaxRows
-	 * gespeichert.
-	 */
-	public int getRowCount() {
-		try {
-			Statement stmt = getConnection().createStatement();
-			String lQuery = "SELECT Count(*) FROM PdfCompany;";
-			ResultSet lResult = stmt.executeQuery(lQuery);
-			if (lResult.next()) {
-				mMaxRows = lResult.getInt(1);
-				lResult.close();
-			}
-		} catch (SQLException e) {
-			System.err.println("CsvCompanyData.getMaxRows: " + e.getMessage());
-			mMaxRows = 0;
-		}
-		return mMaxRows;
-	}
 
 	// ----- Iterator ---------------------------------------------
 

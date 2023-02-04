@@ -29,6 +29,14 @@ public class KontoDataFrom extends DataModelFrom implements BeanContextServicesL
 		super();
 	}
 
+	/**
+	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
+	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
+	 */
+	public void checkTableVersion() {
+		
+	}
+
 
 	// ----- Iterator ---------------------------------------------
 

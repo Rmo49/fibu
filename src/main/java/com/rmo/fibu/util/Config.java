@@ -38,8 +38,8 @@ public class Config {
 
 	private static final String sDefaultDirToken = "fibu.default.dir";
 	public static String sDefaultDir;
-	private static final String sPdfFileNameToken = "fibu.pdf.filename";
-	public static String sPdfFileName;
+	private static final String sCsvFileNameToken = "fibu.csv.filename";
+	public static String sCsvFileName;
 	
 	// Alle Namen der bisher geöffneten Fibus, wird von Config eingelesen
 	private static final String sFibuNamesToken = "fibu.list";
@@ -116,7 +116,7 @@ public class Config {
 	private static final String sWinCsvReaderBuchung = "window.CsvReaderBuchung";	
 	public static Point winCsvReaderBuchungLoc;
 	public static Dimension winCsvReaderBuchungDim;
-	public static final String sPdfTextLenToken = "fibu.pdf.buchungText.length";
+	public static final String sCsvTextLenToken = "fibu.csv.buchungText.length";
 	public static int sCsvTextLen = 30;
 	
 
@@ -193,17 +193,17 @@ public class Config {
 			sDefaultDir="form: F:/Doku/Ruedi/Java/Fibu";
 			mProperties.setProperty(sDefaultDirToken, "form: F:/Doku/Ruedi/Java/Fibu");
 		}
-		sPdfFileName = mProperties.getProperty(sPdfFileNameToken);
-		if (sPdfFileName == null) {
-			sPdfFileName="form: f:/doc/Postfinance151001.pdf";
-			mProperties.setProperty(sPdfFileNameToken, "form: f:/doc/Postfinance151001.pdf");
+		sCsvFileName = mProperties.getProperty(sCsvFileNameToken);
+		if (sCsvFileName == null) {
+			sCsvFileName="form: f:/doc/Postfinance151001.pdf";
+			mProperties.setProperty(sCsvFileNameToken, "form: f:/doc/Postfinance151001.pdf");
 		}
 		temp = sCsvTextLen;
-		temp = readInt(sPdfTextLenToken);
+		temp = readInt(sCsvTextLenToken);
 		if (temp > 0) {
 			sCsvTextLen = temp;
 		}
-		mProperties.setProperty(sPdfTextLenToken, Integer.toString(sCsvTextLen));
+		mProperties.setProperty(sCsvTextLenToken, Integer.toString(sCsvTextLen));
 		
 		sFibuNames = readList(mProperties.getProperty(sFibuNamesToken), ",");
 		if (sFibuNames == null) {
@@ -335,7 +335,7 @@ public class Config {
 		writeWindowCsvReaderKeyword();
 		writeWindowCsvReaderBuchung();
 		writeList(sFibuNames, ",", sFibuNamesToken);
-		mProperties.setProperty(sPdfFileNameToken, sPdfFileName);
+		mProperties.setProperty(sCsvFileNameToken, sCsvFileName);
 		sortPorperties();
 		try {
 			PrintWriter outputStream = new PrintWriter(sConfigFile);

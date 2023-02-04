@@ -25,6 +25,15 @@ public class FibuDataFrom extends DataModelFrom implements Serializable {
 	}
 
 	/**
+	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
+	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
+	 */
+	public void checkTableVersion() {
+		
+	}
+
+	
+	/**
 	 * Liest die allgemeinen Fibu-Daten von der DB.
 	 */
 	public String readFibuTitel() throws FibuException {

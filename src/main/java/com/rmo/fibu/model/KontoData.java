@@ -20,7 +20,7 @@ import com.rmo.fibu.util.Trace;
  * Konto-Model der Fibu, Verbindung zu Kontorahmen in der DB. Schnittstelle zur
  * DB. Konti werden mit der Klasse Konto sichtbar gemacht.
  */
-public class KontoData extends DataModel implements BeanContextServicesListener, Serializable {
+public class KontoData extends DataBase implements BeanContextServicesListener, Serializable {
 	private static final long serialVersionUID = 6158252894613753607L;
 
 	/**
@@ -51,6 +51,15 @@ public class KontoData extends DataModel implements BeanContextServicesListener,
 	public KontoData() throws Exception {
 		super();
 	}
+
+	/**
+	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
+	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
+	 */
+	public void checkTableVersion() {
+		
+	}
+
 
 	/**
 	 * Max. Anzahl Zeilen in der Tabelle.
@@ -421,30 +430,6 @@ public class KontoData extends DataModel implements BeanContextServicesListener,
 
 	@Override
 	public void serviceRevoked(BeanContextServiceRevokedEvent bcsre) {
-	}
-
-	// ======================================================================
-	// --------------------- alte Versionen ---------------------------------
-	/**
-	 * Depreceated Das Konto mit der Nummer pKontoNr wird gelöscht. Falls die
-	 * KontoNr nicht vorhanden ist, wird die Exception KontoNotFoundException
-	 * geworfen.
-	 */
-	public void deleteKonto_alt(int pKontoNr) throws KontoNotFoundException {
-		try {
-			Statement stmt = getConnection().createStatement();
-			String lQuery = "DELETE * FROM Kontorahmen WHERE KontoNr=" + pKontoNr;
-			int lAnzahl = stmt.executeUpdate(lQuery);
-			if (lAnzahl < 1) {
-				throw new KontoNotFoundException("Konto " + pKontoNr + " nicht gelöscht!");
-			}
-			// die Anzahl Zeilen korrigieren
-			synchronized (this) {
-				mMaxRows--;
-			}
-		} catch (SQLException e) {
-			throw new KontoNotFoundException("KontoData.deleteKonto() :" + e.getMessage());
-		}
 	}
 
 }

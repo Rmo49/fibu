@@ -115,7 +115,11 @@ public class CsvReaderKeywordFrame extends JFrame {
 		Trace.println(5, "CsvReaderFrame.initView()");
 		getContentPane().add(initTop(), BorderLayout.PAGE_START);
 		getContentPane().add(initTable(), BorderLayout.CENTER);
-		getContentPane().add(initBottom(), BorderLayout.PAGE_END);
+		Container container = initBottom();
+		if (container == null) {
+			return;
+		}
+		getContentPane().add(container, BorderLayout.PAGE_END);
 		setSize(Config.winCsvReaderKeywordDim);
 		setLocation(Config.winCsvReaderKeywordLoc);
 	}
@@ -254,6 +258,12 @@ public class CsvReaderKeywordFrame extends JFrame {
 
 		// setzt die gewählte Kontonummer
 		int ktoIndex = mKtoNr.getIndex(mCompany.getKontoNrDefault());
+		if (ktoIndex < 0) {
+			JOptionPane.showMessageDialog(this, "Default Konto-Nr nicht vorhanden, Konto: " + mCompany.getKontoNrDefault() + "\n" 
+					+ "Setup anpassen!",
+					"Buchungen einlesen", JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
 		mKtoNrDefault.setSelectedIndex(ktoIndex);
 
 		flow2.add(mKtoNrDefault);
@@ -332,13 +342,13 @@ public class CsvReaderKeywordFrame extends JFrame {
 	 * Die Keywords in der DB speichern.
 	 */
 	private void saveAction() {
-		CsvKeyKonto pdfKeyword = null;
+		CsvKeyKonto csvKeyword = null;
 
 		Iterator<CsvKeyKonto> iter = mKeywordData.getIterator(mCompany.getCompanyID());
 		try {
 			while (iter.hasNext()) {
-				pdfKeyword = iter.next();
-				mKeywordData.add(pdfKeyword);
+				csvKeyword = iter.next();
+				mKeywordData.add(csvKeyword);
 			}
 			// save company data
 			String selecteKto = (String) mKtoNrDefault.getSelectedItem();
@@ -363,7 +373,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 			File file = new File(mDirPath.getText());
 			if (file.isDirectory()) {
 				// save the new name
-				Config.sPdfFileName = mDirPath.getText();
+				Config.sCsvFileName = mDirPath.getText();
 				JFileChooser chooser = new JFileChooser();
 				chooser.setCurrentDirectory(file);
 				chooser.setFileFilter(new FileNameExtensionFilter("CSV", "csv"));

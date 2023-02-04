@@ -1,6 +1,26 @@
+Fehler:
+- Wenn bei CSV Buchungen anpassen, "Speichern in Fibu" gedrückt dann stopped der Service "Maria DB" <= verifiziert!
+- Wenn erste Buchung gespeichert wird, dann stopped Service "Maria DB"
 
 - Einlesen von Raiffeisen, Text ist delimiter ; nicht Komma, siehe Zeile mit BLT.
+- Anzeige bei Kontoblatt, wenn Gegenkonto 0 dann nichts anzeigen
 
-- Eingabe Buchungen mit Liste
 - Kontoplan kein refresh nach Datenspeicherung (2x Speichern drücken)
-- Wenn Buchung eingegeben, noch blau, kann nicht ändern
+
+Erweiterung:
+- Einlesen von PDF (Cumulus)
+- Wenn alte DB geöffnet dann Tabellen auf neue Version migrieren (siehe checkTableVersion())
+- Wenn Fibu kopieren fertig [Schliessen] Button einbauen und aktivieren.
+- Alle DB's von der Datenbank lesen und anzeigen, auch wenn unvollständig (evt. über Config)
+
+- Wenn Buchung eingegeben, dann noch blau in der Liste, kann diese nicht ändern
+- Buchung bei Kontoblatt-Ansicht auch ändern, jetzt muss in die Buchungssicht gewechselt werden.
+	=> ändern bei Buchung als Pop-up, könnte bei Kontoblatt auch verwendet werden.
+- Umbuchen von einem Konto in ein anderes:
+	Konto auswählen => alle Buchungen anzeigen mit Selektionskästli
+	Andere Konto wählen
+	Die ausgewählten Buchungen wechseln
+- Summen Fettschrift möglich?
+
+PDF:
+PDFText2HTML <= erkennt keine Tabelle, kann somit PDFTextStripper verwenden

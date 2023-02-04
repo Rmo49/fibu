@@ -18,7 +18,7 @@ import com.rmo.fibu.util.Trace;
  * @author Ruedi
  *
  */
-public class CsvKeyKontoData extends DataModel {
+public class CsvKeyKontoData extends DataBase {
 
 	/**
 	 * Enthält Connection zur DB. Wird in setupResultset gesetzt, bleibt während
@@ -62,8 +62,16 @@ public class CsvKeyKontoData extends DataModel {
 	private void init() {
 		mMaxRows = 0;
 		getVersion();
-
 	}
+
+	/**
+	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
+	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
+	 */
+	public void checkTableVersion() {
+		
+	}
+
 
 	/**
 	 * Einen leeren Eintrag speichern, ein neues Tupel wird angelegt.
@@ -224,6 +232,7 @@ public class CsvKeyKontoData extends DataModel {
 	 * @return die aktuelle Version
 	 */
 	public int getVersion() {
+		// wird nur das erstemal berechnet
 		if (mVersion == 0) {
 //			int cols = getAnzahlCols();
 			if (getAnzahlCols() <=4) {

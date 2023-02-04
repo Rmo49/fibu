@@ -3,12 +3,12 @@ package com.rmo.fibu.model.from;
 import java.sql.Connection;
 
 import com.rmo.fibu.exception.FibuRuntimeException;
-import com.rmo.fibu.model.DataModel;
+import com.rmo.fibu.model.DataBase;
 
 /**
 Erweiterung des Data-Models auf die Connection2
  */
-public abstract class DataModelFrom extends DataModel {
+public abstract class DataModelFrom extends DataBase {
 
 	/**
 	 * Model constructor comment.

@@ -59,7 +59,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	private static final int TEXT_WIDTH = 30;
 	private static final int DEFAULT_WIDTH = 4;
 
-	// der Name des Institus von dem pdf-buchungen eingelesen werden.
+	// der Name des Institus von dem csv-buchungen eingelesen werden.
 	private String mCompanyName = null;
 	// file von dem gelesen werden soll
 	private File mFile = null;
