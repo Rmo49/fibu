@@ -79,44 +79,44 @@ public class CsvParserPost extends CsvParserBase {
 	protected void readBetrag(BuchungCsv buchung) {
 		if (lineValues[mBetragCol] != null && lineValues[mBetragCol].length() > 0) {
 			buchung.setBetrag(removeTrennzeichen(lineValues[mBetragCol]));
-			buchung.setSoll(getKontoNrDefault());
+			buchung.setSoll(mCompany.getKontoNrDefault());
 		}
 		if (lineValues[mBetragCol+1] != null && lineValues[mBetragCol+1].length() > 0) {			
 			// ist eine Lastschrift
 			buchung.setBetrag(removeTrennzeichen(lineValues[mBetragCol+1]));
-			buchung.setHaben(getKontoNrDefault());
+			buchung.setHaben(mCompany.getKontoNrDefault());
 		}
 	}
 	
 	/**
 	 * Die ID der Company
 	 */
-	@Override
-	protected int getCompanyId() {
-		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
-		try {
-			return companyData.readData(CsvParserBase.companyNamePost).getCompanyID();
-		}
-		catch (FibuException ex){
-			// do nothing
-		}
-		return 0;
-	}
+//	@Override
+//	protected int getCompanyId() {
+//		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
+//		try {
+//			return companyData.readData(CsvParserBase.companyNamePost).getCompanyID();
+//		}
+//		catch (FibuException ex){
+//			// do nothing
+//		}
+//		return 0;
+//	}
 
 	/**
 	 * Die standard KontoNr
 	 */
-	@Override
-	protected String getKontoNrDefault() {
-		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
-		try {
-			return companyData.readData(CsvParserBase.companyNamePost).getKontoNrDefault();
-		}
-		catch (FibuException ex){
-			// do nothing
-		}
-		return "";
-	}
+//	@Override
+//	protected String getKontoNrDefault() {
+//		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
+//		try {
+//			return companyData.readData(CsvParserBase.companyNamePost).getKontoNrDefault();
+//		}
+//		catch (FibuException ex){
+//			// do nothing
+//		}
+//		return "";
+//	}
 
 	/**
 	 * Den encoding string, muss von CS oder Postfinance gesetzt werden.

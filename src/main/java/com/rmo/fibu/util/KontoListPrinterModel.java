@@ -29,7 +29,7 @@ public interface KontoListPrinterModel {
 
 	/** Die Spalten, die rechtsbündig gedruckt werden.
 	 *  Zahlen werden automatisch rechtsbündig gedruckt,
-	 *  hier angeben, wenn Ueberschrift auch rechtsböndig sein soll 
+	 *  hier angeben, wenn Ueberschrift auch rechtsböndig sein soll
 	 * @param columnIndex Nummer der Spalte die rechtsbündig hat */
 	public boolean getColRight(int columnIndex);
 
@@ -38,11 +38,11 @@ public interface KontoListPrinterModel {
 
 	/** Die Kopfzeile, wir linksbündig angezeigt.
 	 * @param kontoNr die gewählte Kontonummer
-	 *  @param number die Zeilennummer 
+	 *  @param number die Zeilennummer
 	 * */
 	public String getHeader(int kontoNr, int number);
 
-	/** Die Anzahl Zeilen 
+	/** Die Anzahl Zeilen
 	 * @param kontoNr die gewählte Kontonummer
 	*/
 	public int getRowCount(int kontoNr);

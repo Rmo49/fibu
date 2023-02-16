@@ -99,7 +99,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 		}
 		initTableKonto();
 //		setTitle("Kontoplan V1.0");
-		
+
 		setSize(Config.winKontoplanDim);
 		setLocation(Config.winKontoplanLoc);
 
@@ -118,14 +118,14 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 		jLabel3.setFont(Config.fontText);
 		jLabel4.setText("Start-Saldo");
 		jLabel4.setFont(Config.fontText);
-		
+
 		jTextFieldKontoNr.setFont(Config.fontText);
 		jTextFieldText.setFont(Config.fontText);
 		jTextFieldStartSaldo.setFont(Config.fontText);
 		jCheckBoxSoll.setFont(Config.fontText);
 		// TODO wie die Grösse setzen abhängig von TextGrösse
 		jCheckBoxSoll.setSize(20,20);
-		
+
 		jButtonClose.setText("Schliessen");
 		jButtonClose.setFont(Config.fontTextBold);
 		jButtonClose.addActionListener(new java.awt.event.ActionListener() {

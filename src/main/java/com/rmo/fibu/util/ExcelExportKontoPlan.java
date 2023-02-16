@@ -14,9 +14,9 @@ import org.apache.poi.ss.usermodel.Row;
 
 /**
  * Exportieren einer Tabelle nach Excel
- * 
+ *
  * @author Ruedi
- * 
+ *
  */
 public class ExcelExportKontoPlan extends ExcelExport {
 
@@ -27,7 +27,7 @@ public class ExcelExportKontoPlan extends ExcelExport {
 
 	/**
 	 * Export des Kontoplan starten (entry point)
-	 * 
+	 *
 	 * @throws PrinterException
 	 */
 	public void doExport(String name) throws Exception {
@@ -77,7 +77,7 @@ public class ExcelExportKontoPlan extends ExcelExport {
 
 	/**
 	 * fügt eine neue Zeilen in das Excel sheet ein.
-	 * 
+	 *
 	 * @param rowNr
 	 */
 	private Row addRow(int rowNr) {

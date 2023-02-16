@@ -242,7 +242,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 				// nix tun
 			}
 		}
-		
+
 		KontoDataFrom kontoDataOld = (KontoDataFrom) DataBeanContext.getContext().getDataBean(KontoDataFrom.class);
 		Iterator<Konto> iterOld = kontoDataOld.getIterator();
 		Konto lKonto = new Konto();
@@ -287,10 +287,10 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 			lPdfCompany.setCompanyName(lPdfCompanyFrom.getCompanyName());
 			lPdfCompany.setDirPath(lPdfCompanyFrom.getDirPath());
 			lPdfCompany.setKontoNrDefault(lPdfCompanyFrom.getKontoNrDefault());
-			lPdfCompany.setTypeOfDoc(lPdfCompanyFrom.getTypeOfDoc());
-			if (lPdfCompany.getTypeOfDoc() == 0) {
+			lPdfCompany.setDocType(lPdfCompanyFrom.getDocType());
+			if (lPdfCompany.getDocType() == 0) {
 				// das ist der default, wenn nichts gesetzt
-				lPdfCompany.setTypeOfDoc(1);
+				lPdfCompany.setDocType(1);
 			}
 			try {
 				mPdfCompanyData.addData(lPdfCompany);

@@ -1,4 +1,4 @@
-package com.rmo.fibu.model;
+package com.rmo.fibu.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,12 +13,19 @@ import org.apache.pdfbox.text.TextPosition;
 * Zusammenhängende Wörter haben immer die gleiche X-Position.
 */
 public class PdfWordStripper extends PDFTextStripper {
-	
-    public static List<PdfWordLocation> pdfWords = new ArrayList<PdfWordLocation>();
-    
+
+	/**
+	 * Worte werden in der Form:
+	 * Kartenlimite 66 442 <= wenn gleiche Zahlen, dann ein zusammenhängender Eintrag
+	 * CHF 66 442
+	 * 7'500 66 442
+	 * 03.01.23 66 457 <= das ist ein neues Wort auf einer neuen Zeile
+	 */
+    public List<PdfWordLocation> pdfWords = new ArrayList<>();
+
     public PdfWordStripper() throws IOException {
     }
-  
+
     /**
      * Override the default functionality of PDFTextStripper.writeString()
      */
@@ -31,7 +38,7 @@ public class PdfWordStripper extends PDFTextStripper {
             	pwl.word = word;
                	pwl.posX = (int) textPositions.get(0).getXDirAdj();
                	pwl.posY = (int) textPositions.get(0).getYDirAdj();
-               	pdfWords.add(pwl);               	
+               	pdfWords.add(pwl);
             }
         }
     }

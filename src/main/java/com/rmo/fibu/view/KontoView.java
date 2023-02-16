@@ -47,17 +47,17 @@ import com.rmo.fibu.view.util.DoubleRenderer;
  * Die View aller Buchungen eines Kontos. Links ist die Liste mit allen Konti. Oben die
  * Bedienungselemente. Mitte die Liste der gefundenen Buchungen.
  */
-public class KontoView extends JFrame 
+public class KontoView extends JFrame
 	implements TablePrinterModel, TableModelListener  {
 	private static final long serialVersionUID = -1758211182591434071L;
-	
+
 	/** Die Breite der KontoListe */
 	private static final int KTONR_WIDTH = 4;
 	private static final int KTOTEXT_WIDTH = 16;
-	
+
 	private final Dimension datumAbSize = new Dimension(8 * Config.windowTextSize, Config.windowTextSize + 12);
 
-	
+
 	/** Die Models zu dieser View */
 	// private BuchungData mBuchungData = null;
 	private KontoData mKontoData = null;
@@ -87,7 +87,7 @@ public class KontoView extends JFrame
 
 	/**
 	 * KontoView constructor.
-	 * 
+	 *
 	 * @param title
 	 *            String
 	 */
@@ -195,7 +195,7 @@ public class KontoView extends JFrame
 		lSplitPane.setOneTouchExpandable(true);
 		lSplitPane.setDividerLocation( ((KTONR_WIDTH + KTOTEXT_WIDTH) * Config.windowTextSize) );
 //				+ lSplitPane.getInsets().left);
- 
+
 		return lSplitPane;
 	}
 
@@ -283,7 +283,7 @@ public class KontoView extends JFrame
 			}
 		}
 	}
-	
+
 	// ----- Implementierung des TablePrinterModels -------------------
 
 	/** Die Tabelle, die gedruckt werden soll */
@@ -354,9 +354,7 @@ public class KontoView extends JFrame
 	 */
 	@Override
 	public boolean getColRight(int columnIndex) {
-		if (columnIndex == 1)
-			return true;
-		if (columnIndex >= 4)
+		if ((columnIndex == 1) || (columnIndex >= 4))
 			return true;
 		return false;
 	}
@@ -430,7 +428,7 @@ public class KontoView extends JFrame
 			mBuchungModel.addTableModelListener(mBuchungTable);
 			setColWidth();
 		}
-		// testen, ob bereits Model vorhanden		
+		// testen, ob bereits Model vorhanden
 		//mBuchungModel.sortValues();
 		mBuchungModel.fireTableDataChanged();
 	}
@@ -479,12 +477,12 @@ public class KontoView extends JFrame
 	private void actionClosePerformed() {
 		this.setVisible(false);
 	}
-	
+
 	/**
 	 * Die selektierte Kontonummer setzen
 	 * @return
 	 */
-	private int getSelectedKontoNr() { 
+	private int getSelectedKontoNr() {
 		int row = mKontoTable.getSelectedRow();
 		if (row >= 0) {
 			mKontoNrShow = ((Integer) mKontoTable.getModel().getValueAt(row, 0))
@@ -522,11 +520,11 @@ public class KontoView extends JFrame
 
 	@Override
 	public void tableChanged(TableModelEvent e) {
-		scrollToLastEntry();		
+		scrollToLastEntry();
 	}
-	
+
 // ----- Model der Konto-Tabelle ----------------------------
-	
+
 	/** Schnittstelle zum Daten-Objekt KontoData */
 	private class KontoModel extends AbstractTableModel {
 

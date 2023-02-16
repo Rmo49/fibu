@@ -2,6 +2,8 @@ Fehler:
 - Wenn bei CSV Buchungen anpassen, "Speichern in Fibu" gedrückt dann stopped der Service "Maria DB" <= verifiziert!
 - Wenn erste Buchung gespeichert wird, dann stopped Service "Maria DB"
 
+- Fenster von PdfSetupFrame schöner machen
+ 
 - Einlesen von Raiffeisen, Text ist delimiter ; nicht Komma, siehe Zeile mit BLT.
 - Anzeige bei Kontoblatt, wenn Gegenkonto 0 dann nichts anzeigen
 
@@ -12,6 +14,7 @@ Erweiterung:
 - Wenn alte DB geöffnet dann Tabellen auf neue Version migrieren (siehe checkTableVersion())
 - Wenn Fibu kopieren fertig [Schliessen] Button einbauen und aktivieren.
 - Alle DB's von der Datenbank lesen und anzeigen, auch wenn unvollständig (evt. über Config)
+- siehe Trace Meldung bei Buchungen.
 
 - Wenn Buchung eingegeben, dann noch blau in der Liste, kann diese nicht ändern
 - Buchung bei Kontoblatt-Ansicht auch ändern, jetzt muss in die Buchungssicht gewechselt werden.

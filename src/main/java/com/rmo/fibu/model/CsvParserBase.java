@@ -21,7 +21,7 @@ import com.rmo.fibu.util.Trace;
 /**
  * CSV-Parser, liest den Text von csv file.
  * Nach Initialisierung mit File, liest die erste Buchung mit nextBuchung.
- * @author Ruedii
+ * @author Ruedi
  */
 public abstract class CsvParserBase {
 
@@ -31,6 +31,7 @@ public abstract class CsvParserBase {
 	static public String	companyNameRaiff = "Raiffeisen";
 	static private String	buchungFalsch = ">>> Fehlerhafte Buchung in CSV file <<<";
 
+	protected CsvCompany		mCompany = null;
 	// file von dem gelesen werden soll
 	protected CSVReader			reader = null;
 //	protected BufferedReader	br = null;
@@ -104,7 +105,8 @@ public abstract class CsvParserBase {
 	 * Startet das parsing, gibt Buchungen zurück
 	 * @return
 	 */
-	public List<BuchungCsv> startParsing() {
+	public List<BuchungCsv> startParsing(CsvCompany company) {
+		this.mCompany = company;
 		List<BuchungCsv> buchungList = new ArrayList<BuchungCsv>();
 
 		BuchungCsv buchungCvs = nextBuchung();
@@ -142,7 +144,7 @@ public abstract class CsvParserBase {
 				if (lineValues.length < 4) {
 					lBuchungCsv.setText(buchungFalsch);
 					lBuchungCsv.setBetrag("0");
-					lBuchungCsv.setHaben(getKontoNrDefault());		
+					lBuchungCsv.setHaben(mCompany.getKontoNrDefault());		
 				}
 				else {
 					readBuchungsText(lBuchungCsv);
@@ -286,12 +288,18 @@ public abstract class CsvParserBase {
 	/**
 	 * Die ID der Company
 	 */
-	protected abstract int getCompanyId();
+	// TODO delete
+//	protected int getCompanyId() {
+//		return mCompany.getCompanyID();
+//	}
 
 	/**
 	 * Die standard KontoNr
 	 */
-	protected abstract String getKontoNrDefault();
+	// TODO delete
+//	protected String getKontoNrDefault() {
+//		return mCompany.getKontoNrDefault();
+//	}
 
 	/**
 	 * Buchungstext muss von Impl. speziell behandelt werden.

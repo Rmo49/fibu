@@ -44,10 +44,6 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.apache.pdfbox.text.TextPosition;
 
-import com.spire.pdf.PdfDocument;
-import com.spire.pdf.utilities.PdfTable;
-import com.spire.pdf.utilities.PdfTableExtractor;
-
 import com.rmo.fibu.exception.BuchungValueException;
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.FibuRuntimeException;
@@ -57,29 +53,32 @@ import com.rmo.fibu.model.BuchungData;
 import com.rmo.fibu.model.CsvCompany;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.DbConnection;
-import com.rmo.fibu.model.PdfWordLocation;
-import com.rmo.fibu.model.PdfWordStripper;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Datum;
+import com.rmo.fibu.util.PdfWordLocation;
+import com.rmo.fibu.util.PdfWordStripper;
 import com.rmo.fibu.util.Trace;
 import com.rmo.fibu.view.util.JFormattedTextFieldExt;
 import com.rmo.fibu.view.util.JTextFiledExt;
+import com.spire.pdf.PdfDocument;
+import com.spire.pdf.utilities.PdfTable;
+import com.spire.pdf.utilities.PdfTableExtractor;
 
 /** Die View aller Buchungen. UseCases: Buchungen eingeben, suchen, bearbeiten, löschen.
  *  Die View besteht aus einem Anzeige-Panel und einen Eingabe-Panel.
- * In Anzeige-Panel wird auch die KontoListe angezeigt, wenn der 
+ * In Anzeige-Panel wird auch die KontoListe angezeigt, wenn der
  * Fokus im Soll- oder HabenKonto ist.
  * Im Eingabe-Panel werden die Eingabe-Felder mit den Steuerbuttons angezeigt.
  * Diese Klasse verwendet:<br>
  * - BuchungListFrame: Anzeige aller Buchungen<br>
  * - KontoListFrame: Alle Konto für die Eingabe der Kontonummer<br>
- * - BuchungSuchenDialog: Eingabe der Suchargumente<br>  
+ * - BuchungSuchenDialog: Eingabe der Suchargumente<br>
  * <br>Status:<br>
  *  - Eingabe (mind. ein Feld ausgefällt): OK aktiv, Andern inaktiv<br>
  *  - ein Tupel ist im Temp-Speicher: Speicher aktiv<br>
  *  - ein Tupel gespeichern: refresh aktiv.<br>
  *
- * @author: R. Moser 
+ * @author: R. Moser
  */
 public class BuchungView extends JFrame  {
 	private static final long serialVersionUID = -4904918454266009794L;
@@ -90,7 +89,7 @@ public class BuchungView extends JFrame  {
 	/** Die view um Buchungen einzulesen */
 	private CsvReaderKeywordFrame		mCsvFrame;
 	/** Csv Setup, Einstellungen der Companys */
-	private CsvSetupFrame				mCsvSetup;
+	private CsvCompanyFrame				mCsvSetup;
 	/** Das Model zu dieser View */
 	private BuchungData     	mBuchungData = null;
 
@@ -124,7 +123,7 @@ public class BuchungView extends JFrame  {
 	/** Die neuen Buchungen sind gesichert */
 	private boolean         mNewBookingsSaved = true;
 	// noch nicht verwendet
-	/** Wenn eine Buchung zur Bearbeitung ausgewählt wurde, 
+	/** Wenn eine Buchung zur Bearbeitung ausgewählt wurde,
 	 * bis Speichern gedrückt */
 	private boolean       	mChangeing = false;
 	/** Zur Steuerung, damit die Selektion in der Kontoliste
@@ -133,7 +132,7 @@ public class BuchungView extends JFrame  {
 	/** Das Feld, das zuletzt den Focus verloren hat,
 	 * wird verwendet, wenn etwas in der KontoListe selektiert wurde */
 	private JTextComponent	mLastField = null;
-		
+
 	/**
 	 * BuchungView constructor comment.
 	 * @param title String
@@ -142,20 +141,20 @@ public class BuchungView extends JFrame  {
 		super("Buchung V2.2");
 		init();
 	}
-	
+
 	// ----- Zugriff auf Objekte der Buchung View ---------------------
 	public BuchungListFrame getBuchungListe() {
 		return mBuchungListe;
 	}
-	
+
 	/**
 	 * Das CsvReaderFrame löschen, damit beim nächsten mal wieder neu gelesen wird.
 	 */
 	public void resetCsvReaderFrame() {
 		mCsvFrame = null;
 	}
-	
-	
+
+
 	/**
 	 * Das CsvReaderFrame löschen, damit beim nächsten mal wieder neu gelesen wird.
 	 */
@@ -170,11 +169,11 @@ public class BuchungView extends JFrame  {
 	private void init() {
 		Trace.println(1,"BuchungView.init()");
 		mBuchungData = (BuchungData) DataBeanContext.getContext().getDataBean(BuchungData.class);
-		
+
 		mBuchungMenu = new BuchungMenu(this);
 		initView();
 		initKontoListView();
-		
+
 		// Buttons setzen
 		enableButtons();
 		mButtonOk.setEnabled(true);
@@ -184,7 +183,7 @@ public class BuchungView extends JFrame  {
 		// die ID bis zu dieser Buchungen gesichert wurden
 		mBuchungData.setIdSaved();
 	}
-	
+
 	/** Initialisierung der verschiedenen Views
 	 */
 	private void initView() {
@@ -195,7 +194,7 @@ public class BuchungView extends JFrame  {
 		setSize(Config.winBuchungDim);
 		setLocation(Config.winBuchungLoc);
 	}
-	
+
 	/** Initialisierung des Anzeige-Bereiches: Buchungen, Kontoliste
 	 * in einem DesktopPane.
 	 */
@@ -232,7 +231,7 @@ public class BuchungView extends JFrame  {
 				}
 			}
 		});
-		
+
 		return lPane;
 	}
 
@@ -257,7 +256,7 @@ public class BuchungView extends JFrame  {
 
 		return lPanel;
 	}
-	
+
 	/** Initialisierung der Eingabefelder
 	 */
 	private Container initEnterFields() {
@@ -267,7 +266,7 @@ public class BuchungView extends JFrame  {
 		lConstraints.weightx = 1.0;
 		lConstraints.fill = GridBagConstraints.HORIZONTAL;
 		JPanel lPanel = new JPanel(lLayout);
-	
+
 		JLabel labelDatum = new JLabel("Datum");
 		labelDatum.setFont(Config.fontTextBold);
 		lLayout.setConstraints(labelDatum, lConstraints);
@@ -294,7 +293,7 @@ public class BuchungView extends JFrame  {
 		labelBetrag.setFont(Config.fontTextBold);
 		lLayout.setConstraints(labelBetrag, lConstraints);
 		lPanel.add(labelBetrag);
-	
+
 		// ----- Eingabefelder: Buchen
 		lConstraints.fill = GridBagConstraints.HORIZONTAL;
 		lConstraints.gridwidth = 1;
@@ -303,13 +302,13 @@ public class BuchungView extends JFrame  {
 		mTfDatum = new JTextFiledExt();
 		lLayout.setConstraints(mTfDatum, lConstraints);
 		lPanel.add(mTfDatum);
-	
+
 		//--- Beleg ----------------------------------
 		lConstraints.weightx = 10.0;
 		mTfBeleg = new JTextFiledExt();
 		lLayout.setConstraints(mTfBeleg, lConstraints);
 		lPanel.add(mTfBeleg);
-	
+
 		//--- Text -----------------------------------
 		lConstraints.weightx = 100.0;
 		mTfText = new JTextFiledExt();
@@ -322,27 +321,27 @@ public class BuchungView extends JFrame  {
 		mTfSoll.setColumns(4);
 		lLayout.setConstraints(mTfSoll, lConstraints);
 		lPanel.add(mTfSoll);
-	
+
 		//--- Haben ------------------------
 		lConstraints.gridwidth = GridBagConstraints.RELATIVE;
 		mTfHaben = new JTextFiledExt();
-		mTfHaben.setColumns(4);	
+		mTfHaben.setColumns(4);
 		lLayout.setConstraints(mTfHaben, lConstraints);
 		lPanel.add(mTfHaben);
-	
+
 		//--- Betrag ------------------------------------
 		lConstraints.gridwidth = GridBagConstraints.REMAINDER;
 		lConstraints.weightx = 20.0;
-		
+
 		mTfBetrag = new JFormattedTextFieldExt(NumberFormat.getNumberInstance());
 		mTfBetrag.setText("");
 		lLayout.setConstraints(mTfBetrag, lConstraints);
 		lPanel.add(mTfBetrag);
 		return lPanel;
 	}
-	
+
 	// --- Listener ----------------------------------------------
-	
+
 	/** Listeners für das Eingabefeld Datum */
 	private void initListenersDatum() {
 		// wenn cursor in Feld und wenn verlassen wird, Eingabe prüfen
@@ -370,7 +369,7 @@ public class BuchungView extends JFrame  {
 			}
 		});
 	}
-	
+
 
 	/** Listeners für das Eingabefeld Beleg */
 	private void initListenersBeleg() {
@@ -393,7 +392,7 @@ public class BuchungView extends JFrame  {
 			}
 		});
 	}
-	
+
 	/** Listeners für das Eingabefeld Text */
 	private void initListenersText() {
 		mTfText.addFocusListener( new FocusListener() {
@@ -408,7 +407,7 @@ public class BuchungView extends JFrame  {
 				// nix
 			}
 		});
-		
+
 		// wenn Enter-Taste gedrückt
 		mTfText.addActionListener( new ActionListener() {
 			@Override
@@ -417,7 +416,7 @@ public class BuchungView extends JFrame  {
 			}
 		});
 	}
-		
+
 	/** Listeners für das Eingabefeld Soll */
 	private void initListenersSoll() {
 		mTfSoll.addFocusListener( new FocusListener() {
@@ -441,7 +440,7 @@ public class BuchungView extends JFrame  {
 				}
 			}
 		});
-		// überwachung der Tastatur-Eingabe 
+		// überwachung der Tastatur-Eingabe
 		mTfSoll.addKeyListener ( new KeyListener() {
 			@Override
 			public void keyTyped (KeyEvent e) {
@@ -466,7 +465,7 @@ public class BuchungView extends JFrame  {
 			}
 		});
 	}
-	
+
 	/** Listeners für das Eingabefeld Haben */
 	private void initListenersHaben() {
 		mTfHaben.addFocusListener( new FocusListener() {
@@ -492,7 +491,7 @@ public class BuchungView extends JFrame  {
 				}
 			}
 		});
-		// überwachung der Tastatur-Eingabe 
+		// überwachung der Tastatur-Eingabe
 		mTfHaben.addKeyListener ( new KeyListener() {
 			@Override
 			public void keyTyped (KeyEvent e) {
@@ -517,7 +516,7 @@ public class BuchungView extends JFrame  {
 			}
 		});
 	}
-	
+
 	/** Listeners für das Eingabefeld Betrag */
 	private void initListenersBetrag() {
 		mTfBetrag.addFocusListener( new FocusListener() {
@@ -535,7 +534,7 @@ public class BuchungView extends JFrame  {
 					focusLostEnterField(mTfBetrag);
 				}
 			}
-		});		
+		});
 		// wenn Enter-Taste gedrückt
 		mTfBetrag.addActionListener( new ActionListener() {
 			@Override
@@ -544,7 +543,7 @@ public class BuchungView extends JFrame  {
 			}
 		});
 	}
-	
+
 	/** Initialisierung der Buttons für die Eingabe, inkl. Listener.
 	 */
 	private Container initEnterButtons() {
@@ -582,7 +581,7 @@ public class BuchungView extends JFrame  {
 				mBuchungListe.scrollToLastEntry();
 			}
 		});
-	
+
 		//--- Save Button, die Daten in der DB speichern
 		mButtonSave = new JButton("Speichern");
 		mButtonSave.setFont(Config.fontTextBold);
@@ -593,7 +592,7 @@ public class BuchungView extends JFrame  {
 				saveActionPerformed();
 			}
 		});
-		
+
 		//--- Cancel Button, die Eingabe löschen
 		mButtonCancel = new JButton("Abbrechen");
 		mButtonCancel.setFont(Config.fontTextBold);
@@ -615,7 +614,7 @@ public class BuchungView extends JFrame  {
 		mMessage = new JLabel("Status:");
 		return mMessage;
 	}
-	
+
 	/** Initialisiert die Anzeige der Konti */
 	private Container initKontoListView() {
 		if (mKontoListe == null) {
@@ -628,11 +627,11 @@ public class BuchungView extends JFrame  {
 			}
 			@Override
 			public void componentMoved(ComponentEvent e) {
-					
+
 			}
 			@Override
 			public void componentHidden(ComponentEvent e) {
-					
+
 			}
 			@Override
 			public void componentShown(ComponentEvent e) {
@@ -641,9 +640,9 @@ public class BuchungView extends JFrame  {
 		});
 		return mKontoListe;
 	}
-	
+
 	/** Grösse und Position der Kontoliste berechnen */
-	private void changeKontoListPosition() {		
+	private void changeKontoListPosition() {
 		mKontoListe.setSize(250, 400);
 		mKontoListe.setLocation(100, 20);
 	}
@@ -666,13 +665,13 @@ public class BuchungView extends JFrame  {
 		//--- Text
 		mTfHaben.setText("");
 		mTfHaben.setBackground(Color.white);
-	
+
 		//--- Betrag
 		mTfBetrag.setText("");
 		mTfBetrag.setBackground(Color.white);
 		mId = -1;
 	}
-	
+
 	/** Kopiert den Inhalt der Eingabefelder in den temporären Speicher */
 	private void copyToTemp() {
 		try {
@@ -703,8 +702,8 @@ public class BuchungView extends JFrame  {
 	}
 
 	//----- Enter-Field Event Handling -------------------------
-	
-	/** FocusGained Behandlung für alle Standard-Enter Fields. 
+
+	/** FocusGained Behandlung für alle Standard-Enter Fields.
 	 * In ein leeres Feld wird der letzt Wert eingetragen.
 	 * Wenn das Feld leer ist, nichts */
 	private void focusGainedEnterField(JTextComponent field, String defaultText) {
@@ -743,7 +742,7 @@ public class BuchungView extends JFrame  {
 			mMessage.setText("Fehler: " + pEx.getMessage() );
 		}
 	}
-	
+
 	/** Werte der letzten Buchung, bzw. selektierten Buchung eintragen */
 	private void belegFocusGained() {
 		Trace.println(4, "BuchungView.belegFocusGained()");
@@ -758,7 +757,7 @@ public class BuchungView extends JFrame  {
 		}
 		enableButtons();
 	}
-	
+
 	/** Beleg Eingaben prüfen, ob etwas eingegeben, Feld markieren */
 	private void belegFocusLost() {
 		Trace.println(4, "BuchungView.belegFocusLost()");
@@ -774,8 +773,8 @@ public class BuchungView extends JFrame  {
 		if (e.getKeyCode() != KeyEvent.VK_BACK_SPACE) {
 			// nur BackSpace erlaubt (nicht Pfeil links / rechts, Delete etc)
 			e.consume();
-		}	
-	}	
+		}
+	}
 
 	/** Konto-Felder prüfen, nur Zahlen und Backspace erlaubt.
 	 * Die Eingabe zusammenstellen und an die Kontoliste übergeben.
@@ -796,7 +795,7 @@ public class BuchungView extends JFrame  {
 		// Der Enter-Event
 		if (lEnter) {
 			nextField.requestFocus();
-		} 
+		}
 		// zukünftigen String zusammenstellen
 		String lEingabe = kontoField.getText();
 		if (lBackSpace) {
@@ -826,7 +825,7 @@ public class BuchungView extends JFrame  {
 	/** KontoListe in den Hintergrund */
 	private void hideKontoListe() {
 		mKontoListe.moveToBack();
-		mHasKontoLostFocus = false;	
+		mHasKontoLostFocus = false;
 	}
 
 	/** prüft alle Eingabefelder.
@@ -844,11 +843,11 @@ public class BuchungView extends JFrame  {
 
 	/** prüft, ob eine Buchung eingegeben wird.
 	 * @return true, wenn mehr als 2 Felder ausgefällt sind
-	 */ 
+	 */
 	private boolean enteringBooking() {
 		return hasEnterFieldsEmpty(false) < 3;
 	}
-	
+
 	/** prüft ob das Textfeld leer ist
 	 * @param mark true wenn das Feld markiert werden soll
 	 * @return true wenn leer ist. */
@@ -861,15 +860,15 @@ public class BuchungView extends JFrame  {
 		textField.setBackground(Color.white);
 		return false;
 	}
-	
+
 	/** Setzt den Standard-String in die Message */
 	private void deleteMessage() {
 		mMessage.setText("Status:");
 	}
-	
+
 	//----- Behandlung der Button-Events --------------------------------
 
-	/** Enables / disables Buttons oder Menus: Ok, Save, Change, Delete.<br>	
+	/** Enables / disables Buttons oder Menus: Ok, Save, Change, Delete.<br>
 	 */
 	private void enableButtons() {
 		Trace.println(5, "BuchungView.enableButtonsManipulate");
@@ -877,14 +876,14 @@ public class BuchungView extends JFrame  {
 		 * (damit OK Button aktiv ist beim letzen Feld
 		 * inaktiv wenn im Modus mChangeing */
 		if (!mChangeing) {
-			mButtonOk.setEnabled(hasEnterFieldsEmpty(false) <= 1);			
+			mButtonOk.setEnabled(hasEnterFieldsEmpty(false) <= 1);
 		}
 		else {
-			mButtonOk.setEnabled(false);			
+			mButtonOk.setEnabled(false);
 		}
 		// Save: aktiv wenn !mNewBookingsSaved oder wenn mChangeing
 		if (!mNewBookingsSaved || mChangeing) {
-			mButtonSave.setEnabled(true);			
+			mButtonSave.setEnabled(true);
 		}
 		else {
 			mButtonSave.setEnabled(false);
@@ -894,18 +893,18 @@ public class BuchungView extends JFrame  {
 		//Buchung copy, delete: wenn !enteringBooking und !mChangeing
 		if (!enteringBooking() && !mChangeing) {
 			mBuchungMenu.setEnableCopy(true);
-			mBuchungMenu.setEnableDelete(true);			
+			mBuchungMenu.setEnableDelete(true);
 		}
 		else {
 			mBuchungMenu.setEnableCopy(false);
-			mBuchungMenu.setEnableDelete(false);						
+			mBuchungMenu.setEnableDelete(false);
 		}
 		// Sort immer true falls es etwas zum sortieren gibt
-//		mBuchungMenu.setEnableSort(mBuchungData.getRowCountNew() > 0 );		
+//		mBuchungMenu.setEnableSort(mBuchungData.getRowCountNew() > 0 );
 		// TODO stimmt das: den Focus immer auf Save setzen, da sonst Eingabe-Felder den Focus erhalten
 		//mButtonSave.requestFocus();
 	}
-			
+
 	public void showPopup(MouseEvent e) {
 		if (e.isPopupTrigger()) {
 			mBuchungMenu.getPopMenu().show(e.getComponent(), e.getX(), e.getY());
@@ -940,7 +939,7 @@ public class BuchungView extends JFrame  {
 		    Trace.println(3, "BuchungView.okActionPerformed() ===> end");
 		}
 	}
-	
+
 	/** Save-Button wurde gedrückt.
 	 *  Wenn die bearbeitete Buchung ID > 0, dann nur diese Buchung sichern
 	 *  sonst alle neuen Buchungen sichern. */
@@ -975,7 +974,7 @@ public class BuchungView extends JFrame  {
 			return false;
 		}
 	}
-	
+
 	/** Cancel-Button wurde gedrückt.
 	 *  Die Eingabe leeren, Buttons zurücksetzen */
 	private void cancelActionPerformed (ActionEvent e) {
@@ -985,7 +984,7 @@ public class BuchungView extends JFrame  {
 		enableButtons();
 		mBuchungListe.repaint();
 	}
-	
+
 	/** Die überschriebene Methode hide, prüft zuerst ob noch gespeichert
 	 *  werden muss */
 	@Override
@@ -1032,14 +1031,14 @@ public class BuchungView extends JFrame  {
 		if (mCsvSetup != null) {
 			mCsvSetup.setVisible(visible);
 			mCsvSetup = null;
-		}		
+		}
 		if (mCsvFrame != null) {
 			mCsvFrame.setVisible(visible);
 			mCsvFrame = null;
 		}
 		super.setVisible(false);
 	}
-		
+
 	/** Sortieren wurde gewählt: Sichern, Tabelle neu ordnen  */
 	public void sortActionPerformed () {
 		Trace.println(3, "RefreshButton->actionPerformed()");
@@ -1053,13 +1052,13 @@ public class BuchungView extends JFrame  {
 			mMessage.setText("Fehler: " + pEx.getMessage() );
 		}
 	}
-	
+
 	/** Change-Button wurde gedrückt.
 	 *  Die gewählte Zeile editieren (in die Eingabe kopieren)
 	*/
 	public void copyActionPerformed () {
 		Trace.println(3, "BuchungView.copyActionPerformed()");
-		
+
 		// sollte nie vorkommen
 		if ( enteringBooking() ) {
 			JOptionPane.showMessageDialog(this, "Eingabe zuerst sichern oder abbrechen",
@@ -1083,7 +1082,7 @@ public class BuchungView extends JFrame  {
 			}
 		}
 	}
-	
+
 	/** Delete-Button wurde gedrückt.
 	 *   Die gewählte Zeilen löschen, mit Confirm-Dialog.
 	*/
@@ -1093,9 +1092,9 @@ public class BuchungView extends JFrame  {
 		if (lRowNrs.length > 0) {
 			// Message zusammenstellen
 			StringBuffer lMsgBuffer = new StringBuffer();
-			for (int i = 0; i < lRowNrs.length; i++) {
-				lMsgBuffer.append(mBuchungListe.getValueAt(lRowNrs[i],1) + ": ");
-				lMsgBuffer.append(mBuchungListe.getValueAt(lRowNrs[i],2) + ", ");
+			for (int lRowNr : lRowNrs) {
+				lMsgBuffer.append(mBuchungListe.getValueAt(lRowNr,1) + ": ");
+				lMsgBuffer.append(mBuchungListe.getValueAt(lRowNr,2) + ", ");
 			}
 			// Bestägigung einholen
 			int answer = JOptionPane.showConfirmDialog(
@@ -1103,8 +1102,8 @@ public class BuchungView extends JFrame  {
 				"Buchungen mit BelegNr löschen", JOptionPane.YES_NO_OPTION);
 			if (answer == JOptionPane.YES_OPTION) {
 				try {
-					for (int i = 0; i < lRowNrs.length; i++) {
-						mBuchungData.delete(getId(lRowNrs[i]));
+					for (int lRowNr : lRowNrs) {
+						mBuchungData.delete(getId(lRowNr));
 					}
 					//mBuchungTable.repaint();
 					this.repaint();
@@ -1117,13 +1116,13 @@ public class BuchungView extends JFrame  {
 			}
 		}
 	}
-	
+
 	/**
 	 * Einstellungen für CSV
 	 */
 	public void csvSetup() {
 		if (mCsvSetup == null) {
-			mCsvSetup = new CsvSetupFrame(this);
+			mCsvSetup = new CsvCompanyFrame(this);
 		}
 		mCsvSetup.setVisible(true);
 	}
@@ -1144,7 +1143,7 @@ public class BuchungView extends JFrame  {
 		}
 	}
 
-	
+
 	/** prüft die Eingabefelder und kopiert deren Inhalt in Buchung.
 	 *  @return Buchung falls alle Felder richtige Werte enthalten, sonst null
 	 */
@@ -1182,7 +1181,7 @@ public class BuchungView extends JFrame  {
 		}
 		return lBuchung;
 	}
-	
+
 	/** prüft die Eingabefelder und kopiert deren Inhalt in Buchung.
 	 */
 	private void copyToGui(Buchung pBuchung) {
@@ -1195,12 +1194,12 @@ public class BuchungView extends JFrame  {
 		mTfBetrag.setText(pBuchung.getBetragAsString());
 		mId = pBuchung.getID();
 	}
-		
+
 	/** Gibt die Id der Row zurück */
 	private long getId(int lRowNr) {
 		return ((Long)mBuchungListe.getValueAt(lRowNr,6)).longValue();
 	}
-		
+
 	/****************************************
 	* für den Test der View von Buchungen.
 	 */
@@ -1220,8 +1219,8 @@ public class BuchungView extends JFrame  {
 		}
 		catch (FibuRuntimeException ex) {}
 	}
-	
-	
+
+
 	/**
 	 * Test PDF mit PDFBox
 	 * File öffnen, Zeilen lesen
@@ -1229,7 +1228,7 @@ public class BuchungView extends JFrame  {
 	 */
 	public void pdfActionMitBox () {
 		File file = new File("Cumulus23-10.pdf");
-//		File file = new File("Raiff2022-12.pdf");	
+//		File file = new File("Raiff2022-12.pdf");
 		if (!file.exists()) {
 			return;
 		}
@@ -1239,11 +1238,11 @@ public class BuchungView extends JFrame  {
 			String para = pdfStripper.getParagraphStart();
 			System.out.println("Para: " + para);
 			String text = pdfStripper.getText(document);
-			System.out.println(text); 
+			System.out.println(text);
 		}
 		catch (Exception ex) {
 			System.out.println(ex.getMessage());
-		}	
+		}
 	}
 
 	/**
@@ -1253,12 +1252,12 @@ public class BuchungView extends JFrame  {
 	 */
 	public void pdfActionMitBoxCoord () {
 		File file = new File("Cumulus23-10.pdf");
-//		File file = new File("Raiff2022-12.pdf");	
+//		File file = new File("Raiff2022-12.pdf");
 		if (!file.exists()) {
 			return;
 		}
 		try {
-			PDDocument document = PDDocument.load(file);			
+			PDDocument document = PDDocument.load(file);
 			GetCharLocationAndSize stripper = new GetCharLocationAndSize();
             stripper.setSortByPosition( true );
             stripper.setStartPage( 0 );
@@ -1268,27 +1267,27 @@ public class BuchungView extends JFrame  {
  		}
 		catch (Exception ex) {
 			System.out.println(ex.getMessage());
-		}	
+		}
 	}
-	
-	private class GetCharLocationAndSize extends PDFTextStripper {		
-		public GetCharLocationAndSize() throws IOException {			 
-		}		 
+
+	private class GetCharLocationAndSize extends PDFTextStripper {
+		public GetCharLocationAndSize() throws IOException {
+		}
 	    /**
 	     * Override the default functionality of PDFTextStripper.writeString()
 	     */
 	    @Override
 	    protected void writeString(String string, List<TextPosition> textPositions) throws IOException {
 	        for (TextPosition text : textPositions) {
-	        	
+
 	            System.out.println(text.getUnicode()+ " [(X=" + text.getXDirAdj() + ",Y=" +
 	                    text.getYDirAdj() + ") height=" + text.getHeightDir() + " width=" +
 	                    text.getWidthDirAdj() + "]");
 	        }
 	    }
 	}
-	
-	
+
+
 	/**
 	 * Test PDF mit PDFBox
 	 * File öffnen, Zeilen lesen
@@ -1296,25 +1295,24 @@ public class BuchungView extends JFrame  {
 	 */
 	public void pdfActionMitBoxWord () {
 		File file = new File("Cumulus23-10.pdf");
-//		File file = new File("Raiff2022-12.pdf");	
+//		File file = new File("Raiff2022-12.pdf");
 		if (!file.exists()) {
 			return;
 		}
 		try {
 			PDDocument document = PDDocument.load(file);
-//			PDFTextStripper stripper = new GetWordsFromPDF();
-			PDFTextStripper stripper = new PdfWordStripper();
+			PdfWordStripper stripper = new PdfWordStripper();
             stripper.setSortByPosition( true );
             stripper.setStartPage( 0 );
             stripper.setEndPage( document.getNumberOfPages() );
             Writer dummy = new OutputStreamWriter(new ByteArrayOutputStream());
             stripper.writeText(document, dummy);
-             
+
             // print words
 //            for(String word:GetWordsFromPDF.words){
-//                System.out.println(word); 
+//                System.out.println(word);
 //            }
-            for (PdfWordLocation pwl: PdfWordStripper.pdfWords) {
+            for (PdfWordLocation pwl: stripper.pdfWords) {
             	System.out.print(pwl.word);
             	System.out.print(" ");
             	System.out.print(pwl.posX);
@@ -1324,18 +1322,18 @@ public class BuchungView extends JFrame  {
  		}
 		catch (Exception ex) {
 			System.out.println(ex.getMessage());
-		}	
+		}
 	}
-	
+
 
 	/**
 	* This is an example on how to extract words from PDF document
 	*/
 	public static class GetWordsFromPDF extends PDFTextStripper {
-	    static List<String> words = new ArrayList<String>();
+	    static List<String> words = new ArrayList<>();
 	    public GetWordsFromPDF() throws IOException {
 	    }
-	  
+
 	    /**
 	     * Override the default functionality of PDFTextStripper.writeString()
 	     */
@@ -1348,9 +1346,9 @@ public class BuchungView extends JFrame  {
 	            }
 	        }
 	    }
-	    
+
 	}
-	
+
 
 	/**
 	 * Test PDF mit Spire PDF
@@ -1359,7 +1357,7 @@ public class BuchungView extends JFrame  {
 	 */
 	public void pdfActionMitSpire () {
 		PdfDocument pdf = new PdfDocument("Cumulus23-10.pdf");
-		
+
         //Create a StringBuilder instance
         StringBuilder builder = new StringBuilder();
         //Create a PdfTableExtractor instance
@@ -1367,7 +1365,7 @@ public class BuchungView extends JFrame  {
         for (int pageIndex = 0; pageIndex < pdf.getPages().getCount(); pageIndex++) {
             //Extract tables from the current page into a PdfTable array
             PdfTable[] tableLists = extractor.extractTable(pageIndex);
-             
+
             //If any tables are found
             if (tableLists != null && tableLists.length > 0) {
                 //Loop through the tables in the array
@@ -1376,7 +1374,7 @@ public class BuchungView extends JFrame  {
                     for (int i = 0; i < table.getRowCount(); i++) {
                         //Loop through the columns in the current table
                         for (int j = 0; j < table.getColumnCount(); j++) {
-                            //Extract data from the current table cell and append to the StringBuilder 
+                            //Extract data from the current table cell and append to the StringBuilder
                             String text = table.getText(i, j);
                             builder.append(text + " | ");
                         }
@@ -1384,7 +1382,7 @@ public class BuchungView extends JFrame  {
                     }
                 }
             }
-        }     
+        }
 	}
 
 

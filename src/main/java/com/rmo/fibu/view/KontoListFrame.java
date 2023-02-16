@@ -19,7 +19,7 @@ import com.rmo.fibu.model.KontoNrVector;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Trace;
 
-/** KontoListView: Zeigt die Liste der vorhandenen Konti, 
+/** KontoListView: Zeigt die Liste der vorhandenen Konti,
  * wird bei Buchungen verwendet.
  * Die Konti werden in einer JTable angezeigt.
  * Das aktuelle Konto wird in der mitte angezeigt.
@@ -33,7 +33,7 @@ import com.rmo.fibu.util.Trace;
 	/** Das Model zur Tabelle */
 	private KontoModel		mKontoTableModel;
 	/** Die Liste aller KontoNummern, für Prüfungen */
-	private KontoNrVector	mKontoNr = null;;
+	private KontoNrVector	mKontoNr = null;
 
 	private JScrollPane		jScrollTable = new JScrollPane();
     private JTable 			jKontoTable = new JTable();
@@ -58,7 +58,7 @@ import com.rmo.fibu.util.Trace;
 		this.getContentPane().add(jScrollTable);
 		jScrollTable.getViewport().add(jKontoTable, null);
 		initTableKonto();
-		
+
 		setTitle("KontoList");
 		this.setSize(250, 400);
 		this.setLocation(100, 20);
@@ -102,7 +102,7 @@ import com.rmo.fibu.util.Trace;
 	/** Setzt den Cursor auf das entsprechende Konto.
 	 * @param ktoNr kann auch nur ein Teil der Nr enthalten.
 	 * @return wenn die Nummer eindeutigvervollständigt werden kann,
-	 *  wird diese zurückgegeben, sonst der korekte Teil 
+	 *  wird diese zurückgegeben, sonst der korekte Teil
 	 */
 	public String selectRow (String ktoNr) throws KontoNotFoundException {
 		Trace.println(4,"KontoListFrame.selectRow(ktoNr:" + ktoNr +")");
@@ -121,14 +121,14 @@ import com.rmo.fibu.util.Trace;
 
 		return expandKontoNr (ktoNr, rowNr);
 	}
-	
+
 	/** Sucht nach der KontoNummer, oder Teile davon
 	 * @param ktoNr die Nummer 1..4-stellig
 	 * @return die ZeilenNr (Position) des Kontos
 	 * @throws KontoNotFoundException wenn KontoNummer nicht gefunden
 	 */
 	private int checkNr (String ktoNr) throws KontoNotFoundException {
-		
+
 		int i =0;
 		while (i<mKontoNr.size()) {
 			String lStr = mKontoNr.get(i);
@@ -176,7 +176,7 @@ import com.rmo.fibu.util.Trace;
 		}
 		return null;
 	}
-	
+
 	/** Beenden der Anzeige */
 	@Override
 	public void dispose() {

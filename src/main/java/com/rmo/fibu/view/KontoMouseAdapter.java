@@ -13,7 +13,7 @@ import com.rmo.fibu.util.Trace;
 public class KontoMouseAdapter extends MouseAdapter {
 	// Das Eingabefeld, auf das sich der Mouse-Event bezieht.
 	JTextField mKontoField;
-	
+
 	/**
 	 * Konstruktor mit dem entsprechenden Feld
 	 */

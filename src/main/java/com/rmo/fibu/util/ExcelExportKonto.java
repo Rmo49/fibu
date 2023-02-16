@@ -1,8 +1,8 @@
 package com.rmo.fibu.util;
 
 import java.awt.print.PrinterException;
-import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Date;
 
@@ -23,9 +23,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * Exportieren einer Tabelle nach Excel
- * 
+ *
  * @author Ruedi
- * 
+ *
  */
 public class ExcelExportKonto {
 	// Das Model der Tabelle, immer über getTabelModel lesen
@@ -53,7 +53,7 @@ public class ExcelExportKonto {
 
 	/**
 	 * Export eines Kontos starten.
-	 * 
+	 *
 	 * @throws PrinterException
 	 */
 	public void doExport(int kontoNr) throws Exception {
@@ -132,7 +132,7 @@ public class ExcelExportKonto {
 
 	/**
 	 * fügt eine neue Zeilen in das Excel sheet ein.
-	 * 
+	 *
 	 * @param rowNr
 	 */
 	private Row addRow(int rowNr) {
@@ -156,7 +156,7 @@ public class ExcelExportKonto {
 
 	/**
 	 * Setzt das Feld nur, wenn Betrag >= 0
-	 * 
+	 *
 	 * @param row
 	 *            die Zeile
 	 * @param rowNr
@@ -178,7 +178,7 @@ public class ExcelExportKonto {
 
 	/**
 	 * Speichern in Datei.
-	 * 
+	 *
 	 * @param kontoNr
 	 * @throws PrinterException
 	 */
@@ -213,5 +213,5 @@ public class ExcelExportKonto {
 //		mFontBold = mWorkbook.createFont();
 //		mFontBold.setBoldweight(Font.BOLDWEIGHT_BOLD);
 //	}
-	
+
 }

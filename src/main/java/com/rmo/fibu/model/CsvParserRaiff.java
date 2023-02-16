@@ -76,10 +76,10 @@ public class CsvParserRaiff extends CsvParserBase {
 	protected void readBetrag(BuchungCsv buchung) {
 		if (lineValues[mBetragCol] != null && lineValues[mBetragCol].length() > 0) {
 			if (lineValues[mBetragCol].startsWith("-")) {
-				buchung.setHaben(getKontoNrDefault());
+				buchung.setHaben(mCompany.getKontoNrDefault());
 			}
 			else {
-				buchung.setSoll(getKontoNrDefault());
+				buchung.setSoll(mCompany.getKontoNrDefault());
 			}
 			buchung.setBetrag(removeTrennzeichen(lineValues[mBetragCol]));		
 		}
@@ -88,32 +88,32 @@ public class CsvParserRaiff extends CsvParserBase {
 	/**
 	 * Die ID der Company
 	 */
-	@Override
-	protected int getCompanyId() {
-		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
-		try {
-			return companyData.readData(CsvParserBase.companyNameRaiff).getCompanyID();
-		}
-		catch (FibuException ex){
-			// do nothing
-		}
-		return 0;
-	}
+//	@Override
+//	protected int getCompanyId() {
+//		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
+//		try {
+//			return companyData.readData(CsvParserBase.companyNameRaiff).getCompanyID();
+//		}
+//		catch (FibuException ex){
+//			// do nothing
+//		}
+//		return 0;
+//	}
 
 	/**
 	 * Die standard KontoNr
 	 */
-	@Override
-	protected String getKontoNrDefault() {
-		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
-		try {
-			return companyData.readData(CsvParserBase.companyNameRaiff).getKontoNrDefault();
-		}
-		catch (FibuException ex){
-			// do nothing
-		}
-		return "";
-	}
+//	@Override
+//	protected String getKontoNrDefault() {
+//		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
+//		try {
+//			return companyData.readData(CsvParserBase.companyNameRaiff).getKontoNrDefault();
+//		}
+//		catch (FibuException ex){
+//			// do nothing
+//		}
+//		return "";
+//	}
 
 	/**
 	 * Den encoding string, muss von detail Implementation gesetzt werden.

@@ -91,7 +91,7 @@ public class AuswertungView extends JFrame implements Printable {
 		setSize(Config.winBilanzenDim);
 		setLocation(Config.winBilanzenLoc);
 	}
-	
+
 
 	/** Methode von JBuilder generiert */
 	private Container initButton() {
@@ -128,7 +128,7 @@ public class AuswertungView extends JFrame implements Printable {
 		jToolBar1.add(btnClose, null);
 		return jToolBar1;
 	}
-	
+
 	private Container initTables() {
 		tableStartBilanz.setShowHorizontalLines(false);
 		scrollBilanz.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -139,11 +139,11 @@ public class AuswertungView extends JFrame implements Printable {
 		tableBilanz.setShowHorizontalLines(false);
 		tableER.setShowHorizontalLines(false);
 		tabPane.add(scrollStartBilanz, "StartBilanz");
-		
+
 		tabPane.add(scrollBilanz, "Bilanz");
 		tabPane.add(scrollER, "Erfolgsrechnung");
 		tabPane.setFont(Config.fontTextBold);
-		
+
 		scrollER.getViewport().add(tableER, null);
 		scrollBilanz.getViewport().add(tableBilanz, null);
 		scrollStartBilanz.getViewport().add(tableStartBilanz, null);
@@ -152,7 +152,7 @@ public class AuswertungView extends JFrame implements Printable {
 
 	/** Initialisierung der Daten (Tabellen) */
 	/**
-	 * 
+	 *
 	 */
 	private void initData() {
 		// die Verbindung zur DB
@@ -242,7 +242,7 @@ public class AuswertungView extends JFrame implements Printable {
 
 	/**
 	 * Druckt eine Auswertungsseite
-	 * 
+	 *
 	 * @todo 3 später mit mehreren Seiten (TablePrinter verwenden)
 	 */
 	private void printPage(Graphics2D g2, PageFormat pf, String titel, JTable table) {
@@ -264,7 +264,7 @@ public class AuswertungView extends JFrame implements Printable {
 	private class AuswertungModel extends AbstractTableModel {
 		private static final long serialVersionUID = 4937461172246423789L;
 		/** der Vector mit den einträgen */
-		private Vector<KontoRow> mKonti = new Vector<KontoRow>();
+		private Vector<KontoRow> mKonti = new Vector<>();
 		/** Range der Konto */
 		private int kontoNrVon;
 		private int kontoNrBis;
@@ -581,9 +581,9 @@ public class AuswertungView extends JFrame implements Printable {
 			cal.set(Calendar.DAY_OF_MONTH, 1);
 			cal.add(Calendar.DATE, -1);
 		}
-		return JOptionPane.showInputDialog(this, "Abschluss-Datum", dateFormat.format(cal.getTime()));		
+		return JOptionPane.showInputDialog(this, "Abschluss-Datum", dateFormat.format(cal.getTime()));
 	}
-	
+
 	@Override
 	public void setVisible(boolean visible) {
 		if (!visible) {
@@ -593,8 +593,8 @@ public class AuswertungView extends JFrame implements Printable {
 		super.setVisible(visible);
 
 	}
-	
-	
+
+
 	// -------- innere Klasse für drucken ------------------------------------
 	/**
 	 * Stellt die Verbindung zu den Daten her und steuert die Darstellung.
@@ -680,7 +680,7 @@ public class AuswertungView extends JFrame implements Printable {
 		}
 
 	}// /endOfJournalPrinterModel
-	
+
 	/********************************
 	 * Start für Einzeltest
 	 */

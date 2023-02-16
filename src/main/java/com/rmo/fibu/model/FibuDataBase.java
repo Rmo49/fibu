@@ -1,5 +1,8 @@
 package com.rmo.fibu.model;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
 import java.util.Calendar;
@@ -136,6 +139,27 @@ public class FibuDataBase {
 		getFibuData().writeFibuData();
 	}
 
+	/**
+	 * Prüft, ob tabelle vorhanden
+	 * @param tableName
+	 * @return
+	 * @throws SQLException
+	 */
+	public static boolean tableExist(String tableName) throws SQLException {
+	    boolean tExists = false;
+	    Connection conn = DbConnection.getConnection();
+	    try (ResultSet rs = conn.getMetaData().getTables(null, null, tableName, null)) {
+	        while (rs.next()) { 
+	            String tName = rs.getString("TABLE_NAME");
+	            if (tName != null && tName.equals(tableName)) {
+	                tExists = true;
+	                break;
+	            }
+	        }
+	    }
+	    return tExists;
+	}
+	
 	/**
 	 * Bestehende Fibu löschen, Connection wird geschlossen.
 	 * @param name der Fibu

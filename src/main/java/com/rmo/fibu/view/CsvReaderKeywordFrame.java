@@ -79,12 +79,12 @@ public class CsvReaderKeywordFrame extends JFrame {
 
 	/**
 	 * Wird gestartet von Buchungen mit der gewählten ID der Bank
-	 * 
+	 *
 	 * @param pCompanyId, ID der gewählten Bank
 	 * @param pParent     Referenz zu den Buchungen
 	 */
 	public CsvReaderKeywordFrame(CsvCompany pCompany, BuchungView pParent) {
-		super("Schlüsselwort für CSV eingenben, V3.0");
+		super("Schlüsselworte für Buchungen einlsesen, V4.0");
 		mCompany = pCompany;
 		mParent = pParent;
 	}
@@ -93,17 +93,24 @@ public class CsvReaderKeywordFrame extends JFrame {
 	 * Start der Initialisierung, muss von jedem Konstruktor aufgerufen werden.
 	 */
 	public boolean init() {
-		Trace.println(1, "CsvReaderKeywordFrame.init()");
-		// prüfen, ob auch eine Implementation vorhanden.
-		String err = CsvParserBase.parserVorhanden(mCompany.getCompanyName());
-		if (err.length() > 1) {
-			JOptionPane.showMessageDialog(this, err, "CSV Datei selektieren", JOptionPane.ERROR_MESSAGE);
-			return false;
+		Trace.println(3, "CsvReaderKeywordFrame.init()");
+		// wenn PDF
+		if (mCompany.getDocType() == CsvCompany.docTypePdf) {
+			// nix
+		}
+		else {
+			// prüfen, ob auch eine Implementation vorhanden ist.
+			String err = CsvParserBase.parserVorhanden(mCompany.getCompanyName());
+			if (err.length() > 1) {
+				JOptionPane.showMessageDialog(this, err, "CSV Datei selektieren", JOptionPane.ERROR_MESSAGE);
+				return false;
+			}
 		}
 		mKeywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
 		mCompanyData = (CsvCompanyData) DataBeanContext.getContext().getDataBean(CsvCompanyData.class);
 
-		mKeywordData.getVersion(); // die Version der Daten lesen
+		// die Version zurücksetzen, wenn das erstemal geöffnet
+		mKeywordData.resetVersion();
 		initView();
 		return true;
 	}
@@ -120,13 +127,17 @@ public class CsvReaderKeywordFrame extends JFrame {
 			return;
 		}
 		getContentPane().add(container, BorderLayout.PAGE_END);
+		if ( (Config.winCsvReaderKeywordDim.height < 100) || (Config.winCsvReaderKeywordDim.width < 300)) {
+			Config.winCsvReaderKeywordDim.height = 600;
+			Config.winCsvReaderKeywordDim.width = 400;
+		}
 		setSize(Config.winCsvReaderKeywordDim);
 		setLocation(Config.winCsvReaderKeywordLoc);
 	}
 
 	/**
 	 * Top-Zeile setzen
-	 * 
+	 *
 	 * @return
 	 */
 	private Container initTop() {
@@ -139,7 +150,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 
 	/**
 	 * Tabelle setzen
-	 * 
+	 *
 	 * @return
 	 */
 	private Container initTable() {
@@ -190,8 +201,8 @@ public class CsvReaderKeywordFrame extends JFrame {
 	 * Setzt die Kontonummern Combobox
 	 */
 	private void setColKontoNummern() {
-		JComboBox<String> comboBoxKtonr = new JComboBox<String>();
-		comboBoxKtonr.setModel(new DefaultComboBoxModel<String>(new KontoNrVector()));
+		JComboBox<String> comboBoxKtonr = new JComboBox<>();
+		comboBoxKtonr.setModel(new DefaultComboBoxModel<>(new KontoNrVector()));
 		comboBoxKtonr.setFont(Config.fontText);
 		TableColumn ktoColumn;
 		if (mKeywordData.getVersion() <= 2) {
@@ -205,7 +216,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 
 	/**
 	 * Buttons setzen
-	 * 
+	 *
 	 * @return
 	 */
 	private Container initBottom() {
@@ -250,16 +261,16 @@ public class CsvReaderKeywordFrame extends JFrame {
 		label1.setFont(Config.fontTextBold);
 
 		flow2.add(label1);
-		mKtoNrDefault = new JComboBox<String>();
+		mKtoNrDefault = new JComboBox<>();
 		mKtoNr = new KontoNrVector();
-		mKtoNrDefault.setModel(new DefaultComboBoxModel<String>(mKtoNr));
+		mKtoNrDefault.setModel(new DefaultComboBoxModel<>(mKtoNr));
 		mKtoNrDefault.setPreferredSize(ktoNrDefaultSize);
 		mKtoNrDefault.setFont(Config.fontText);
 
 		// setzt die gewählte Kontonummer
 		int ktoIndex = mKtoNr.getIndex(mCompany.getKontoNrDefault());
 		if (ktoIndex < 0) {
-			JOptionPane.showMessageDialog(this, "Default Konto-Nr nicht vorhanden, Konto: " + mCompany.getKontoNrDefault() + "\n" 
+			JOptionPane.showMessageDialog(this, "Default Konto-Nr nicht vorhanden, Konto: " + mCompany.getKontoNrDefault() + "\n"
 					+ "Setup anpassen!",
 					"Buchungen einlesen", JOptionPane.ERROR_MESSAGE);
 			return null;
@@ -285,13 +296,13 @@ public class CsvReaderKeywordFrame extends JFrame {
 
 		// datei selektieren
 		JPanel flow4 = new JPanel(new FlowLayout());
-		JButton btnSelectFile = new JButton("CSV-datei selektieren");
+		JButton btnSelectFile = new JButton("Datei mit Buchungen selektieren");
 		btnSelectFile.setFont(Config.fontTextBold);
 
 		btnSelectFile.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				showCsvFiles();
+				showFiles();
 			}
 		});
 		flow4.add(btnSelectFile);
@@ -363,10 +374,10 @@ public class CsvReaderKeywordFrame extends JFrame {
 	/**
 	 * Mögliche CSV-files anzeigen, eines selektieren
 	 */
-	private void showCsvFiles() {
+	private void showFiles() {
 		// prüfen, ob eintrag im Feld directory
 		if (mDirPath.getText() == null) {
-			JOptionPane.showMessageDialog(this, "CSV-file name fehlt", "CSV einlesen", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Directory fehlt", "Buchungen einlesen", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -376,7 +387,12 @@ public class CsvReaderKeywordFrame extends JFrame {
 				Config.sCsvFileName = mDirPath.getText();
 				JFileChooser chooser = new JFileChooser();
 				chooser.setCurrentDirectory(file);
-				chooser.setFileFilter(new FileNameExtensionFilter("CSV", "csv"));
+				if (mCompany.getDocType() == CsvCompany.docTypeCsv) {
+					chooser.setFileFilter(new FileNameExtensionFilter("CSV", "csv"));
+				}
+				else {
+					chooser.setFileFilter(new FileNameExtensionFilter("PDF", "pdf"));
+				}
 				int returnValue = chooser.showOpenDialog(this);
 				if ((returnValue == JFileChooser.APPROVE_OPTION)) {
 					file = chooser.getSelectedFile();
@@ -388,11 +404,11 @@ public class CsvReaderKeywordFrame extends JFrame {
 				}
 			} else {
 				JOptionPane.showMessageDialog(this, "'" + mDirPath.getText() + "' ist kein Directory",
-						"CSV Datei selektieren", JOptionPane.ERROR_MESSAGE);
+						"Buchungen einlesen", JOptionPane.ERROR_MESSAGE);
 
 			}
 		} catch (FibuRuntimeException ex) {
-			JOptionPane.showMessageDialog(this, ex.getMessage(), "CSV einlesen", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, ex.getMessage(), "Buchungen einlesen", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 	}
@@ -534,8 +550,15 @@ public class CsvReaderKeywordFrame extends JFrame {
 		 */
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			if (columnIndex > 3) {
-				return false;
+			if (mKeywordData.getVersion() <= 2) {
+				if (columnIndex > 2) {
+					return false;
+				}
+			}
+			else {
+				if (columnIndex > 3) {
+					return false;
+				}
 			}
 			return true;
 		}

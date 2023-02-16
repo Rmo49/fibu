@@ -37,14 +37,6 @@ public class CsvParserCs extends CsvParserBase {
 	}
 	
 	/**
-	 * Das verwendete Datumsformat.
-	 */
-	@Override
-	protected DateFormat getDateFormat() {
-		return mDateFormat;
-	}
-
-	/**
 	 * Buchungstest lesen, diesen evt. anpassen.
 	 * @param buchung
 	 */
@@ -55,6 +47,14 @@ public class CsvParserCs extends CsvParserBase {
 		}
 	}
 	
+	/**
+	 * Das verwendete Datumsformat.
+	 */
+	@Override
+	protected DateFormat getDateFormat() {
+		return mDateFormat;
+	}
+
 	/**
 	 * Erster Teil bis zum ersten Komma entfernen, wenn bestimmte Werte enthält.
 	 * Sonst Leezeichen entfernen
@@ -106,44 +106,44 @@ public class CsvParserCs extends CsvParserBase {
 		if (lineValues[mBetragCol] != null && lineValues[mBetragCol].length() > 1) {
 			// ist eine Belastung
 			buchung.setBetrag(lineValues[mBetragCol]);
-			buchung.setHaben(getKontoNrDefault());
+			buchung.setHaben(mCompany.getKontoNrDefault());
 		}
 		if (lineValues[mBetragCol+1] != null && lineValues[mBetragCol+1].length() > 1) {
 			// ist eine Gutschrift
 			buchung.setBetrag(lineValues[mBetragCol+1]);
-			buchung.setSoll(getKontoNrDefault());
+			buchung.setSoll(mCompany.getKontoNrDefault());
 		}
 	}
 
 	/**
 	 * Die ID der Company
 	 */
-	@Override
-	protected int getCompanyId() {
-		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
-		try {
-			return companyData.readData(CsvParserBase.companyNameCS).getCompanyID();
-		}
-		catch (FibuException ex){
-			// do nothing
-		}
-		return 0;
-	}
+//	@Override
+//	protected int getCompanyId() {
+//		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
+//		try {
+//			return companyData.readData(CsvParserBase.companyNameCS).getCompanyID();
+//		}
+//		catch (FibuException ex){
+//			// do nothing
+//		}
+//		return 0;
+//	}
 
 	/**
 	 * Die standard KontoNr
 	 */
-	@Override
-	protected String getKontoNrDefault() {
-		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
-		try {
-			return companyData.readData(CsvParserBase.companyNameCS).getKontoNrDefault();
-		}
-		catch (FibuException ex){
-			// do nothing
-		}
-		return "";
-	}
+//	@Override
+//	protected String getKontoNrDefault() {
+//		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
+//		try {
+//			return companyData.readData(CsvParserBase.companyNameCS).getKontoNrDefault();
+//		}
+//		catch (FibuException ex){
+//			// do nothing
+//		}
+//		return "";
+//	}
 
 	/**
 	 * Den encoding string, muss von CS oder Postfinance gesetzt werden.

@@ -8,7 +8,7 @@ import java.util.EventObject;
  * Event-Klasse für die Notifikation der KontoListe
  */
 public class KontoEvent extends EventObject {
-	
+
 	private static final long serialVersionUID = 3615826658264857078L;
 	private String mKtoNr;
 

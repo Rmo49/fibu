@@ -26,7 +26,7 @@ import com.rmo.fibu.view.util.DoubleRenderer;
 
 
 /** Die Anzeige der Buchungsliste.
- * Aufbau: 
+ * Aufbau:
  * @author Ruedi
  *
  */
@@ -45,9 +45,9 @@ public class BuchungListFrame
 	private BuchungData     mBuchungData = null;
 	/** Das Model zur Tabelle */
 	private BuchungModel    mBuchungModel;
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public BuchungListFrame(BuchungView parent) {
 		// title resizable closable maximizable iconifiable
@@ -55,7 +55,7 @@ public class BuchungListFrame
 		mBuchungView = parent;
 		init();
 	}
-	
+
 	//	----- Initialisierung ------------------------------------------------
 	 /**
 	  * Start der Initialisierung, muss von jedem Konstruktor aufgerufen werden.
@@ -66,7 +66,7 @@ public class BuchungListFrame
 		 initView();
 	 }
 
-	/** Initialisierung der View: 
+	/** Initialisierung der View:
 	 */
 	private void initView() {
 		Trace.println(2,"BuchungListFrame.initView()");
@@ -124,7 +124,7 @@ public class BuchungListFrame
 		// TODO zuerst testen, ob was selektiert, wenn nicht Fehlermeldung
 		mBuchungView.showPopup(e);
 	}
-	
+
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		mBuchungView.showPopup(e);
@@ -133,16 +133,16 @@ public class BuchungListFrame
 	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
-	
+
 	@Override
 	public void mouseExited(MouseEvent e) {
 	}
-	
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
-	
-	
+
+
 	@Override
 	public void componentResized(ComponentEvent e) {
 		// do nothing
@@ -150,7 +150,7 @@ public class BuchungListFrame
 
 	@Override
 	public void componentMoved(ComponentEvent e) {
-		// do nothing	
+		// do nothing
 	}
 
 	@Override
@@ -161,7 +161,7 @@ public class BuchungListFrame
 	@Override
 	public void componentHidden(ComponentEvent e) {
 		// do nothing
-		
+
 	}
 
 	//--- Steuerung der Anzeige ----------------------
@@ -175,7 +175,7 @@ public class BuchungListFrame
 		JScrollBar bar = mBuchungScroller.getVerticalScrollBar();
 		bar.setValue( bar.getMaximum() );
 	}
-	
+
 	/** Zeigt die Zeile mit der rowNr an */
 	public void showRow(int rowNr) {
 		JScrollBar bar = mBuchungScroller.getVerticalScrollBar();
@@ -195,7 +195,7 @@ public class BuchungListFrame
 
 
 	//--- Zugriff auf die Daten	-------------------------
-	
+
 	/** Gibt den Inhalt der Letzten Buchung zurück */
 	public Buchung getLastBuchung() {
 		Trace.println(3,"BuchungListFrame.getLastBuchung()");
@@ -209,7 +209,7 @@ public class BuchungListFrame
 		}
 		catch (ParseException e) {}
 		catch (BuchungValueException e) {} // nix machen
-		
+
 		//--- letzt Beleg-Nr berechnen
 		Iterator<Buchung> buchungIter = mBuchungData.getIterator();
 		String lBeleg = new String("");
@@ -235,7 +235,7 @@ public class BuchungListFrame
 	public int[] getSelectedRows() {
 		return mBuchungTable.getSelectedRows();
 	}
-	
+
 	/** Gibt den Wert einer Buchung an der Koordinate row / col zurück.
 	 * @param row die Zeile im Model
 	 * @param col die Spalte
@@ -251,7 +251,7 @@ public class BuchungListFrame
 	public Object getValueAt(int row, int col) {
 		return mBuchungModel.getValueAt(row, col);
 	}
-	
+
 	/**
 	 * Anzahl Buchungen
 	 * @return
@@ -259,7 +259,7 @@ public class BuchungListFrame
 	public int getRowCount() {
 		return mBuchungTable.getRowCount();
 	}
-	
+
 	public JScrollPane getScroller() {
 		return mBuchungScroller;
 	}

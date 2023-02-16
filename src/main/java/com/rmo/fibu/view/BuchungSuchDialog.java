@@ -1,11 +1,12 @@
 package com.rmo.fibu.view;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,9 +31,9 @@ import com.rmo.fibu.util.Trace;
 public class BuchungSuchDialog extends JDialog {
 
 	private static final long serialVersionUID = -5377839122390325204L;
-	private static int SUCH_BREITE = 300;
-	private static int SUCH_HOEHE = 150;
-	
+	private static int SUCH_BREITE = 200;
+	private static int SUCH_HOEHE = 200;
+
 	/** Die Verbindung zur Buchung-View */
 	private BuchungView			mBuchungView;
 	// Eingabefelder
@@ -42,7 +43,7 @@ public class BuchungSuchDialog extends JDialog {
 	private JTextField      	mBetragBis;
 	private JButton         	mButtonSearch;
 	private JButton         	mButtonCancel;
-	
+
 	// Die Nummer der Row in der gesucht wird
 	private int             	mSerachRow = 0;
 
@@ -61,11 +62,12 @@ public class BuchungSuchDialog extends JDialog {
 
 	private void init() {
 		Trace.println(3,"BuchungSuchPanel.init()");
-		JPanel lPanel = new JPanel(new GridLayout(1, 2));
+		JPanel lPanel = new JPanel(new BorderLayout());
 		this.getContentPane().add(lPanel);
-		lPanel.add(initEingabe());
-		lPanel.add(initButtons());
-		
+		lPanel.add(initEingabe(), BorderLayout.CENTER);
+		lPanel.add(initButtons(), BorderLayout.PAGE_END);
+
+
 		//--- Border
 		lPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		initListeners();
@@ -83,84 +85,100 @@ public class BuchungSuchDialog extends JDialog {
 		JPanel lPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
-		int y = 0;
+		int zeile = 0;
 		JLabel lLabel;
+		lLabel = new JLabel("");
+		c.weightx = 1.0;
+		c.gridx = 0;
+		c.gridy = zeile;
+		lPanel.add(lLabel, c);
+		lLabel = new JLabel("");
+		c.gridx = 1;
+		c.gridy = zeile;
+		lPanel.add(lLabel, c);
+		lLabel = new JLabel("");
+		c.gridx = 2;
+		c.gridy = zeile;
+		lPanel.add(lLabel, c);
+
+		zeile++;
 		lLabel = new JLabel("Text");
 		lLabel.setFont(Config.fontTextBold);
 		lLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+		c.weightx = 1.0;
 		c.gridx = 0;
-		c.gridy = y;
+		c.gridy = zeile;
 		lPanel.add(lLabel, c);
 
 		mSuchText = new JTextField();
 		mSuchText.setFont(Config.fontTextBold);
-		c.weightx = 1.0;
+		c.gridwidth = 2;
+		c.weightx = 3.0;
 		c.gridx = 1;
-		c.gridy = y;
+		c.gridy = zeile;
 		lPanel.add(mSuchText, c);
 
-		y++;
+		zeile++;
 		lLabel = new JLabel("Beleg");
 		lLabel.setFont(Config.fontTextBold);
 		lLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
+		c.gridwidth = 1;
 		c.weightx = 0.2;
 		c.gridx = 0;
-		c.gridy = y;
-		lPanel.add(lLabel, c);		
-		
+		c.gridy = zeile;
+		lPanel.add(lLabel, c);
+
 		mSuchBeleg = new JTextField();
 		mSuchBeleg.setFont(Config.fontTextBold);
 		c.weightx = 1.0;
 		c.gridx = 1;
-		c.gridy = y;
+		c.gridy = zeile;
 		lPanel.add(mSuchBeleg, c);
-		
-		y++;
+
+		zeile++;
 		lLabel = new JLabel("Betrag von");
 		lLabel.setFont(Config.fontTextBold);
 		lLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
 		c.weightx = 0.2;
 		c.gridx = 0;
-		c.gridy = y;
-		lPanel.add(lLabel, c);		
-		
+		c.gridy = zeile;
+		lPanel.add(lLabel, c);
+
 		mBetragVon = new JTextField();
 		mBetragVon.setFont(Config.fontTextBold);
 		c.weightx = 1.0;
 		c.gridx = 1;
-		c.gridy = y;
+		c.gridy = zeile;
 		lPanel.add(mBetragVon, c);
-		
-		y++;
+
+		zeile++;
 		lLabel = new JLabel("bis");
 		lLabel.setFont(Config.fontTextBold);
 		lLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
 		c.weightx = 0.2;
 		c.gridx = 0;
-		c.gridy = y;
-		lPanel.add(lLabel, c);		
-		
+		c.gridy = zeile;
+		lPanel.add(lLabel, c);
+
 		mBetragBis = new JTextField();
 		mBetragBis.setFont(Config.fontTextBold);
 		c.weightx = 1.0;
 		c.gridx = 1;
-		c.gridy = y;
+		c.gridy = zeile;
 		lPanel.add(mBetragBis, c);
-		
+
 		return lPanel;
 	}
-	
+
 	/** Buttons initialisieren */
 	private Component initButtons() {
 		JPanel lButtonPane = new JPanel();
-		lButtonPane.setLayout(new GridLayout(2, 1, 10, 5));
+		lButtonPane.setLayout(new FlowLayout());
 		mButtonSearch = new JButton("Suchen");
 		mButtonSearch.setFont(Config.fontTextBold);
-		mButtonSearch.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lButtonPane.add(mButtonSearch);
 		mButtonCancel = new JButton("Abbrechen");
 		mButtonCancel.setFont(Config.fontTextBold);
-		mButtonCancel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		lButtonPane.add(mButtonCancel);
 		lButtonPane.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		return lButtonPane;
@@ -230,7 +248,7 @@ public class BuchungSuchDialog extends JDialog {
 	public void setXY (int x, int y) {
 		this.setLocation(x, y);
 	}
-	
+
 	/** Search-Button wurde gedrückt.
 	 *  Herausfinden welche Felder gesetzt sind.
 	 *  Nach Buchungen mit diesem Inhalt suchen, wenn das 2. mal gedrückt weitersuchen.
@@ -239,7 +257,7 @@ public class BuchungSuchDialog extends JDialog {
 		Trace.println(3, "SearchButton->actionPerformed()");
 		mSerachRow++;
 		BuchungListFrame lBuchungListe = mBuchungView.getBuchungListe();
-		
+
 		// Nach Text suchen, falls eingegeben
 		if ( mSuchText.getText() != null && mSuchText.getText().length() > 0) {
 			while (mSerachRow < lBuchungListe.getRowCount() ) {
@@ -257,7 +275,7 @@ public class BuchungSuchDialog extends JDialog {
 					"Suchen", JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
-		
+
 		// Nach Beleg suchen, falls eingegeben
 		if (mSuchBeleg.getText() != null && mSuchBeleg.getText().length() > 0) {
 			while (mSerachRow < lBuchungListe.getRowCount() ) {
@@ -275,10 +293,10 @@ public class BuchungSuchDialog extends JDialog {
 					"Suchen", JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
-	
+
 		// Nach Betrag suchen, falls eingegeben
 		double betragVon = -1;
-		double betragBis = -1;	
+		double betragBis = -1;
 		if (mBetragVon.getText() != null && mBetragVon.getText().length() > 0) {
 			betragVon = parseBetrag(mBetragVon.getText());
 		}
@@ -289,14 +307,14 @@ public class BuchungSuchDialog extends JDialog {
 			if (betragBis < 0) {
 				betragBis = 999999999;
 			}
-			while (mSerachRow < lBuchungListe.getRowCount() ) {	
+			while (mSerachRow < lBuchungListe.getRowCount() ) {
 				Double betrag = (Double) lBuchungListe.getValueAt(mSerachRow, 5);
 				// gefunden
 				if ( (betrag >= betragVon) && (betrag <= betragBis) ) {
 					lBuchungListe.setRowSelectionInterval(mSerachRow, mSerachRow);
 					// die selektierte Zeile sichtbar machen
 					lBuchungListe.showRow(mSerachRow);
-					return;					
+					return;
 				}
 				mSerachRow++;
 			}
@@ -314,7 +332,7 @@ public class BuchungSuchDialog extends JDialog {
 	 */
 	private double parseBetrag(String text) {
 		try {
-			return Double.parseDouble(text); 
+			return Double.parseDouble(text);
 		}
 		catch (NumberFormatException ex) {
 			return -1;

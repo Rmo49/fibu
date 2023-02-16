@@ -122,7 +122,7 @@ private class KontoPrinterModel implements KontoListPrinterModel
 		mKontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
 	}
 
-	/** Der Iterator, der verwendet werden muss 
+	/** Der Iterator, der verwendet werden muss
 	 * um über alle Konti zu Iterieren*/
 //	public Iterator<Konto> getIterator() {
 //		return mKontoData.getIterator();
@@ -137,7 +137,7 @@ private class KontoPrinterModel implements KontoListPrinterModel
 
 	/** Die Kopfzeile, wir linksbündig angezeigt.
 	 * @param kontoNr die gewählte Kontonummer
-	 *  @param number die Zeilennummer 
+	 *  @param number die Zeilennummer
 	 * */
 	@Override
 	public String getHeader(int kontoNr, int number) {
@@ -181,8 +181,7 @@ private class KontoPrinterModel implements KontoListPrinterModel
 	 *  hier angeben, wenn Ueberschrift auch rechtsbündig sein soll */
 	@Override
 	public boolean getColRight(int columnIndex) {
-		if (columnIndex == 1) return true;
-		if (columnIndex >= 4) return true;
+		if ((columnIndex == 1) || (columnIndex >= 4)) return true;
 		return false;
 	}
 
@@ -209,9 +208,9 @@ private class KontoPrinterModel implements KontoListPrinterModel
 		return getBuchungTable(kontoNr).getValueAt(row, col);
 	}
 
-	/** Setzt das BuchungsModel auf das geforderte Konto 
+	/** Setzt das BuchungsModel auf das geforderte Konto
 	 * falls nicht identisch mit dem Vorgänger.
-	 * @param kontoNr 
+	 * @param kontoNr
 	 * @return
 	 */
 	private BuchungOfKontoModel getBuchungTable(int kontoNr) {

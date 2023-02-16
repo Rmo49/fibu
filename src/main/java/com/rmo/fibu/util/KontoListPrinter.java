@@ -107,7 +107,7 @@ public int print(Graphics g, PageFormat pf, int pageIndex) throws PrinterExcepti
 	colSumme = new double [printerModel.getColCount()];
 	// absulute Cols berechnen
 	setColStartX(g2, pf);
-	
+
 	int lPageIndex = 0;
 	mPrintedRows = 0;
 	mVectorNr = 0;
@@ -134,7 +134,7 @@ private void printPage(Graphics2D g, boolean printing) {
 	String bool = "false";
 	if (printing) bool = "true";
 	Trace.println(4, "KontoListPrinter.printPage(printing: " + bool +")");
-	
+
 	// erste Position auf der Seite
 	yPos = Config.printerTitelFont.getSize2D();
 	// durchlaufen bis alle Konto einer Seite gedruckt sind
@@ -228,7 +228,7 @@ private void printTable(Graphics2D g, boolean printing) {
 			}
 			yPos += 2;
 		}
-		
+
 		if ( mPrintedRows >= printerModel.getRowCount(mKontoNr)) {
 			mKontoPrinted = true;
 			break;
@@ -358,7 +358,7 @@ private void printSumme(Graphics2D g, boolean printing) {
 	}
 }
 
-/** Strich, über der Spalten mit Summe 
+/** Strich, über der Spalten mit Summe
  * @param yLine die y-Position der Linie */
 private void printSummeLine(Graphics2D g, int yLine) {
 	for( int colNr = 0; colNr < printerModel.getColCount(); colNr++ ) {
@@ -437,7 +437,7 @@ private float spaceBetweenKonto() {
 	return spaceForOneRow() * 5;
 }
 
-/** Bereich zwischen 2 Kontos 
+/** Bereich zwischen 2 Kontos
  * Titel + Anzahl Zeilen */
 private float spaceMinimumForKonto() {
 	return (2*Config.printerTitelFont.getSize2D()) + (4*spaceForOneRow());

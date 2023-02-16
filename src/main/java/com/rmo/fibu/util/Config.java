@@ -40,11 +40,11 @@ public class Config {
 	public static String sDefaultDir;
 	private static final String sCsvFileNameToken = "fibu.csv.filename";
 	public static String sCsvFileName;
-	
+
 	// Alle Namen der bisher geöffneten Fibus, wird von Config eingelesen
 	private static final String sFibuNamesToken = "fibu.list";
 	private static DefaultListModel<String> sFibuNames;
-	
+
 	public static boolean sConfigError = false;
 
 	public static int traceLevel = 3;
@@ -75,7 +75,7 @@ public class Config {
 	public static java.awt.Font printerNormalFont = new java.awt.Font("Arial", 0, 10);
 	public static java.awt.Font fontText;
 	public static java.awt.Font fontTextBold;
-	
+
 
 	// ----- Variable pro Buchhaltung ------------------------------------------
 	// Der DB-Name der Fibu
@@ -89,36 +89,40 @@ public class Config {
 
 	// ----- View --------------------------------------------------------------
 	// ---- Windows Grösse und Positon
-	private static final String sWinBuchung = "window.buchung";	
+	private static final String sWinBuchung = "window.buchung";
 	public static Point winBuchungLoc;
 	public static Dimension winBuchungDim;
 
-	private static final String sWinKontoblatt = "window.kontoblatt";	
+	private static final String sWinKontoblatt = "window.kontoblatt";
 	public static Point winKontoblattLoc;
 	public static Dimension winKontoblattDim;
 
-	private static final String sWinKontoplan = "window.kontoplan";	
+	private static final String sWinKontoplan = "window.kontoplan";
 	public static Point winKontoplanLoc;
 	public static Dimension winKontoplanDim;
 
-	private static final String sWinBilanzen = "window.bilanzen";	
+	private static final String sWinBilanzen = "window.bilanzen";
 	public static Point winBilanzenLoc;
 	public static Dimension winBilanzenDim;
 
-	private static final String sWinCsvSetup = "window.CsvSetup";	
+	private static final String sWinCsvSetup = "window.CsvSetup";
 	public static Point winCsvSetupLoc;
 	public static Dimension winCsvSetupDim;
 
-	private static final String sWinCsvReaderKeyword = "window.CsvReaderKeyword";	
+	private static final String sWinPdfSetup = "window.PdfSetup";
+	public static Point winPdfSetupLoc;
+	public static Dimension winPdfSetupDim;
+
+	private static final String sWinCsvReaderKeyword = "window.CsvReaderKeyword";
 	public static Point winCsvReaderKeywordLoc;
 	public static Dimension winCsvReaderKeywordDim;
 
-	private static final String sWinCsvReaderBuchung = "window.CsvReaderBuchung";	
+	private static final String sWinCsvReaderBuchung = "window.CsvReaderBuchung";
 	public static Point winCsvReaderBuchungLoc;
 	public static Dimension winCsvReaderBuchungDim;
 	public static final String sCsvTextLenToken = "fibu.csv.buchungText.length";
 	public static int sCsvTextLen = 30;
-	
+
 
 	// --- die Grösse des Textes
 	public static final String WindowTextSizeToken = "window.size.text";
@@ -187,7 +191,7 @@ public class Config {
 		mProperties.setProperty(traceLevelToken, Integer.toString(traceLevel));
 
 		traceTimestamp = readBoolean(traceTimestampToken);
-		
+
 		sDefaultDir = mProperties.getProperty(sDefaultDirToken);
 		if (sDefaultDir == null) {
 			sDefaultDir="form: F:/Doku/Ruedi/Java/Fibu";
@@ -204,14 +208,14 @@ public class Config {
 			sCsvTextLen = temp;
 		}
 		mProperties.setProperty(sCsvTextLenToken, Integer.toString(sCsvTextLen));
-		
+
 		sFibuNames = readList(mProperties.getProperty(sFibuNamesToken), ",");
 		if (sFibuNames == null) {
-			sFibuNames = new DefaultListModel<String>();
+			sFibuNames = new DefaultListModel<>();
 			sFibuNames.addElement("FibuLeer");
 			mProperties.setProperty(sFibuNamesToken, "FibuLeer,");
 		}
-		
+
 		float tempF = 0;
 		tempF = readFloat(printerRandLinksToken);
 		if (tempF >= 0F) {
@@ -247,7 +251,7 @@ public class Config {
 		}
 		else {
 			mProperties.setProperty(printerColAbstandToken, Float.toString(printerColAbstand));
-			
+
 		}
 		tempF = readFloat(printerRowAbstandToken);
 		if (tempF >= 0F) {
@@ -255,14 +259,14 @@ public class Config {
 		}
 		else {
 			mProperties.setProperty(printerRowAbstandToken, Float.toString(printerRowAbstand));
-		}		
+		}
 		tempF = readFloat(printerHeaderAbstandToken);
 		if (tempF >= 0F) {
 			printerHeaderAbstand = tempF;
 		}
 		else {
 			mProperties.setProperty(printerHeaderAbstandToken, Float.toString(printerHeaderAbstand));
-		}		
+		}
 		tempF = readFloat(printerSummeAbstandToken);
 		if (tempF >= 0F) {
 			printerSummeAbstand = tempF;
@@ -270,17 +274,18 @@ public class Config {
 		else {
 			mProperties.setProperty(printerSummeAbstandToken, Float.toString(printerSummeAbstand));
 		}
-		
+
 		// --- Fenster einlesen
 		readWindowBuchung();
 		readWindowKontoblatt();
 		readWindowKontoplan();
 		readWindowBilanzen();
-		
+
 		readWindowCsvSetup();
+		readWindowPdfSetup();
 		readWindowCsvReaderKeyword();
 		readWindowCsvReaderBuchung();
-		
+
 		// --- Size von Text, Menu, Buttons
 		windowTextSize = readInt(WindowTextSizeToken);
 		if (windowTextSize < 1) {
@@ -315,7 +320,7 @@ public class Config {
 		if (dbUrl == null) {
 			dbUrl="jdbc:mysql://localhost:3307/";
 			mProperties.setProperty(dbUrlToken, "jdbc:mysql://localhost:3307/");
-		}		
+		}
 	}
 
 	/** java.awt.Fonts initialisieren */
@@ -323,7 +328,7 @@ public class Config {
 		fontText = new java.awt.Font(java.awt.Font.DIALOG, java.awt.Font.PLAIN, Config.windowTextSize);
 		fontTextBold = new java.awt.Font(java.awt.Font.DIALOG, java.awt.Font.BOLD, Config.windowTextSize);
 	}
-	
+
 	/** Alle Properites in das File schreiben */
 	public static void writeProperties() throws FibuException {
 		Trace.println(0, "Config.writeProperties()");
@@ -361,20 +366,20 @@ public class Config {
 	 */
 	private static void sortPorperties() {
 		Enumeration<Object> properityKeys = mProperties.keys();
-		mPropertyList = new Vector<Object>();
+		mPropertyList = new Vector<>();
 		while (properityKeys.hasMoreElements()) {
 			mPropertyList.add(properityKeys.nextElement());
 		}
-		
+
 		Collections.sort(mPropertyList, new Comparator <Object>() {
 			@Override
 			public int compare(Object o1, Object o2) {
 				return o1.toString().compareTo(o2.toString());
 			}
 		});
-		
+
 	}
-	
+
 
 	/**
 	 * Alle einträge der Fibu-Liste lesen, diese in das Model der JList
@@ -386,7 +391,7 @@ public class Config {
 			return null;
 		}
 		// zuerst Model anlengen
-		DefaultListModel<String> stringList = new DefaultListModel<String>();
+		DefaultListModel<String> stringList = new DefaultListModel<>();
 		StringTokenizer lToken = new StringTokenizer(property, separtor);
 		while (lToken.hasMoreTokens()) {
 			String zeile = lToken.nextToken().trim();
@@ -396,12 +401,12 @@ public class Config {
 		}
 		return stringList;
 	}
-	
-	
+
+
 	/**
 	 * FibuListe in das Property scheiben
 	 */
-	private static void writeList(DefaultListModel<String> stringList, String separtor, String propertyName) 
+	private static void writeList(DefaultListModel<String> stringList, String separtor, String propertyName)
 			throws FibuException {
 		Trace.println(3, "Config.writeList()");
 		if (stringList== null || stringList.isEmpty()) {
@@ -485,7 +490,7 @@ public class Config {
 	}
 
 	/**
-	 * Position und Grösse des Windows 
+	 * Position und Grösse des Windows
 	 */
 	private static void readWindowCsvSetup() throws FibuException {
 		winCsvSetupDim = readWindowDimension(sWinCsvSetup);
@@ -493,9 +498,18 @@ public class Config {
 		writeWindowCsvSetup();
 	}
 
-
 	/**
-	 * Position und Grösse des Windows 
+	 * Position und Grösse des Windows
+	 */
+	private static void readWindowPdfSetup() throws FibuException {
+		winPdfSetupDim = readWindowDimension(sWinPdfSetup);
+		winPdfSetupLoc= readWindowPoint(sWinPdfSetup);
+		writeWindowPdfSetup();
+	}
+
+	
+	/**
+	 * Position und Grösse des Windows
 	 */
 	private static void readWindowCsvReaderKeyword() throws FibuException {
 		winCsvReaderKeywordDim = readWindowDimension(sWinCsvReaderKeyword);
@@ -508,6 +522,13 @@ public class Config {
 	 */
 	private static void writeWindowCsvSetup() throws FibuException {
 		writeWindowConfig(sWinCsvSetup, winCsvSetupLoc, winCsvSetupDim);
+	}
+
+	/**
+	 * Position und Grösse des Windows in das Property schreiben
+	 */
+	private static void writeWindowPdfSetup() throws FibuException {
+		writeWindowConfig(sWinPdfSetup, winPdfSetupLoc, winPdfSetupDim);
 	}
 
 	/**
@@ -575,7 +596,7 @@ public class Config {
 		writeInt(winName + ".width", (int) dim.getWidth());
 		writeInt(winName + ".height", (int) dim.getHeight());
 	}
-	
+
 
 	/** Einen boolean-Werte von den Properties lesen */
 	private static boolean readBoolean(String property) throws FibuException {
@@ -677,11 +698,11 @@ public class Config {
 	public static void setDbName(String dbName) {
 		mDBname = dbName;
 	}
-	
+
 	public static DefaultListModel<String> getFibuList(){
 		return sFibuNames;
 	}
-	
+
 	public static void addFibuToList(String fibuName) {
 		sFibuNames.addElement(fibuName);
 	}
@@ -699,7 +720,7 @@ public class Config {
 			}
 	     }
 	}
-	
+
 	/** Adds 1 to a String ending with 0..9.
 	 *  Or a letter when endig a..z / A..Z (not implemented) */
 	public static String addOne(String pBelegNr) {

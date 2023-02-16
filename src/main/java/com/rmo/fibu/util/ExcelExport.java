@@ -1,8 +1,8 @@
 package com.rmo.fibu.util;
 
 import java.awt.print.PrinterException;
-import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import javax.swing.table.TableModel;
@@ -20,9 +20,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * Exportieren einer Tabelle nach Excel
- * 
+ *
  * @author Ruedi
- * 
+ *
  */
 public class ExcelExport {
 	// Das Model der Tabelle, immer über getTabelModel lesen
@@ -51,7 +51,7 @@ public class ExcelExport {
 
 	/**
 	 * Setzt das Feld nur, wenn Betrag >= 0
-	 * 
+	 *
 	 * @param row
 	 *            die Zeile
 	 * @param rowNr
@@ -68,7 +68,7 @@ public class ExcelExport {
 
 	/**
 	 * Speichern in Datei.
-	 * 
+	 *
 	 * @param kontoNr
 	 * @throws PrinterException
 	 */
@@ -106,7 +106,7 @@ public class ExcelExport {
 
 	/**
 	 * Speichern in Datei.
-	 * 
+	 *
 	 * @param kontoNr
 	 * @throws PrinterException
 	 */

@@ -224,6 +224,10 @@ public class CsvKeyKontoData extends DataBase {
 		mMaxRows--;
 	}
 
+	public void resetVersion() {
+		mVersion = 0;
+	}
+	
 	/**
 	 * Die Version, abhängig von der Anzahl Felder in der DB
 	 * 1: companyID, SuchWort, KontoNr, SH

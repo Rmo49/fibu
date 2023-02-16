@@ -37,6 +37,7 @@ import javax.swing.SwingConstants;
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.FibuRuntimeException;
 import com.rmo.fibu.model.BuchungData;
+import com.rmo.fibu.model.CsvCompany;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.DbConnection;
 import com.rmo.fibu.model.FibuData;
@@ -49,7 +50,7 @@ import com.rmo.fibu.util.Trace;
 /**
  * Fibu Start-View. Auswahl der Fibu-DB, setzen der Parameauter und starten der
  * Unterprogramme. Diese View wurde mit dem Painter von JBuilder erstellt.
- * 
+ *
  * @author R. Moser
  * @version  (Drucker-Font: Arial)
  */
@@ -61,7 +62,7 @@ public class FibuView extends JFrame
 
 	private final int	FENSTER_BREITE = 300;
 	private final int	FENSTER_HOEHE = 420;
-	
+
 	private final int	FIBU_LIST_BREITE = 150;
 	private final int	FIBU_LIST_HOEHE = 200;
 
@@ -82,7 +83,8 @@ public class FibuView extends JFrame
 	JButton btnKontoblatt = new JButton();
 	JButton btnBuchung = new JButton();
 	JButton btnClose = new JButton();
-	
+	JButton btnTest = new JButton();
+
 	// --- Die Liste mit allen Fibus
 	JList<String> jListFibu;
 	// --- Button für die Liste Steuerung
@@ -207,11 +209,23 @@ public class FibuView extends JFrame
 				closeFibuAction(e);
 			}
 		});
+		btnTest.setEnabled(false);
+		btnTest.setFont(Config.fontTextBold);
+		btnTest.setToolTipText("");
+		btnTest.setText("Test");
+		btnTest.addActionListener(new java.awt.event.ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				testAction(e);
+			}
+		});
+
 		lPanel.add(btnOpen, null);
 		lPanel.add(btnClose, null);
 		lPanel.add(btnBuchung, null);
 		lPanel.add(btnKontoblatt, null);
 		lPanel.add(btnKontoplan, null);
+		lPanel.add(btnTest, null);
 		return lPanel;
 	}
 
@@ -224,7 +238,7 @@ public class FibuView extends JFrame
 		label.setFont(Config.fontTextBold);
 		box.add(label);
 		// box.add(Box.createVerticalStrut(5));
-		jListFibu = new JList<String>();
+		jListFibu = new JList<>();
 		jListFibu.setFont(Config.fontTextBold);
 		jListFibu.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jListFibu.setSelectedIndex(0);
@@ -236,10 +250,10 @@ public class FibuView extends JFrame
 		this.setSize(new Dimension(breite, hoehe));
 		scrollPane.setPreferredSize(new Dimension(breite, hoehe));
 		box.add(scrollPane);
-		
+
 		final JPanel upPanel = new JPanel();
 		upPanel.setLayout(new FlowLayout());
-		
+
 		btnUp.setFont(Config.fontTextBold);
 		btnUp.setText("up");
 		btnUp.setActionCommand(upString);
@@ -358,7 +372,7 @@ public class FibuView extends JFrame
 				mnuNeuAction(e);
 			}
 		});
-		
+
 		mnuFibu2.setFont(Config.fontTextBold);
 		mnuFibu2.setEnabled(false);
 		mnuFibu2.setText("Daten von alter Fibu kopieren");
@@ -458,6 +472,13 @@ public class FibuView extends JFrame
 		closeFibu();
 	}
 
+	void testAction (ActionEvent e) {
+		CsvCompany company = new CsvCompany();
+		company.setCompanyName("Cumulus");
+		PdfSetupFrame setup = new PdfSetupFrame(company);
+		setup.leseBuchungsZeileTest();
+	}
+
 	/** überschriebene Methode */
 	@Override
 	public void hide() {
@@ -527,7 +548,7 @@ public class FibuView extends JFrame
 
 	/**
 	 * öffnet die Fibu.
-	 * 
+	 *
 	 * @param dbName
 	 *            der Name der Fibu.
 	 */
@@ -544,7 +565,7 @@ public class FibuView extends JFrame
 			showMessage("Probleme beim Fibu öffnen", ex);
 		}
 	}
-	
+
 	/** Felder der Fibu in der View setzen */
 	private void setFibuDaten(String dbName) {
 		Config.sFibuDbName = dbName;
@@ -553,7 +574,7 @@ public class FibuView extends JFrame
 		tfDatumBis.setText(Config.sDatumBis.toString());
 		FibuData.getFibuData().setFibuName(dbName);
 	}
-	
+
 	/**
 	 * Ist das file von csv noch vorhanden, wenn ja, Frame öffnen
 	 */
@@ -566,7 +587,7 @@ public class FibuView extends JFrame
 
 	/**
 	 * Fibu schliessen, zuerst Stammdaten speichern
-	 * 
+	 *
 	 * @todo: prüfen, ob noch etwas zu speichern ist (Buchung)
 	 */
 	private void closeFibu() {
@@ -578,7 +599,7 @@ public class FibuView extends JFrame
 				DbConnection.close();
 			}
 			else {
-				JOptionPane.showMessageDialog(null, "Kann nicht speichern, da kein Zugriff auf die Datenbank (mehr).", 
+				JOptionPane.showMessageDialog(null, "Kann nicht speichern, da kein Zugriff auf die Datenbank (mehr).",
 						"Fibu schliessen", JOptionPane.ERROR_MESSAGE);
 			}
 			DataBeanContext.removeAll();
@@ -601,6 +622,7 @@ public class FibuView extends JFrame
 		btnKontoblatt.setEnabled(enable);
 		btnKontoplan.setEnabled(enable);
 		btnClose.setEnabled(enable);
+		btnTest.setEnabled(enable);
 		mnuBilanz.setEnabled(enable);
 		mnuAbschluss.setEnabled(enable);
 		mnuJournal.setEnabled(enable);
@@ -791,7 +813,7 @@ public class FibuView extends JFrame
 
 	/**
 	 * Fehler anzeigen
-	 * 
+	 *
 	 * @param ex
 	 *            die Exception
 	 */
@@ -816,7 +838,7 @@ public class FibuView extends JFrame
 	 * the maximum preferred width of the components in that column; height is
 	 * similarly determined for each row. The parent is made just big enough to
 	 * fit them all.
-	 * 
+	 *
 	 * @param rows
 	 *            number of rows
 	 * @param cols
@@ -876,10 +898,11 @@ public class FibuView extends JFrame
 		pCons.setConstraint(SpringLayout.EAST, x);
 	}
 
-	
+
     //Listen for clicks on the up and down arrow buttons.
     class UpDownListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
+        @Override
+		public void actionPerformed(ActionEvent e) {
             //This method can be called only when
             //there's a valid selection,
             //so go ahead and move the list item.
@@ -907,7 +930,7 @@ public class FibuView extends JFrame
             }
         }
     }
-    
+
     //Swap two elements in the list.
     private void swap(int a, int b) {
         String aObject = Config.getFibuList().getElementAt(a);

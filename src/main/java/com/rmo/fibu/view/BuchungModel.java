@@ -18,7 +18,7 @@ public class BuchungModel extends AbstractTableModel {
 	private static final long serialVersionUID = 4355743120074812303L;
 	/** Die Verbindung zur Datenbank */
 	private BuchungData     mBuchungData = null;
-	
+
 public BuchungModel(BuchungData buchungen) {
 	mBuchungData = buchungen;
 }

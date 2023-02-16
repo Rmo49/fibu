@@ -19,7 +19,7 @@ import com.rmo.fibu.util.Trace;
  */
 public class CsvCompanyData extends DataBase {
 	
-	private final String TABLE_NAME = "pdfcompany";
+	private final static String TABLE_NAME = "pdfcompany";
 	
 	/** 
 	 * Das SQL Statement für die Erstellung
@@ -30,10 +30,10 @@ public class CsvCompanyData extends DataBase {
 			 + "`KontoNrDefault` varchar(6) DEFAULT NULL, "
 			 + "`DirPath` varchar(100) DEFAULT NULL );";
 	
-	private final static String ADD_COL_CSVCOMPANY = "ALTER TABLE `pdfcompany`"
+	private final static String ADD_COL_V2 = "ALTER TABLE `pdfcompany`"
 			+ " ADD COLUMN `TypeOfDoc` SMALLINT NULL DEFAULT NULL AFTER `DirPath`;";
 	
-	private final static String SET_INIT_VALUE = "UPDATE `pdfcompany` SET `TypeOfDoc`=1 WHERE `TypeOfDoc` is NULL;";
+	private final static String SET_INIT_V2 = "UPDATE `pdfcompany` SET `TypeOfDoc`=1 WHERE `TypeOfDoc` is NULL;";
 
 	public final static String CREATE_CSVCOMPANY_V2 = "CREATE TABLE `pdfcompany` ("
 			 + "`CompanyID` int AUTO_INCREMENT PRIMARY KEY, "
@@ -41,10 +41,24 @@ public class CsvCompanyData extends DataBase {
 			 + "`KontoNrDefault` varchar(6) DEFAULT NULL, "
 			 + "`DirPath` varchar(100) DEFAULT NULL, "
 			 + "`TypeOfDoc` SMALLINT(6) NULL DEFAULT NULL );";
-			 
 	
-	private final int COLS_V1 = 4;		// Anzahl Cols in der Version 1
+	private final static String ADD_COL_V3 = "ALTER TABLE `" + TABLE_NAME + "`"
+			+ "ADD COLUMN `WordBefore` VARCHAR(25) NULL DEFAULT NULL AFTER `TypeOfDoc`, "
+			+ "ADD COLUMN `SpaltenArray` VARCHAR(20) NULL DEFAULT NULL AFTER `WordBefore`;";
+
+	public final static String CREATE_CSVCOMPANY_V3 = "CREATE TABLE `" + TABLE_NAME + "` ("
+			 + "`CompanyID` int AUTO_INCREMENT PRIMARY KEY, "
+			 + "`CompanyName` varchar(20) NOT NULL, "
+			 + "`KontoNrDefault` varchar(6) DEFAULT NULL, "
+			 + "`DirPath` varchar(100) DEFAULT NULL, "
+			 + "`TypeOfDoc` SMALLINT(6) NULL DEFAULT NULL , "
+			 + "`WordBefore` VARCHAR(25) NULL DEFAULT NULL, "
+			 + "`SpaltenArray` VARCHAR(20) NULL DEFAULT NULL );";
+
+
+	
 	private final int COLS_V2 = 5;		// Anzahl Cols in der Version 2
+	private final int COLS_V3 = 7;		// Anzahl Cols in der Version 3
 	
 			 
 	/**
@@ -90,14 +104,28 @@ public class CsvCompanyData extends DataBase {
 	 */
 	public void checkTableVersion() {
 		try {
-			int colsAnzahl = getNumberOfCols();
-			if (colsAnzahl < COLS_V2) {
-				addColumnV1();
+			if (FibuDataBase.tableExist(TABLE_NAME)) {	
+				int colsAnzahl = getNumberOfCols();
+				
+				if (colsAnzahl < COLS_V2) {
+					addColumnV2();
+				}
+				else {
+					if (colsAnzahl < COLS_V3) {
+						addColumnV3();
+					}
+				}
+			}
+			else {
+				Statement stmt = getConnection().createStatement();
+				stmt.execute(CREATE_CSVCOMPANY_V3);
+				stmt.close();
 			}			
 		} catch (SQLException e) {
 			System.err.println("CsvCompanyData.checkTableVersion: " + e.getMessage());
 		}
 	}
+
 
 
 	/**
@@ -153,7 +181,9 @@ public class CsvCompanyData extends DataBase {
 				mReadSetAll.updateString(2, pCompany.getCompanyName());
 				mReadSetAll.updateString(3, pCompany.getKontoNrDefault());
 				mReadSetAll.updateString(4, pCompany.getDirPath());
-				
+				mReadSetAll.updateInt(5, pCompany.getDocType());
+				mReadSetAll.updateString(6, pCompany.getWordBefore());
+				mReadSetAll.updateString(7, pCompany.getSpaltenArray());
 				mReadSetAll.updateRow();
 			}
 		}
@@ -173,11 +203,7 @@ public class CsvCompanyData extends DataBase {
 		try {
 			if (findRow(companyName)) {
 				mReadSetName.refreshRow();
-				lCompany.setCompanyID(mReadSetName.getInt(1));
-				lCompany.setCompanyName(mReadSetName.getString(2));
-				lCompany.setKontoNrDefault(mReadSetName.getString(3));
-				lCompany.setDirPath(mReadSetName.getString(4));
-				return lCompany;
+				return copyCompanyValues();
 			} else {
 				throw new FibuException("CompanyName: " + companyName);
 			}
@@ -192,15 +218,10 @@ public class CsvCompanyData extends DataBase {
 	 * FibuException geworfen.
 	 */
 	public CsvCompany readData(int companyId) throws FibuException {
-		CsvCompany lCompany = new CsvCompany();
 		try {
 			if (findRow(companyId)) {
 				mReadSetName.refreshRow();
-				lCompany.setCompanyID(mReadSetName.getInt(1));
-				lCompany.setCompanyName(mReadSetName.getString(2));
-				lCompany.setKontoNrDefault(mReadSetName.getString(3));
-				lCompany.setDirPath(mReadSetName.getString(4));
-				return lCompany;
+				return copyCompanyValues();
 			} else {
 				throw new FibuException("CompanyId: " + companyId);
 			}
@@ -221,18 +242,13 @@ public class CsvCompanyData extends DataBase {
 	 */
 	public CsvCompany readAt(int row) throws FibuException {
 		Trace.println(7, "CsvCompanyData.readAt(" + row +")");
-		CsvCompany lCompany = new CsvCompany();
 		mReadSetAll = null;	// zurücksetzen, da nicht von Anfang liest
 
 		try {
 			setupReadSetAll();
 			if (mReadSetAll.absolute(row + 1)) {
 //				mReadSetName.refreshRow();
-				lCompany.setCompanyID(mReadSetAll.getInt(1));
-				lCompany.setCompanyName(mReadSetAll.getString(2));
-				lCompany.setKontoNrDefault(mReadSetAll.getString(3));
-				lCompany.setDirPath(mReadSetAll.getString(4));
-				return lCompany;
+				return copyCompanyValues();
 			} else {
 				throw new FibuException("CsvCompanyData: Zeile nicht gefunden");
 			}
@@ -285,6 +301,22 @@ public class CsvCompanyData extends DataBase {
 	}
 
 	/**
+	 * Die Wert vom ReadSet in das Objekt kopieren
+	 */
+	private CsvCompany copyCompanyValues() throws SQLException {
+		CsvCompany lCompany = new CsvCompany();
+		lCompany.setCompanyID(mReadSetAll.getInt(1));
+		lCompany.setCompanyName(mReadSetAll.getString(2));
+		lCompany.setKontoNrDefault(mReadSetAll.getString(3));
+		lCompany.setDirPath(mReadSetAll.getString(4));
+		lCompany.setDocType(mReadSetAll.getInt(5));
+		lCompany.setWordBefore(mReadSetAll.getString(6));
+		lCompany.setSpaltenArray(mReadSetAll.getString(7));
+		return lCompany;
+	}
+	
+	
+	/**
 	 * Eine neue Zeile (Row) in die Tabelle eintragen. Kopiert die Attribute 
 	 * Objekt PdfKeyword in den ResultSet. Der SQL-String wird zusammengestellt.
 	 */
@@ -305,7 +337,11 @@ public class CsvCompanyData extends DataBase {
 		lQuery.append("', '");
 		lQuery.append(pCompany.getDirPath());
 		lQuery.append("', '");
-		lQuery.append(pCompany.getTypeOfDoc());
+		lQuery.append(pCompany.getDocType());
+		lQuery.append("', '");
+		lQuery.append(pCompany.getWordBefore());
+		lQuery.append("', '");
+		lQuery.append(pCompany.getSpaltenArray());
 		lQuery.append("')");
 		
 		stmt.executeUpdate(lQuery.toString());
@@ -318,7 +354,8 @@ public class CsvCompanyData extends DataBase {
 	 */
 	private void updateRow(CsvCompany pCompany) throws SQLException {
 		StringBuffer sql = new StringBuffer(200);
-		sql.append("UPDATE PdfCompany SET CompanyName = ?, KontoNrDefault = ?, DirPath = ? WHERE CompanyID = ");
+		sql.append("UPDATE PdfCompany SET CompanyName = ?, KontoNrDefault = ?, DirPath = ?, TypeOfDoc = ?,  "
+				+ "WordBefore = ?, SpaltenArray = ? WHERE CompanyID = ");
 		sql.append(pCompany.getCompanyID());
 		sql.append(";");
 	
@@ -326,6 +363,10 @@ public class CsvCompanyData extends DataBase {
 		updateCompany.setString(1, pCompany.getCompanyName());
 		updateCompany.setString(2, pCompany.getKontoNrDefault());
 		updateCompany.setString(3, pCompany.getDirPath());
+		updateCompany.setInt(4, pCompany.getDocType());
+		updateCompany.setString(5, pCompany.getWordBefore());
+		updateCompany.setString(6, pCompany.getSpaltenArray());
+		
 		updateCompany.executeUpdate();
 	}
 	
@@ -348,14 +389,28 @@ public class CsvCompanyData extends DataBase {
 		int columnsNumber = rsmd.getColumnCount();
 		return columnsNumber;
 	}
-
-	private void addColumnV1() throws SQLException {
+	
+	/**
+	 * Version 1 erweitern
+	 * @throws SQLException
+	 */
+	private void addColumnV2() throws SQLException {
 		Statement stmt = getConnection(). createStatement();
-		stmt.execute(ADD_COL_CSVCOMPANY);
-		stmt.execute(SET_INIT_VALUE);
+		stmt.execute(ADD_COL_V2);
+		stmt.execute(SET_INIT_V2);
 		stmt.close();
 	}
-	
+
+	/**
+	 * Version 2 erweitern
+	 * @throws SQLException
+	 */
+	private void addColumnV3() throws SQLException {
+		Statement stmt = getConnection(). createStatement();
+		stmt.execute(ADD_COL_V3);
+		stmt.close();
+	}
+
 	//--- SQL Statements ---------------------------------------------------
 	/**
 	 * Setzt das Statement (Connection zur DB) und den Scroll-Set, der für
@@ -450,6 +505,10 @@ public class CsvCompanyData extends DataBase {
 				lCompany.setCompanyName(mReadSet.getString(2));
 				lCompany.setKontoNrDefault(mReadSet.getString(3));
 				lCompany.setDirPath(mReadSet.getString(4));
+				lCompany.setDocType(mReadSet.getInt(5));
+				lCompany.setWordBefore(mReadSet.getString(6));
+				lCompany.setSpaltenArray(mReadSet.getString(7));
+
 				return lCompany;
 			} catch (SQLException ex) {
 				throw new NoSuchElementException(ex.getMessage());

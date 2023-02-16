@@ -39,7 +39,7 @@ public class BuchungSelectDialog extends JDialog {
 	private JTextField      	mHabenKonto;
 	private JButton         	mButtonSelect;
 	private JButton         	mButtonCancel;
-	
+
 	// Die Nummer der Row in der gesucht wird
 	private int             	mSerachRow = 0;
 
@@ -62,7 +62,7 @@ public class BuchungSelectDialog extends JDialog {
 		this.getContentPane().add(lPanel);
 		lPanel.add(initEingabe(), BorderLayout.CENTER);
 		lPanel.add(initButtons(), BorderLayout.LINE_END);
-		
+
 		//--- Border
 		lPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
 		initListeners();
@@ -80,7 +80,7 @@ public class BuchungSelectDialog extends JDialog {
 		JPanel lPanel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.HORIZONTAL;
-		
+
 		JLabel lLabel;
 		lLabel = new JLabel("Soll Konto");
 		lLabel.setFont(Config.fontTextBold);
@@ -88,7 +88,7 @@ public class BuchungSelectDialog extends JDialog {
 		c.weightx = 0.2;
 		c.gridx = 0;
 		c.gridy = 0;
-		lPanel.add(lLabel, c);		
+		lPanel.add(lLabel, c);
 		lLabel = new JLabel("Haben Konto");
 		lLabel.setFont(Config.fontTextBold);
 		lLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -108,10 +108,10 @@ public class BuchungSelectDialog extends JDialog {
 		c.gridx = 1;
 		c.gridy = 1;
 		lPanel.add(mHabenKonto, c);
-		
+
 		return lPanel;
 	}
-	
+
 	/** Buttons initialisieren */
 	private Component initButtons() {
 		JPanel lButtonPane = new JPanel();
@@ -169,7 +169,7 @@ public class BuchungSelectDialog extends JDialog {
 	public void setXY (int x, int y) {
 		this.setLocation(x, y);
 	}
-	
+
 	/** Search-Button wurde gedrückt.
 	 *  Herausfinden welche Felder gesetzt sind.
 	 *  Nach Buchungen mit diesem Inhalt suchen, wenn das 2. mal gedrückt weitersuchen.

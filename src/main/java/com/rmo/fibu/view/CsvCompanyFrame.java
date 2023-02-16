@@ -27,35 +27,37 @@ import com.rmo.fibu.model.KontoNrVector;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Trace;
 
-
-/** 
- * Liest CSV Keywords ein, schreibt diese in Tabelle.
- * "CSV-datei selektieren": Eine Auswahl von dateien anzeigen,
- * wenn ein File selektiert, wird das file an CsvReaderTableFrame weitergegeben.
+/**
+ * Liest CSV Keywords ein, schreibt diese in Tabelle. "CSV-datei selektieren":
+ * Eine Auswahl von dateien anzeigen, wenn ein File selektiert, wird das file an
+ * CsvReaderTableFrame weitergegeben.
  */
-public class CsvSetupFrame extends JFrame {
-	
+public class CsvCompanyFrame extends JFrame {
+
 	private static final long serialVersionUID = 1310342465892805867L;
 	/** Die Breite der Columns */
 	private static final int DEFAULT_WIDTH = 2;
 	private static final int PATH_WIDTH = 20;
 
 	// view elemente
-	private BuchungView 		mParent = null;
+	private BuchungView mParent = null;
 
 	// view der tabelle
-	private JTable 			mTableView = null;
+	private JTable mTableView = null;
 	/** Das interne Model zur Tabelle */
-	private CsvSetupModel mSetupModel;
+	private CsvCompanyModel mTableModel;
 	/** Die Daten in der DB */
-	private CsvCompanyData 	mCompanyData = null;
+	private CsvCompanyData mCompanyData = null;
 
+	/** Die view um Daten einzulesen */
+	private PdfSetupFrame mCsvSetupFrame;
 
 	/**
 	 * Wird gestartet von Buchungen für Einstellungen.
+	 *
 	 * @param pParent Referenz zu den Buchungen
 	 */
-	public CsvSetupFrame(BuchungView pParent) {
+	public CsvCompanyFrame(BuchungView pParent) {
 		super("Setup für CSV und PDF einlesen");
 		mParent = pParent;
 		init();
@@ -65,7 +67,7 @@ public class CsvSetupFrame extends JFrame {
 	 * Start der Initialisierung, muss von jedem Konstruktor aufgerufen werden.
 	 */
 	private void init() {
-		Trace.println(1, "CsvSetupFrame.init()");
+		Trace.println(1, "CsvCompanyFrame.init()");
 		// Verbindung zur DB
 		mCompanyData = (CsvCompanyData) DataBeanContext.getContext().getDataBean(CsvCompanyData.class);
 //		datenEinlesen();
@@ -84,22 +86,23 @@ public class CsvSetupFrame extends JFrame {
 		setLocation(Config.winCsvSetupLoc);
 	}
 
-
 	/**
 	 * Tabelle setzen
+	 *
 	 * @return
 	 */
 	private Container initTable() {
-		mSetupModel = new CsvSetupModel();
+		mTableModel = new CsvCompanyModel();
 
-		mTableView = new JTable(mSetupModel);
+		mTableView = new JTable(mTableModel);
 		mTableView.getTableHeader().setFont(Config.fontText);
 		mTableView.setRowHeight(Config.windowTextSize + 4);
 		mTableView.setFont(Config.fontText);
-	
+
 		JScrollPane lScrollPane = new JScrollPane(mTableView);
 		setColWidth();
 		setColKontoNummern();
+		setColDocType();
 		return lScrollPane;
 	}
 
@@ -119,28 +122,39 @@ public class CsvSetupFrame extends JFrame {
 			}
 		}
 	}
-	
+
 	/**
 	 * Setzt die Kontonummern Combobox
 	 */
 	private void setColKontoNummern() {
-		JComboBox<String> comboBoxKtonr = new JComboBox<String>();
-		comboBoxKtonr.setModel(new DefaultComboBoxModel<String>(new KontoNrVector()));
+		JComboBox<String> comboBoxKtonr = new JComboBox<>();
+		comboBoxKtonr.setModel(new DefaultComboBoxModel<>(new KontoNrVector()));
 		comboBoxKtonr.setFont(Config.fontText);
 		TableColumn ktoColumn = mTableView.getColumnModel().getColumn(2);
 		ktoColumn.setCellEditor(new DefaultCellEditor(comboBoxKtonr));
 	}
 
 	/**
+	 * Setzt die docType Combobox
+	 */
+	private void setColDocType() {
+		JComboBox<String> comboBoxDocType = new JComboBox<>();
+		comboBoxDocType.setModel(new DefaultComboBoxModel<>(CsvCompany.docTypes));
+		comboBoxDocType.setFont(Config.fontText);
+		TableColumn docColumn = mTableView.getColumnModel().getColumn(4);
+		docColumn.setCellEditor(new DefaultCellEditor(comboBoxDocType));
+	}
+
+	/**
 	 * Buttons setzen
-	 * 
+	 *
 	 * @return
 	 */
 	private Container initBottom() {
-		JPanel lPanel = new JPanel(new GridLayout(0,1));
-		
+		JPanel lPanel = new JPanel(new GridLayout(0, 1));
+
 		JPanel flow1 = new JPanel(new FlowLayout());
-		
+
 		JButton btnAdd = new JButton("Neuer Eintrag");
 		btnAdd.setFont(Config.fontTextBold);
 
@@ -152,7 +166,7 @@ public class CsvSetupFrame extends JFrame {
 		});
 		flow1.add(btnAdd);
 
-		JButton btnSetup = new JButton("Einrichten");
+		JButton btnSetup = new JButton("Steuerdaten eingeben");
 		btnSetup.setFont(Config.fontTextBold);
 
 		btnSetup.addActionListener(new ActionListener() {
@@ -184,12 +198,11 @@ public class CsvSetupFrame extends JFrame {
 		});
 		flow1.add(btnDelete);
 
-
 		return lPanel;
 	}
 
 	/**
-	 * Einen Eintrag dazufügen
+	 * Einen Eintrag in der DB dazufügen
 	 */
 	private void addAction() {
 		CsvCompany lCompany = new CsvCompany();
@@ -199,32 +212,36 @@ public class CsvSetupFrame extends JFrame {
 		lCompany.setDirPath(" ");
 		try {
 			mCompanyData.addData(lCompany);
-			mSetupModel.fireTableDataChanged();
+			mTableModel.fireTableDataChanged();
 		} catch (FibuException ex2) {
 			JOptionPane.showMessageDialog(this, ex2.getMessage(), "\"Fehler in DB", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 	}
-	
+
 	/**
-	 * Den Eintrag weiter definieren
+	 * Die Setup Daten eingeben
 	 */
 	private void setupAction() {
-		CsvCompany lCompany = new CsvCompany();
-		lCompany.setCompanyID(0);
-		lCompany.setCompanyName(" ");
-		lCompany.setKontoNrDefault(" ");
-		lCompany.setDirPath(" ");
-		try {
-			mCompanyData.addData(lCompany);
-			mSetupModel.fireTableDataChanged();
-		} catch (FibuException ex2) {
-			JOptionPane.showMessageDialog(this, ex2.getMessage(), "\"Fehler in DB", JOptionPane.ERROR_MESSAGE);
+		// selektierte row
+		int selRow = mTableView.getSelectedRow();
+		if (selRow < 0) {
+			JOptionPane.showMessageDialog(this, "Einen Eintrag selektieren", "PDF Setup",
+					JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
+		try {
+			CsvCompany lCompany = mTableModel.readAt(selRow);
+			// TODO muss diese Var gespeichert werden?
+			mCsvSetupFrame = null;
+			if (mCsvSetupFrame == null) {
+				mCsvSetupFrame = new PdfSetupFrame(lCompany);
+			}
+			mCsvSetupFrame.setVisible(true);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(this, ex.getMessage(), "PDF setup", JOptionPane.ERROR_MESSAGE);
+		}
 	}
-	
-	
 
 	/**
 	 * Einen Eintrag löschen
@@ -233,45 +250,26 @@ public class CsvSetupFrame extends JFrame {
 		int rowNr = mTableView.getSelectedRow();
 		if (rowNr >= 0) {
 			try {
-				CsvCompany lCompany = mSetupModel.readAt(rowNr);
-				int answer = JOptionPane.showConfirmDialog(
-						this, lCompany.getCompanyName() +" wirklich löschen?", "Eintrag löschen",
-						JOptionPane.YES_NO_OPTION);
+				CsvCompany lCompany = mTableModel.readAt(rowNr);
+				int answer = JOptionPane.showConfirmDialog(this, lCompany.getCompanyName() + " wirklich löschen?",
+						"Eintrag löschen", JOptionPane.YES_NO_OPTION);
 				if (answer == JOptionPane.NO_OPTION) {
 					return;
 				}
 				// hier YES
 				mCompanyData.deleteRow(lCompany);
-				mSetupModel.fireTableDataChanged();
+				mTableModel.fireTableDataChanged();
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(this, ex.getMessage(), "Fehler beim löschen", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
 
-	/**
-	 * Die Keywords in der DB speichern.
-	 */
-	/* wird nicht gebraucht, da nach Enter-Taste, die Daten bereits gespeichert sind.
-	private void saveAction() {
-		CsvCompany lCompany = null;
-
-		Iterator<CsvCompany> iter = mCompanyData.getIterator();
-		try {
-			while (iter.hasNext()) {
-				lCompany = iter.next();
-				mCompanyData.addData(lCompany);
-			}
-		} catch (FibuException e) {
-			Trace.println(1, "Fehler in PdfKeywordPanel.saveAction: " + e.getMessage());
-		}
-	}
-	*/
-	
 	/** wenn Fenster geschlossen */
-	@Override	
+	@Override
 	public void setVisible(boolean b) {
 		if (!b) {
+			// TODO neue Variablen für dieses Fenster
 			Config.winCsvSetupDim = getSize();
 			Config.winCsvSetupLoc = getLocation();
 			mParent.resetCsvSetupFrame();
@@ -279,18 +277,16 @@ public class CsvSetupFrame extends JFrame {
 		super.setVisible(b);
 	}
 
-
 // ----- Model der Keyword-Tabelle ---------------------------------------------
-	
+
 	/** Schnittstelle zum Daten-Objekt KontoData */
-	private class CsvSetupModel extends AbstractTableModel {
+	private class CsvCompanyModel extends AbstractTableModel {
 
 		private static final long serialVersionUID = -3805602970105237582L;
 
-
 		@Override
 		public int getColumnCount() {
-			return 4;
+			return 5;
 		}
 
 		@Override
@@ -309,6 +305,8 @@ public class CsvSetupFrame extends JFrame {
 				return "KontoNr";
 			case 3:
 				return "Dir path";
+			case 4:
+				return "Typ";
 			}
 			return "";
 		}
@@ -318,7 +316,6 @@ public class CsvSetupFrame extends JFrame {
 //		public Class<?> getColumnClass(int col) {
 //			return getValueAt(0, col).getClass();
 //		}
-		
 
 		/**
 		 * Alle Zellen 0..1 können nicht editiert werden.
@@ -339,38 +336,35 @@ public class CsvSetupFrame extends JFrame {
 			CsvCompany lCompany = null;
 			try {
 				lCompany = mCompanyData.readAt(rowIndex);
-			}
-			catch (FibuException ex) {
+			} catch (FibuException ex) {
 				return;
 			}
 			if (columnIndex == 0) {
 				String i = (String) aValue;
 				int x = Integer.valueOf(i);
 				lCompany.setCompanyID(x);
-			}
-			else if (columnIndex == 1) {
+			} else if (columnIndex == 1) {
 				lCompany.setCompanyName((String) aValue);
+			} else if (columnIndex == 2) {
+				lCompany.setKontoNrDefault((String) aValue);
+			} else if (columnIndex == 3) {
+				lCompany.setDirPath((String) aValue);
+			} else if (columnIndex == 4) {
+				lCompany.setDocString((String) aValue);
 			}
-			else if (columnIndex == 2) {
-				lCompany.setKontoNrDefault((String) aValue);				
-			}
-			else if (columnIndex == 3) {
-				lCompany.setDirPath((String) aValue);				
-			}
-			
+
 			try {
 				mCompanyData.updateAt(rowIndex, lCompany);
-				mSetupModel.fireTableDataChanged();
-			}
-			catch (FibuException ex) {
+				mTableModel.fireTableDataChanged();
+			} catch (FibuException ex) {
 				JOptionPane.showMessageDialog(null, ex.getMessage(), "Suchwort ändern", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 		}
-		
+
 		/**
 		 * Den Eintrag an der Stelle position (0..x) zurückgeben.
-		 * 
+		 *
 		 * @return Company an der position, null wenn nicht vorhanden
 		 */
 		public CsvCompany readAt(int row) throws FibuException {
@@ -379,7 +373,7 @@ public class CsvSetupFrame extends JFrame {
 				CsvCompany lCompany = mCompanyData.readAt(row);
 				return lCompany;
 			} catch (FibuException ex) {
-				Trace.println(3, "CsvCompany.readAt() "  + ex.getMessage());
+				Trace.println(3, "CsvCompany.readAt() " + ex.getMessage());
 			}
 			return null;
 		}
@@ -401,15 +395,15 @@ public class CsvSetupFrame extends JFrame {
 					return lCompany.getKontoNrDefault();
 				case 3:
 					return lCompany.getDirPath();
+				case 4:
+					return lCompany.getDocString();
 				}
 			} catch (FibuException ex) {
-				Trace.println(3, "getValueAt() "  +ex.getMessage());
+				Trace.println(3, "getValueAt() " + ex.getMessage());
 				return " ";
 			}
 			return "";
 		}
-		
-		
 	}
 
 }

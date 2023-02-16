@@ -10,9 +10,9 @@ import javax.swing.table.TableModel;
 
 /**
  * Exportieren einer Tabelle in ein Text file.
- * 
+ *
  * @author Ruedi
- * 
+ *
  */
 public class TextExportKontoPlan extends ExcelExport {
 
@@ -27,7 +27,7 @@ public class TextExportKontoPlan extends ExcelExport {
 
 	/**
 	 * Export des Kontoplan starten (entry point)
-	 * 
+	 *
 	 * @throws PrinterException
 	 */
 	public void doExport(String name) throws Exception {
@@ -47,14 +47,14 @@ public class TextExportKontoPlan extends ExcelExport {
 	/**
 	 * Textfile erstellen erstellen mit sheet und datumsformat.
 	 */
-	private void createFile(String name) throws PrinterException {		
+	private void createFile(String name) throws PrinterException {
 		String fileName = "/" + name + ".txt";
 		try {
 			String lFileName = Config.sDefaultDir + fileName;
 			mFileWriter = new FileWriter(lFileName);
 		} catch (IOException ex) {
 			throw new PrinterException(ex.getMessage());
-		} 
+		}
 	}
 
 	/**
@@ -74,7 +74,7 @@ public class TextExportKontoPlan extends ExcelExport {
 
 	/**
 	 * Schreibt eine neue Zeile in das File
-	 * 
+	 *
 	 * @param rowNr
 	 */
 	private void addRow(int rowNr) throws IOException {

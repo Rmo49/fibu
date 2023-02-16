@@ -25,7 +25,7 @@ public class BuchungMenu {
 	// ---- Das Menu (inkl. Popup)
 	private JMenu			mnuFile;
 	private JMenuItem		mnuClose;
-	
+
 	private JMenu			mnuEdit;
 	private JMenuItem		mnuSearch;
 	private JMenuItem		mnuCopy;
@@ -33,14 +33,14 @@ public class BuchungMenu {
 	private JMenuItem		mnuSelect;
 
 	private JMenu			mnuCsv;
-	
+
 	private JMenuItem		mnuCsvSetup;
 
 	private JPopupMenu		popMenu;
 	private JMenuItem		popCopy;
 	private JMenuItem		popDelete;
 	private JMenuItem		popSort;
-	
+
 
 	/** Konstruktor mit Initialisierung	 */
 	public BuchungMenu(BuchungView parent) {
@@ -51,17 +51,17 @@ public class BuchungMenu {
 	}
 
 	/** Initialisierung der Menus
-	 */	
-	private void initMenu() {	
+	 */
+	private void initMenu() {
 		JMenuBar menuBar = new JMenuBar();
 		mnuFile = new JMenu("Datei");
 		mnuFile.setFont(Config.fontTextBold);
 		mnuClose = new JMenuItem("Schliessen");
 		mnuClose.setFont(Config.fontTextBold);
-		
+
 		menuBar.add(mnuFile);
 		mnuFile.add(mnuClose);
-		
+
 		mnuEdit = new JMenu("Bearbeiten");
 		mnuEdit.setFont(Config.fontTextBold);
 		mnuSearch = new JMenuItem("suchen");
@@ -72,7 +72,7 @@ public class BuchungMenu {
 		mnuDelete.setFont(Config.fontTextBold);
 		mnuSelect = new JMenuItem("selektieren");
 		mnuSelect.setFont(Config.fontTextBold);
-		
+
 		menuBar.add(mnuEdit);
 		mnuEdit.add(mnuSearch);
 		mnuEdit.addSeparator();
@@ -83,27 +83,18 @@ public class BuchungMenu {
 
 		mnuCsv = new JMenu("Einlesen");
 		mnuCsv.setFont(Config.fontTextBold);
-//		mnuCsvPost = new JMenuItem("Post Finance CSV");
-//		mnuCsvPost.setFont(Config.fontTextBold);
-//		mnuCsvCs = new JMenuItem("Credit Suisse CSV");
-//		mnuCsvCs.setFont(Config.fontTextBold);
-//		mnuCsvRaiff = new JMenuItem("Raiffeisen CSV");
-//		mnuCsvRaiff.setFont(Config.fontTextBold);
 
 		menuBar.add(mnuCsv);
-//		mnuCsv.add(mnuCsvPost);
-//		mnuCsv.add(mnuCsvCs);
-//		mnuCsv.add(mnuCsvRaiff);
 		insertCsvMenu(mnuCsv);
-		
+
 		mnuCsvSetup = new JMenuItem("Setup");
 		mnuCsvSetup.setFont(Config.fontTextBold);
 		menuBar.add(mnuCsvSetup);
-				
+
 		mBuchungView.setJMenuBar(menuBar);
-		
-		
-		
+
+
+
 		popMenu = new JPopupMenu();
 		popCopy = new JMenuItem("Buchung bearbeiten");
 		popCopy.setFont(Config.fontTextBold);
@@ -113,10 +104,10 @@ public class BuchungMenu {
 		popSort.setFont(Config.fontTextBold);
 		popMenu.add(popCopy);
 		popMenu.add(popDelete);
-		popMenu.addSeparator();		
+		popMenu.addSeparator();
 		popMenu.add(popSort);
 	}
-	
+
 	/**
 	 * Das CSV Menu setzen, gemäss Einträge in der DB (pdfcompany)
 	 * @param mnuCsv
@@ -136,58 +127,26 @@ public class BuchungMenu {
 				public void actionPerformed(ActionEvent e) {
 					mBuchungView.csvAction(company);
 				}
-			});	
+			});
 			mnuCsv.add(mnuItem);
 		}
-		
+
 		// zu Test von PDF
 		// TODO löschen wenn PDF funktioniert
 		JMenuItem mnuPdfTest;
 		mnuPdfTest = new JMenuItem("PDF Test");
 		mnuPdfTest.setFont(Config.fontTextBold);
 		mnuCsv.add(mnuPdfTest);
-		
+
 		mnuPdfTest.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 //				mBuchungView.pdfActionMitBox();
 //				mBuchungView.pdfActionMitBoxCoord();
 				mBuchungView.pdfActionMitBoxWord();
 //				mBuchungView.pdfActionMitSpire();
 			}
-		});	
-		
-//		JMenuItem mnuCsvPost;
-//		mnuCsvPost = new JMenuItem("Post Finance CSV");
-//		mnuCsvPost.setFont(Config.fontTextBold);
-//		mnuCvs.insert(mnuCsvPost, 0);
-//		
-//		JMenuItem mnuCsvCs;
-//		mnuCsvCs = new JMenuItem("Credit Suisse CSV");
-//		mnuCsvCs.setFont(Config.fontTextBold);
-//		mnuCvs.insert(mnuCsvCs, 1);
-//		
-//		JMenuItem mnuCsvRaiff;
-//		mnuCsvRaiff = new JMenuItem("Raiffeisen CSV");
-//		mnuCsvRaiff.setFont(Config.fontTextBold);
-//		mnuCvs.insert(mnuCsvRaiff, 2);
-//		
-//		mnuCsvPost.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				mBuchungView.csvAction(CsvParserBase.companyNamePost);
-//			}
-//		});	
-//		
-//		mnuCsvCs.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				mBuchungView.csvAction(CsvParserBase.companyNameCS);
-//			}
-//		});
-//		
-//		mnuCsvRaiff.addActionListener(new ActionListener() {
-//			public void actionPerformed(ActionEvent e) {
-//				mBuchungView.csvAction(CsvParserBase.companyNameRaiff);
-//			}
-//		});	
+		});
 	}
 
 
@@ -207,7 +166,7 @@ public class BuchungMenu {
 				lSuchen.setVisible(true);
 			}
 		});
-		
+
 		mnuCopy.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -231,8 +190,8 @@ public class BuchungMenu {
 			public void actionPerformed(ActionEvent e) {
 				mBuchungView.csvSetup();
 			}
-		});	
-		
+		});
+
 		popCopy.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -250,13 +209,13 @@ public class BuchungMenu {
 			public void actionPerformed(ActionEvent e) {
 				mBuchungView.sortActionPerformed();
 			}
-		});	
+		});
 	}
-	
+
 	public JPopupMenu getPopMenu() {
 		return popMenu;
 	}
-	
+
 	/** SortMenu und SortPopup setzen */
 	public void setEnableSort(boolean active) {
 		mnuSelect.setEnabled(active);

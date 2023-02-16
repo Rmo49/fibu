@@ -165,8 +165,7 @@ private class JournalPrinterModel implements TablePrinterModel
 	 *  hier angeben, wenn Ueberschrift auch rechtsbündig sein soll */
 	@Override
 	public boolean getColRight(int columnIndex) {
-		if (columnIndex == 1) return true;
-		if (columnIndex >= 3) return true;
+		if ((columnIndex == 1) || (columnIndex >= 3)) return true;
 		return false;
 	}
 

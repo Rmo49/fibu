@@ -19,9 +19,9 @@ import com.rmo.fibu.exception.FibuException;
 
 /**
  * Exportieren einer Tabelle nach Excel
- * 
+ *
  * @author Ruedi
- * 
+ *
  */
 public class ExcelImport {
 	// file von dem gelesen wird
@@ -36,7 +36,7 @@ public class ExcelImport {
 	protected Sheet mSheet1;
 	// das verwendete Datumsformat
 	protected Row mRow = null;
-	
+
 
 	/** Konstruktor mit TableModel für die Datenabfrage */
 	public ExcelImport() {
@@ -44,7 +44,7 @@ public class ExcelImport {
 
 	/**
 	 * Export eines Kontos starten.
-	 * 
+	 *
 	 * @throws PrinterException
 	 */
 	public void doOpen(File file) throws FibuException {
@@ -54,7 +54,7 @@ public class ExcelImport {
 
 	/**
 	 * Export eines Kontos starten.
-	 * 
+	 *
 	 * @throws PrinterException
 	 */
 	public void doOpen(String name) throws Exception {
@@ -64,7 +64,7 @@ public class ExcelImport {
 
 	/**
 	 * Export eines Kontos starten.
-	 * 
+	 *
 	 * @throws PrinterException
 	 */
 	public void doClose() throws Exception {
@@ -75,7 +75,7 @@ public class ExcelImport {
 
 	/**
 	 * Speichern in Datei.
-	 * 
+	 *
 	 * @param kontoNr
 	 * @throws PrinterException
 	 */
@@ -90,11 +90,11 @@ public class ExcelImport {
 			throw new FibuException(ex.getMessage());
 		}
 	}
-	
+
 	public int getMaxRow() {
 		return mSheet1.getLastRowNum();
 	}
-	
+
 	public String getStringAt(int row, int col) {
 		mRow = mSheet1.getRow(row);
 		return mRow.getCell(col).getStringCellValue();
