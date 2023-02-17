@@ -14,7 +14,7 @@ import com.rmo.fibu.util.Trace;
 
 /**
  * Verwaltet die Datenbank. Kennt den namen der geöffneten Fibu
- * 
+ *
  * @author Ruedi
  */
 public class FibuDataBase {
@@ -24,12 +24,12 @@ public class FibuDataBase {
 			+ "FibuTitel varchar(50) DEFAULT NULL, DatumVon date DEFAULT NULL, "
 			+ "DatumBis date DEFAULT NULL, DatumFormat varchar(20) DEFAULT NULL ,"
 			+ "PRIMARY KEY (ID) );";
-			
+
 	private final static String CREATE_KONTORAHMEN = "CREATE TABLE Kontorahmen ("
 			+ "KontoNr int(11) NOT NULL, KontoText varchar(50) DEFAULT NULL, "
 			+ "StartSaldo decimal(12,2) DEFAULT NULL, Saldo decimal(12,2) DEFAULT NULL, "
 			+ "IstSollKto char(1) DEFAULT b'0', PRIMARY KEY (KontoNr) );";
-	
+
 	private final static String CREATE_CSVKEYWORD = "CREATE TABLE `pdfkeyword` ("
 			+ "`ID` int(11) NOT NULL AUTO_INCREMENT, `CompanyID` int, "
 			+ "`SuchWort` varchar(20) NOT NULL, "
@@ -57,7 +57,7 @@ public class FibuDataBase {
 
 	/**
 	 * Eine neue Fibu anlegen
-	 * 
+	 *
 	 * @param fibuName
 	 * @return
 	 * @throws FibuException
@@ -125,8 +125,8 @@ public class FibuDataBase {
 			throw new FibuException(ex.getMessage());
 		}
 	}
-	
-	
+
+
 	/** Daten von der DB einlesen. */
 	private static void readFibuData() throws FibuException {
 		Trace.println(2, "FibuDataBase.readFibuData()");
@@ -149,7 +149,7 @@ public class FibuDataBase {
 	    boolean tExists = false;
 	    Connection conn = DbConnection.getConnection();
 	    try (ResultSet rs = conn.getMetaData().getTables(null, null, tableName, null)) {
-	        while (rs.next()) { 
+	        while (rs.next()) {
 	            String tName = rs.getString("TABLE_NAME");
 	            if (tName != null && tName.equals(tableName)) {
 	                tExists = true;
@@ -159,7 +159,7 @@ public class FibuDataBase {
 	    }
 	    return tExists;
 	}
-	
+
 	/**
 	 * Bestehende Fibu löschen, Connection wird geschlossen.
 	 * @param name der Fibu
@@ -182,12 +182,12 @@ public class FibuDataBase {
 		}
 	}
 
-	private static FibuData getFibuData() {	
+	private static FibuData getFibuData() {
 		if (mFibuData == null) {
 			mFibuData = (FibuData) DataBeanContext.getContext().getDataBean(FibuData.class);
 		}
 		return mFibuData;
 	}
 
-	
+
 }

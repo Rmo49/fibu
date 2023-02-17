@@ -18,10 +18,10 @@ import com.rmo.fibu.util.Trace;
  *
  */
 public class CsvCompanyData extends DataBase {
-	
+
 	private final static String TABLE_NAME = "pdfcompany";
-	
-	/** 
+
+	/**
 	 * Das SQL Statement für die Erstellung
 	 */
 	public final static String CREATE_CSVCOMPANY_V1 = "CREATE TABLE `pdfcompany` ("
@@ -29,10 +29,10 @@ public class CsvCompanyData extends DataBase {
 			 + "`CompanyName` varchar(20) NOT NULL, "
 			 + "`KontoNrDefault` varchar(6) DEFAULT NULL, "
 			 + "`DirPath` varchar(100) DEFAULT NULL );";
-	
+
 	private final static String ADD_COL_V2 = "ALTER TABLE `pdfcompany`"
 			+ " ADD COLUMN `TypeOfDoc` SMALLINT NULL DEFAULT NULL AFTER `DirPath`;";
-	
+
 	private final static String SET_INIT_V2 = "UPDATE `pdfcompany` SET `TypeOfDoc`=1 WHERE `TypeOfDoc` is NULL;";
 
 	public final static String CREATE_CSVCOMPANY_V2 = "CREATE TABLE `pdfcompany` ("
@@ -41,7 +41,7 @@ public class CsvCompanyData extends DataBase {
 			 + "`KontoNrDefault` varchar(6) DEFAULT NULL, "
 			 + "`DirPath` varchar(100) DEFAULT NULL, "
 			 + "`TypeOfDoc` SMALLINT(6) NULL DEFAULT NULL );";
-	
+
 	private final static String ADD_COL_V3 = "ALTER TABLE `" + TABLE_NAME + "`"
 			+ "ADD COLUMN `WordBefore` VARCHAR(25) NULL DEFAULT NULL AFTER `TypeOfDoc`, "
 			+ "ADD COLUMN `SpaltenArray` VARCHAR(20) NULL DEFAULT NULL AFTER `WordBefore`;";
@@ -56,11 +56,11 @@ public class CsvCompanyData extends DataBase {
 			 + "`SpaltenArray` VARCHAR(20) NULL DEFAULT NULL );";
 
 
-	
+
 	private final int COLS_V2 = 5;		// Anzahl Cols in der Version 2
 	private final int COLS_V3 = 7;		// Anzahl Cols in der Version 3
-	
-			 
+
+
 	/**
 	 * Die Anzahl Rows in der Tabelle. Wird beim Start berechnet, dann immer
 	 * updated, da Probleme bei vielen Zugriffen
@@ -89,7 +89,7 @@ public class CsvCompanyData extends DataBase {
 	 * Set der von allen Methoden verwendet wird.
 	 */
 	private ResultSet mReadSetAll;
-	
+
 	/**
 	 * Model constructor comment.
 	 */
@@ -97,16 +97,17 @@ public class CsvCompanyData extends DataBase {
 		super();
 	}
 
-	
+
 	/**
 	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
 	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
 	 */
+	@Override
 	public void checkTableVersion() {
 		try {
-			if (FibuDataBase.tableExist(TABLE_NAME)) {	
+			if (FibuDataBase.tableExist(TABLE_NAME)) {
 				int colsAnzahl = getNumberOfCols();
-				
+
 				if (colsAnzahl < COLS_V2) {
 					addColumnV2();
 				}
@@ -120,7 +121,7 @@ public class CsvCompanyData extends DataBase {
 				Statement stmt = getConnection().createStatement();
 				stmt.execute(CREATE_CSVCOMPANY_V3);
 				stmt.close();
-			}			
+			}
 		} catch (SQLException e) {
 			System.err.println("CsvCompanyData.checkTableVersion: " + e.getMessage());
 		}
@@ -147,7 +148,7 @@ public class CsvCompanyData extends DataBase {
 		}
 		return mMaxRows;
 	}
-	
+
 
 	/**
 	 * Ein Eintrag für eine Company speichern, falls nicht vorhanden ist, wird
@@ -172,7 +173,7 @@ public class CsvCompanyData extends DataBase {
 	 */
 	public void updateAt(int row, CsvCompany pCompany) throws FibuException {
 		Trace.println(7, "CsvCompanyData.updateAt(" + row +")");
-		
+
 		try {
 			setupReadSetAll();
 			if (mReadSetAll.absolute(row + 1)) {
@@ -192,7 +193,7 @@ public class CsvCompanyData extends DataBase {
 			throw new FibuException("SQL: " + e.getSQLState() + " Message: " + e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Die CsvCompany mit dem suchWort wird zurückgegeben. Wenn nicht gefunden wird
 	 * FibuException geworfen.
@@ -212,7 +213,7 @@ public class CsvCompanyData extends DataBase {
 			throw new FibuException("SQL: " + e.getSQLState() + " Message: " + e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Die CsvCompany mit dem suchWort wird zurückgegeben. Wenn nicht gefunden wird
 	 * FibuException geworfen.
@@ -230,12 +231,12 @@ public class CsvCompanyData extends DataBase {
 			throw new FibuException("SQL: " + e.getSQLState() + " Message: " + e.getMessage());
 		}
 	}
-	
-	
+
+
 	/**
 	 * Die CsvCompany an der Position zurückgeben.
 	 *  Wenn nicht gefunden wird FibuException geworfen.
-	 * 
+	 *
 	 * @param row, erste row = 1
 	 * @return
 	 * @throws FibuException
@@ -257,7 +258,7 @@ public class CsvCompanyData extends DataBase {
 			throw new FibuException("SQL: " + e.getSQLState() + " Message: " + e.getMessage());
 		}
 	}
-	
+
 	/**
 	 * Ein Tupel löschen
 	 */
@@ -269,7 +270,7 @@ public class CsvCompanyData extends DataBase {
 	}
 
 	//----- private Methoden ------------------------------------------
-	
+
 	/**
 	 * Die Daten einer Company lesen
 	 * @param pCompany
@@ -314,10 +315,10 @@ public class CsvCompanyData extends DataBase {
 		lCompany.setSpaltenArray(mReadSetAll.getString(7));
 		return lCompany;
 	}
-	
-	
+
+
 	/**
-	 * Eine neue Zeile (Row) in die Tabelle eintragen. Kopiert die Attribute 
+	 * Eine neue Zeile (Row) in die Tabelle eintragen. Kopiert die Attribute
 	 * Objekt PdfKeyword in den ResultSet. Der SQL-String wird zusammengestellt.
 	 */
 	private void addRow(CsvCompany pCompany) throws SQLException {
@@ -343,7 +344,7 @@ public class CsvCompanyData extends DataBase {
 		lQuery.append("', '");
 		lQuery.append(pCompany.getSpaltenArray());
 		lQuery.append("')");
-		
+
 		stmt.executeUpdate(lQuery.toString());
 		stmt.close();
 		mReadSetName = null;
@@ -358,7 +359,7 @@ public class CsvCompanyData extends DataBase {
 				+ "WordBefore = ?, SpaltenArray = ? WHERE CompanyID = ");
 		sql.append(pCompany.getCompanyID());
 		sql.append(";");
-	
+
 		PreparedStatement updateCompany = getConnection().prepareStatement(sql.toString());
 		updateCompany.setString(1, pCompany.getCompanyName());
 		updateCompany.setString(2, pCompany.getKontoNrDefault());
@@ -366,11 +367,11 @@ public class CsvCompanyData extends DataBase {
 		updateCompany.setInt(4, pCompany.getDocType());
 		updateCompany.setString(5, pCompany.getWordBefore());
 		updateCompany.setString(6, pCompany.getSpaltenArray());
-		
+
 		updateCompany.executeUpdate();
 	}
-	
-	
+
+
 	//----- Tabelle migrieren -----------------------------
 
 	/**
@@ -389,7 +390,7 @@ public class CsvCompanyData extends DataBase {
 		int columnsNumber = rsmd.getColumnCount();
 		return columnsNumber;
 	}
-	
+
 	/**
 	 * Version 1 erweitern
 	 * @throws SQLException

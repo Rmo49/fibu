@@ -8,7 +8,7 @@ import com.rmo.fibu.util.Trace;
 /**
  * Verwaltet eine alte Datenbank, von der die Kontodaten gelesen werden.
  * Kennt den namen der alten Fibu
- * 
+ *
  * @author Ruedi
  */
 public class FibuDataBaseFrom {

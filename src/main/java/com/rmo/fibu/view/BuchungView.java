@@ -16,15 +16,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -40,10 +33,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.JTextComponent;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
-import org.apache.pdfbox.text.TextPosition;
-
 import com.rmo.fibu.exception.BuchungValueException;
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.FibuRuntimeException;
@@ -55,14 +44,9 @@ import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.DbConnection;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Datum;
-import com.rmo.fibu.util.PdfWordLocation;
-import com.rmo.fibu.util.PdfWordStripper;
 import com.rmo.fibu.util.Trace;
 import com.rmo.fibu.view.util.JFormattedTextFieldExt;
 import com.rmo.fibu.view.util.JTextFiledExt;
-import com.spire.pdf.PdfDocument;
-import com.spire.pdf.utilities.PdfTable;
-import com.spire.pdf.utilities.PdfTableExtractor;
 
 /** Die View aller Buchungen. UseCases: Buchungen eingeben, suchen, bearbeiten, löschen.
  *  Die View besteht aus einem Anzeige-Panel und einen Eingabe-Panel.
@@ -1219,171 +1203,5 @@ public class BuchungView extends JFrame  {
 		}
 		catch (FibuRuntimeException ex) {}
 	}
-
-
-	/**
-	 * Test PDF mit PDFBox
-	 * File öffnen, Zeilen lesen
-	 * TODO entfernen wenn PDF funktioniert
-	 */
-	public void pdfActionMitBox () {
-		File file = new File("Cumulus23-10.pdf");
-//		File file = new File("Raiff2022-12.pdf");
-		if (!file.exists()) {
-			return;
-		}
-		try {
-			PDDocument document = PDDocument.load(file);
-			PDFTextStripper pdfStripper = new PDFTextStripper();
-			String para = pdfStripper.getParagraphStart();
-			System.out.println("Para: " + para);
-			String text = pdfStripper.getText(document);
-			System.out.println(text);
-		}
-		catch (Exception ex) {
-			System.out.println(ex.getMessage());
-		}
-	}
-
-	/**
-	 * Test PDF mit PDFBox
-	 * File öffnen, Zeilen lesen
-	 * TODO entfernen wenn PDF funktioniert
-	 */
-	public void pdfActionMitBoxCoord () {
-		File file = new File("Cumulus23-10.pdf");
-//		File file = new File("Raiff2022-12.pdf");
-		if (!file.exists()) {
-			return;
-		}
-		try {
-			PDDocument document = PDDocument.load(file);
-			GetCharLocationAndSize stripper = new GetCharLocationAndSize();
-            stripper.setSortByPosition( true );
-            stripper.setStartPage( 0 );
-            stripper.setEndPage( document.getNumberOfPages() );
-            Writer dummy = new OutputStreamWriter(new ByteArrayOutputStream());
-            stripper.writeText(document, dummy);
- 		}
-		catch (Exception ex) {
-			System.out.println(ex.getMessage());
-		}
-	}
-
-	private class GetCharLocationAndSize extends PDFTextStripper {
-		public GetCharLocationAndSize() throws IOException {
-		}
-	    /**
-	     * Override the default functionality of PDFTextStripper.writeString()
-	     */
-	    @Override
-	    protected void writeString(String string, List<TextPosition> textPositions) throws IOException {
-	        for (TextPosition text : textPositions) {
-
-	            System.out.println(text.getUnicode()+ " [(X=" + text.getXDirAdj() + ",Y=" +
-	                    text.getYDirAdj() + ") height=" + text.getHeightDir() + " width=" +
-	                    text.getWidthDirAdj() + "]");
-	        }
-	    }
-	}
-
-
-	/**
-	 * Test PDF mit PDFBox
-	 * File öffnen, Zeilen lesen
-	 * TODO entfernen wenn PDF funktioniert
-	 */
-	public void pdfActionMitBoxWord () {
-		File file = new File("Cumulus23-10.pdf");
-//		File file = new File("Raiff2022-12.pdf");
-		if (!file.exists()) {
-			return;
-		}
-		try {
-			PDDocument document = PDDocument.load(file);
-			PdfWordStripper stripper = new PdfWordStripper();
-            stripper.setSortByPosition( true );
-            stripper.setStartPage( 0 );
-            stripper.setEndPage( document.getNumberOfPages() );
-            Writer dummy = new OutputStreamWriter(new ByteArrayOutputStream());
-            stripper.writeText(document, dummy);
-
-            // print words
-//            for(String word:GetWordsFromPDF.words){
-//                System.out.println(word);
-//            }
-            for (PdfWordLocation pwl: stripper.pdfWords) {
-            	System.out.print(pwl.word);
-            	System.out.print(" ");
-            	System.out.print(pwl.posX);
-            	System.out.print(" ");
-            	System.out.println(pwl.posY);
-            }
- 		}
-		catch (Exception ex) {
-			System.out.println(ex.getMessage());
-		}
-	}
-
-
-	/**
-	* This is an example on how to extract words from PDF document
-	*/
-	public static class GetWordsFromPDF extends PDFTextStripper {
-	    static List<String> words = new ArrayList<>();
-	    public GetWordsFromPDF() throws IOException {
-	    }
-
-	    /**
-	     * Override the default functionality of PDFTextStripper.writeString()
-	     */
-	    @Override
-	    protected void writeString(String str, List<TextPosition> textPositions) throws IOException {
-	        String[] wordsInStream = str.split(getWordSeparator());
-	        if(wordsInStream!=null){
-	            for(String word :wordsInStream){
-	                words.add(word);
-	            }
-	        }
-	    }
-
-	}
-
-
-	/**
-	 * Test PDF mit Spire PDF
-	 * File öffnen, Zeilen lesen
-	 * TODO entfernen wenn PDF funktioniert
-	 */
-	public void pdfActionMitSpire () {
-		PdfDocument pdf = new PdfDocument("Cumulus23-10.pdf");
-
-        //Create a StringBuilder instance
-        StringBuilder builder = new StringBuilder();
-        //Create a PdfTableExtractor instance
-        PdfTableExtractor extractor = new PdfTableExtractor(pdf);
-        for (int pageIndex = 0; pageIndex < pdf.getPages().getCount(); pageIndex++) {
-            //Extract tables from the current page into a PdfTable array
-            PdfTable[] tableLists = extractor.extractTable(pageIndex);
-
-            //If any tables are found
-            if (tableLists != null && tableLists.length > 0) {
-                //Loop through the tables in the array
-                for (PdfTable table : tableLists) {
-                    //Loop through the rows in the current table
-                    for (int i = 0; i < table.getRowCount(); i++) {
-                        //Loop through the columns in the current table
-                        for (int j = 0; j < table.getColumnCount(); j++) {
-                            //Extract data from the current table cell and append to the StringBuilder
-                            String text = table.getText(i, j);
-                            builder.append(text + " | ");
-                        }
-                        builder.append("\r\n");
-                    }
-                }
-            }
-        }
-	}
-
 
 }//endOfClass

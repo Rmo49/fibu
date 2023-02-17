@@ -5,8 +5,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import com.rmo.fibu.exception.FibuException;
-
 public class CsvParserPost extends CsvParserBase {
 
 	// die Spalte des Datums
@@ -18,17 +16,17 @@ public class CsvParserPost extends CsvParserBase {
 	// die Spalte des Betrages
 	private final int mBetragCol = 2;
 
-	
-	
+
+
 	public CsvParserPost(File file) {
 		super(file);
 	}
-	
+
 	@Override
 	public char getSplitChar() {
 		return ';';
 	}
-	
+
 	/**
 	 * Buchungstest lesen, diesen evt. anpassen.
 	 * @param buchung
@@ -40,7 +38,7 @@ public class CsvParserPost extends CsvParserBase {
 		}
 	}
 
-	
+
 	/**
 	 * Buchungstext optimieren
 	 */
@@ -62,7 +60,7 @@ public class CsvParserPost extends CsvParserBase {
 	protected int getDateCol() {
 		return mDateCol;
 	}
-	
+
 	/**
 	 * Das verwendete Datumsformat.
 	 */
@@ -81,13 +79,13 @@ public class CsvParserPost extends CsvParserBase {
 			buchung.setBetrag(removeTrennzeichen(lineValues[mBetragCol]));
 			buchung.setSoll(mCompany.getKontoNrDefault());
 		}
-		if (lineValues[mBetragCol+1] != null && lineValues[mBetragCol+1].length() > 0) {			
+		if (lineValues[mBetragCol+1] != null && lineValues[mBetragCol+1].length() > 0) {
 			// ist eine Lastschrift
 			buchung.setBetrag(removeTrennzeichen(lineValues[mBetragCol+1]));
 			buchung.setHaben(mCompany.getKontoNrDefault());
 		}
 	}
-	
+
 	/**
 	 * Die ID der Company
 	 */

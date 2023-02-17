@@ -35,13 +35,7 @@ public Konto (int pKontoNr, String pText, double pStartSaldo, double pSaldo, boo
 public boolean equals(Object anObject) {
 	if (anObject instanceof Konto) {
 		Konto otherKonto = (Konto) anObject;
-		if (mKontoNr != otherKonto.getKontoNr())
-			return false;
-		if (!mText.equals(otherKonto.getText()))
-			return false;
-		if (mStartSaldo != otherKonto.getStartSaldo())
-			return false;
-		if (mSaldo != otherKonto.getSaldo())
+		if ((mKontoNr != otherKonto.getKontoNr()) || !mText.equals(otherKonto.getText()) || (mStartSaldo != otherKonto.getStartSaldo()) || (mSaldo != otherKonto.getSaldo()))
 			return false;
 		if (mIstSollKonto != otherKonto.isSollKonto())
 			return false;

@@ -53,9 +53,9 @@ public Object getDataBean(Class<?> pClass) {
  */
 public Object getDataObject(Object pObject) {
 	Object [] lBeans = toArray();
-	for (int i=0; i<lBeans.length; i++) {
-		if (lBeans[i].getClass().equals(pObject)) {
-			return lBeans[i];
+	for (Object lBean : lBeans) {
+		if (lBean.getClass().equals(pObject)) {
+			return lBean;
 		}
 	}
 	return null;

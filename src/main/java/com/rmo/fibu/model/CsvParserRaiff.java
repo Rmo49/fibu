@@ -5,10 +5,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
-import com.rmo.fibu.exception.FibuException;
-
 public class CsvParserRaiff extends CsvParserBase {
-	
+
 	// die Spalte des Datums
 	private final int mDateCol = 1;
 	// das Format der Raiffeisen
@@ -17,16 +15,16 @@ public class CsvParserRaiff extends CsvParserBase {
 	private final int mTextCol = 2;
 	// die Spalte des Betrages
 	private final int mBetragCol = 3;
-	
+
 	public CsvParserRaiff(File file) {
 		super(file);
 	}
-	
+
 	@Override
 	public char getSplitChar() {
 		return ';';
 	}
-	
+
 	/**
 	 * Die Spalten-Nummer des Datums
 	 */
@@ -34,7 +32,7 @@ public class CsvParserRaiff extends CsvParserBase {
 	protected int getDateCol() {
 		return mDateCol;
 	}
-	
+
 	/**
 	 * Das verwendete Datumsformat.
 	 */
@@ -81,10 +79,10 @@ public class CsvParserRaiff extends CsvParserBase {
 			else {
 				buchung.setSoll(mCompany.getKontoNrDefault());
 			}
-			buchung.setBetrag(removeTrennzeichen(lineValues[mBetragCol]));		
+			buchung.setBetrag(removeTrennzeichen(lineValues[mBetragCol]));
 		}
 	}
-	
+
 	/**
 	 * Die ID der Company
 	 */

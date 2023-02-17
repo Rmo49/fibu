@@ -51,7 +51,7 @@ public abstract class DataBase implements BeanContextChild {
 	protected Connection getConnection() throws FibuRuntimeException {
 		return DbConnection.getConnection();
 	}
-	
+
 	/** Setup the Conneciton.
 	*/
 	private void init() throws Exception {
@@ -88,7 +88,7 @@ public abstract class DataBase implements BeanContextChild {
 		pcSupport.firePropertyChange("beanContext", null, bc);
 		initContextListener();
 	}
-	
+
 	/**
 	 * Jede Klasse muss den check implementieren
 	 */

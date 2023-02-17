@@ -63,11 +63,7 @@ public class Buchung {
             if (!mDatum.equals(((Buchung) pObject).getDatum()))
                 return false;
             String beleg = ((Buchung) pObject).getBeleg();
-            if (beleg != null && !mBeleg.equals(((Buchung) pObject).getBeleg()))
-                return false;
-            if (mSoll != ((Buchung) pObject).getSoll())
-                return false;
-            if (mHaben != ((Buchung) pObject).getHaben())
+            if ((beleg != null && !mBeleg.equals(((Buchung) pObject).getBeleg())) || (mSoll != ((Buchung) pObject).getSoll()) || (mHaben != ((Buchung) pObject).getHaben()))
                 return false;
             if (Math.round(mBetrag) != Math.round(((Buchung) pObject).getBetrag()))
                 return false;
@@ -85,13 +81,7 @@ public class Buchung {
             if (mID >= 0 && ((Buchung) pObject).getID() >= 0) {
                 return mID == ((Buchung) pObject).getID();
             }
-            if (!mDatum.equals(((Buchung) pObject).getDatum()))
-                return false;
-            if (mSoll != ((Buchung) pObject).getSoll())
-                return false;
-            if (mHaben != ((Buchung) pObject).getHaben())
-                return false;
-            if (Math.round(mBetrag) != Math.round(((Buchung) pObject).getBetrag()))
+            if (!mDatum.equals(((Buchung) pObject).getDatum()) || (mSoll != ((Buchung) pObject).getSoll()) || (mHaben != ((Buchung) pObject).getHaben()) || (Math.round(mBetrag) != Math.round(((Buchung) pObject).getBetrag())))
                 return false;
         } else {
             return false;
@@ -99,7 +89,7 @@ public class Buchung {
         return true;
     }
 
-    
+
     //----- getter mehtoden ------------------------------
 	public String getBeleg() {
 		return mBeleg;
@@ -168,7 +158,7 @@ public class Buchung {
 	public void setBetrag(String pValue) {
 		mBetrag = Double.parseDouble(pValue);
 	}
-	
+
 	public void setBuchungText(String pValue) {
 		mBuchungText = pValue;
 	}
@@ -194,7 +184,7 @@ public class Buchung {
 	public void setSoll(int pValue) throws BuchungValueException {
 		mSoll = pValue;
 	}
-	
+
 	public void setHaben(String pValue) throws BuchungValueException {
 		setHaben( convertToInt(pValue) );
 	}
@@ -215,11 +205,11 @@ public class Buchung {
 			intValue = Integer.valueOf(pValue).intValue();
 		}
 		catch (NumberFormatException ex) {
-			throw new BuchungValueException("KontoNr: " +pValue + " " + ex.getMessage());			
+			throw new BuchungValueException("KontoNr: " +pValue + " " + ex.getMessage());
 		}
 		return intValue;
 	}
-	
+
 	public void setID(long pValue) {
 		mID = pValue;
 	}

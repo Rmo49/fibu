@@ -17,7 +17,7 @@ public class BuchungOfKontoModelSorted extends BuchungOfKontoModel {
 
 	private static final long serialVersionUID = -141586862566627222L;
 	/** die Lise mit allen Buchungen eines Kontos */
-	private List<BuchungRow> mBuchungen = new ArrayList<BuchungRow>();
+	private List<BuchungRow> mBuchungen = new ArrayList<>();
 	/** gibt an, ob das Konto ein SollKonto ist */
 	private boolean mIsSoll = true;
 
@@ -43,7 +43,7 @@ protected List<BuchungRow> getBuchungen() {
 @Override
 public Object getValueAt(int row, int col) {
 	Trace.println(7, "KontoView.BuchungModel.getValueAt(" +row +',' + col +')');
-	BuchungRow lRow = mBuchungen.get(row);		
+	BuchungRow lRow = mBuchungen.get(row);
 	switch (col) {
 		case 0: return lRow.datum;
 		case 1: return lRow.beleg;
@@ -109,14 +109,14 @@ private void readAllBuchungen(int kontoNr, Date from) {
 			}
 		}
 	}
-	catch (FibuException e) {}	
+	catch (FibuException e) {}
 }
 
 /**
  * Alle Zwischensummen zu den bestehenden buchungen einfügen
  */
 private List<BuchungRow> addZwischensumme() {
-	List<BuchungRow> buchungenNew = new ArrayList<BuchungRow>();
+	List<BuchungRow> buchungenNew = new ArrayList<>();
 	Iterator<BuchungRow> iter = mBuchungen.iterator();
 	BuchungRow buchung = null;
 	String tag1 = "";
@@ -141,7 +141,7 @@ private List<BuchungRow> addZwischensumme() {
 				addTotalRow(tag1, buchungenNew);
 			}
 			tag1 = tags[0];
-			buchung.saldo = -1;			
+			buchung.saldo = -1;
 			buchungenNew.add(buchung);
 			mSaldo = 0;
 			addSortedSaldo(buchung);
@@ -173,7 +173,7 @@ private void addSortedSaldo(BuchungRow buchung) {
 			mSaldo += buchung.sollBetrag;
 		}
 		else {
-			mSaldo -= buchung.habenBetrag;		
+			mSaldo -= buchung.habenBetrag;
 		}
 	}
 	else {
@@ -181,13 +181,13 @@ private void addSortedSaldo(BuchungRow buchung) {
 			mSaldo -= buchung.sollBetrag;
 		}
 		else {
-			mSaldo += buchung.habenBetrag;		
-		}	
-	}	
+			mSaldo += buchung.habenBetrag;
+		}
+	}
 }
 
 //----- Sortieren -------------------------
- 
+
 private class BuchungComparator implements Comparator <BuchungRow> {
 
 	@Override
@@ -198,7 +198,7 @@ private class BuchungComparator implements Comparator <BuchungRow> {
 		}
 		return o2.text.compareTo(tag[0]);
 	}
-	
+
 }
 
 }

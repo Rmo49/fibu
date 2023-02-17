@@ -17,9 +17,9 @@ import com.rmo.fibu.view.FibuView;
  */
 public class FibuApp {
 
-	private static final String sVersion = "FibuLocal V5.0 (05.02.23)";
+	private static final String sVersion = "FibuLocal V5.2 (17.02.23)";
 	private static FibuView mFibu;
-   
+
 	/********************************
 	 * Main, start der Fibu: Config einlesen, Fibu kreieren
 	 */
@@ -27,7 +27,7 @@ public class FibuApp {
 		try {
 			// Die Configuration einlesen
 			Config.checkArgs(args);
-			Date date = new Date();    
+			Date date = new Date();
 			Trace.println(0, "--- Gestartet: " + date);
 			Config.readProperties();
 //			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());

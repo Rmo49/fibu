@@ -15,7 +15,7 @@ import com.rmo.fibu.model.CsvCompany;
  *
  */
 public class CsvCompanyDataFrom extends DataModelFrom {
-	
+
 	/**
 	 * Model constructor comment.
 	 */
@@ -27,12 +27,13 @@ public class CsvCompanyDataFrom extends DataModelFrom {
 	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
 	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
 	 */
+	@Override
 	public void checkTableVersion() {
-		
+
 	}
 
 
-	
+
 	private void copyToPdfCompany(ResultSet mReadSet, CsvCompany lCompany) throws SQLException {
 		lCompany.setCompanyID(mReadSet.getInt(1));
 		lCompany.setCompanyName(mReadSet.getString(2));
@@ -53,7 +54,7 @@ public class CsvCompanyDataFrom extends DataModelFrom {
 	private class PdfIterator implements Iterator<CsvCompany> {
 		private Statement mReadStmt;
 		private ResultSet mReadSet;
-		
+
 		PdfIterator() {
 			try {
 				mReadStmt = getConnection()
@@ -96,5 +97,5 @@ public class CsvCompanyDataFrom extends DataModelFrom {
 		}
 	}
 
-	
+
 }

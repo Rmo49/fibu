@@ -9,7 +9,7 @@ public class FibuException extends Exception
 	private static final long serialVersionUID = -4260846904191081241L;
 	public FibuException() {
 	}
-	
+
 	public FibuException(String pMessage) {
 		super (pMessage);
 	}

@@ -11,23 +11,23 @@ public class CsvCompany {
 	static final public int docTypePdf = 2;
 	static final public String[] docTypes = { "CSV", "PDF"};
 
-	
+
 	private int companyID;
 	private String companyName;
 	private String kontoNrDefault;
 	private String dirPath;
 	private int docType = 1;	// 1=default
 	private String docString;	// für die Anzeige von ComboBox
-	
+
 	//--- für PDF
 	private String wordBefore;
 	private String spaltenArray; // zum Speichern der Spalten-Werte
-	
+
 	private int spalteDatum;
 	private int spalteText;
 	private int spalteSoll;
 	private int spalteHaben;
-	private int anzahlSpalten = 0; // die höchste Nummer der Spalten 
+	private int anzahlSpalten = 0; // die höchste Nummer der Spalten
 
 
 	public CsvCompany() {
@@ -215,7 +215,7 @@ public class CsvCompany {
 		this.spalteHaben = parse(spalteHaben);
 	}
 
-	
+
 	/**
 	 * @return the spaltenArray
 	 */
@@ -245,18 +245,18 @@ public class CsvCompany {
 		String[] words = spaltenArray.split(",");
 		for (int i = 0; i < words.length; i++) {
 			switch(i) {
-			case 0: 
+			case 0:
 				setSpalteDatum(parse(words[i]));
 				break;
-			case 1: 
+			case 1:
 				setSpalteText(parse(words[i]));
 				break;
-			case 2: 
+			case 2:
 				setSpalteSoll(parse(words[i]));
 				break;
-			case 3: 
+			case 3:
 				setSpalteHaben(parse(words[i]));
-				break;			
+				break;
 			}
 		}
 	}
@@ -276,7 +276,7 @@ public class CsvCompany {
 			return i;
 		}
 		catch (NumberFormatException ex) {
-			return -1;			
+			return -1;
 		}
 	}
 
@@ -286,7 +286,7 @@ public class CsvCompany {
 	public int getAnzahlSpalten() {
 		return anzahlSpalten;
 	}
-	
-	
-	
+
+
+
 }

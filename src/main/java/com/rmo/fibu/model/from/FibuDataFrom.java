@@ -16,7 +16,7 @@ public class FibuDataFrom extends DataModelFrom implements Serializable {
 
 	/**
 	 * FibuData constructor comment.
-	 * 
+	 *
 	 * @exception java.lang.Exception
 	 *                The exception description.
 	 */
@@ -28,11 +28,12 @@ public class FibuDataFrom extends DataModelFrom implements Serializable {
 	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
 	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
 	 */
+	@Override
 	public void checkTableVersion() {
-		
+
 	}
 
-	
+
 	/**
 	 * Liest die allgemeinen Fibu-Daten von der DB.
 	 */
@@ -45,7 +46,7 @@ public class FibuDataFrom extends DataModelFrom implements Serializable {
 			ResultSet lResult = stmt.executeQuery(lQuery);
 			if (lResult.next()) {
 				return lResult.getString("FibuTitel");
-			} 
+			}
 		} catch (java.sql.SQLException e) {
 			throw new FibuException("FibuDaten readFibuData \n SQLState: "
 					+ e.getSQLState() + " Message: " + e.getMessage());

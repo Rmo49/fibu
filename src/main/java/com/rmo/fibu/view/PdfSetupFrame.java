@@ -6,8 +6,6 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,12 +28,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableColumn;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -60,10 +56,6 @@ public class PdfSetupFrame extends JFrame
 
 	private static final long serialVersionUID = -6429166001920978382L;
 
-	/** Die Breite der Columns */
-	private static final int DEFAULT_WIDTH = 2;
-	private static final int PATH_WIDTH = 20;
-
 	// die View Elemente
 	private CsvCompany mCompany;
 
@@ -85,9 +77,6 @@ public class PdfSetupFrame extends JFrame
 
 	// File von dem gelesen wird
 	private File mPdfFile;
-
-	/** Die Daten gelesen vom PDF-File */
-	private List <String> pdfZeile;
 
 	/** Verbindung zur DB */
 	private CsvCompanyData mCompanyData = null;
@@ -166,7 +155,7 @@ public class PdfSetupFrame extends JFrame
 		mWordBefore.setText("Kartenlimite");
 		lPanel2.add(mWordBefore);
 
-		lPanel2.setBorder(blackline);
+//		lPanel2.setBorder(blackline);
 		lPanel2.setAlignmentX(Component.LEFT_ALIGNMENT);
 		Dimension size = new Dimension(500,30);
 		lPanel2.setMaximumSize(size);
@@ -211,6 +200,10 @@ public class PdfSetupFrame extends JFrame
 		paneList.add(mSollSpalte = new JTextField() );
 		paneList.add(new JLabel("Haben"));
 		paneList.add(mHabenSplalte = new JTextField() );
+		size = new Dimension(200,150);
+		paneList.setMaximumSize(size);
+		paneList.setPreferredSize(size);
+		paneList.setMinimumSize(size);
 
 		allPanel.add(paneList);
 
@@ -245,22 +238,6 @@ public class PdfSetupFrame extends JFrame
 //		setColWidth();
 	}
 
-	/**
-	 * Die Breite der Cols setzen
-	 */
-	private void setColWidth() {
-		TableColumn column = null;
-		for (int i = 0; i < mTableView.getColumnCount(); i++) {
-			column = mTableView.getColumnModel().getColumn(i);
-			switch (i) {
-			case 3:
-				column.setPreferredWidth(PATH_WIDTH * Config.windowTextSize);
-				break;
-			default:
-				column.setPreferredWidth(DEFAULT_WIDTH * Config.windowTextSize);
-			}
-		}
-	}
 
 	/**
 	 * Die erste Zeile mit Buchungen lesen.
@@ -457,194 +434,6 @@ public class PdfSetupFrame extends JFrame
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			return data.get(columnIndex);
 		}
-	}
-
-
-
-
-
-	//----- Backup ----------------------------------------------------
-
-	private Container initAllGridLayout() {
-		JPanel allPanel = new JPanel();
-		GridLayout layout = new GridLayout(0,1);
-		allPanel.setLayout(layout);
-
-		JLabel lLabel;
-		lLabel = new JLabel("Steuerdaten für: " + mCompany.getCompanyName());
-		lLabel.setFont(Config.fontText);
-		lLabel.setAlignmentY(Component.RIGHT_ALIGNMENT);
-		allPanel.add(lLabel);
-
-		JPanel lPanel = new JPanel(new FlowLayout());
-		lLabel = new JLabel("Zeile vor Buchungen");
-		lLabel.setFont(Config.fontText);
-		lPanel.add(lLabel);
-
-		mWordBefore = new JTextField();
-		mWordBefore.setFont(Config.fontTextBold);
-		lPanel.add(mWordBefore);
-		mWordBefore.setText("Kartenlimite");
-		lPanel.setAlignmentY(Component.LEFT_ALIGNMENT);
-		allPanel.add(lPanel);
-
-		mBtnSearch = new JButton("Nächste Zeile einlesen");
-		mBtnSearch.setFont(Config.fontTextBold);
-		allPanel.add(mBtnSearch);
-
-		mBtnSearch.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				leseBuchungsZeile();
-			}
-		});
-
-		// model initialisieren, da vor der mTableView gebraucht
-		mTableModel = new PdfBuchungModel();
-		mTableModel.addTableModelListener(this);
-//		mTableScroll.add(initTable());
-
-		mTableScroll = new JScrollPane(initTable());
-		mTableScroll.setSize(300,50);
-		mTableScroll.setBorder(new LineBorder(Color.black));
-		allPanel.add(mTableScroll);
-
-		JPanel paneList = new JPanel(new GridLayout(0,2));
-		paneList.add(new JLabel("Was"));
-		paneList.add(new JLabel("Spalte"));
-		paneList.add(new JLabel("Datum"));
-		paneList.add(mDatumSpalte = new JTextField() );
-		allPanel.add(paneList);
-
-		return allPanel;
-	}
-
-
-	private Container initAllWithGridBag() {
-		JPanel lPanel = new JPanel(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
-		int zeile = 0;
-		JLabel lLabel;
-
-		lLabel = new JLabel("Steuerdaten für");
-		lLabel.setFont(Config.fontText);
-		c.weightx = 0.5;
-		c.gridx = 0;
-		c.gridy = zeile;
-		lPanel.add(lLabel, c);
-
-		lLabel = new JLabel(mCompany.getCompanyName());
-		lLabel.setFont(Config.fontTextBold);
-		c.gridx =  1;
-		c.gridy = zeile;
-		lPanel.add(lLabel, c);
-
-		zeile++;
-		lLabel = new JLabel("Zeile vor Buchungen");
-		lLabel.setFont(Config.fontText);
-		c.gridx = 0;
-		c.gridy = zeile;
-		lPanel.add(lLabel, c);
-
-		mWordBefore = new JTextField();
-		mWordBefore.setFont(Config.fontTextBold);
-		c.gridwidth = 2;
-		c.gridx = 1;
-		c.gridy = zeile;
-		lPanel.add(mWordBefore, c);
-		mWordBefore.setText("Kartenlimite");
-
-		zeile++;
-		mBtnSearch = new JButton("Nächste Zeile einlesen");
-		mBtnSearch.setFont(Config.fontTextBold);
-		c.gridwidth = 1;
-		c.gridx = 0;
-		c.gridy = zeile;
-		lPanel.add(mBtnSearch, c);
-
-		mBtnSearch.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				leseBuchungsZeile();
-			}
-		});
-
-		zeile++;
-		// model initialisieren, da vor der mTableView gebraucht
-		mTableModel = new PdfBuchungModel();
-		mTableModel.addTableModelListener(this);
-//		mTableScroll.add(initTable());
-
-		mTableScroll = new JScrollPane(initTable());
-		mTableScroll.setSize(300,100);
-		mTableScroll.setBorder(new LineBorder(Color.black));
-		c.gridwidth = 2;
-		c.weightx = 1.0;
-		c.gridx = 0;
-		c.gridy = zeile;
-		lPanel.add(mTableScroll, c);
-
-		// TODO müsste in der Scollpane erscheinen
-		zeile++;
-		c.gridy = zeile;
-		lPanel.add(initTable(), c);
-
-		zeile++;
-		lLabel = new JLabel("Was");
-		lLabel.setFont(Config.fontTextBold);
-		c.gridwidth = 1;
-		c.gridx = 0;
-		c.gridy = zeile;
-		lPanel.add(lLabel, c);
-		lLabel = new JLabel("Spalte");
-		lLabel.setFont(Config.fontTextBold);
-		c.gridx = 1;
-		lPanel.add(lLabel, c);
-
-		zeile++;
-		lLabel = new JLabel("Datum");
-		lLabel.setFont(Config.fontText);
-		c.gridwidth = 1;
-		c.gridx = 0;
-		c.gridy = zeile;
-		lPanel.add(lLabel, c);
-		c.gridx = 1;
-		c.anchor = GridBagConstraints.LINE_START;
-		mDatumSpalte = new JTextField(3);
-		lPanel.add(mDatumSpalte,c);
-
-		zeile++;
-		lLabel = new JLabel("Text");
-		lLabel.setFont(Config.fontText);
-		c.gridwidth = 1;
-		c.gridx = 0;
-		c.gridy = zeile;
-		lPanel.add(lLabel, c);
-		c.gridx = 1;
-		lPanel.add(mTextSpalte = new JTextField(),c);
-
-		zeile++;
-		lLabel = new JLabel("Soll");
-		lLabel.setFont(Config.fontText);
-		c.gridwidth = 1;
-		c.gridx = 0;
-		c.gridy = zeile;
-		lPanel.add(lLabel, c);
-		c.gridx = 1;
-		lPanel.add(mSollSpalte = new JTextField(),c);
-
-		zeile++;
-		lLabel = new JLabel("Haben");
-		lLabel.setFont(Config.fontText);
-		c.gridwidth = 1;
-		c.gridx = 0;
-		c.gridy = zeile;
-		lPanel.add(lLabel, c);
-		c.gridx = 1;
-		lPanel.add(mHabenSplalte = new JTextField(),c);
-
-		return lPanel;
 	}
 
 }

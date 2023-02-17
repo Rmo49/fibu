@@ -14,7 +14,7 @@ import com.rmo.fibu.util.Trace;
 /**
  * Model der gespeicherten keywords für CSV. Diese können gespeichert oder
  * geändert werden (add). Auslesen als Iterator
- * 
+ *
  * @author Ruedi
  *
  */
@@ -68,8 +68,9 @@ public class CsvKeyKontoData extends DataBase {
 	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
 	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
 	 */
+	@Override
 	public void checkTableVersion() {
-		
+
 	}
 
 
@@ -113,7 +114,7 @@ public class CsvKeyKontoData extends DataBase {
 
 	/**
 	 * Das Keywort an der Stelle position (0..x) zurückgeben.
-	 * 
+	 *
 	 * @return Keywort an der position, null wenn nicht vorhanden
 	 */
 	public CsvKeyKonto readAt(int companyId, int position) throws FibuException {
@@ -193,7 +194,7 @@ public class CsvKeyKontoData extends DataBase {
 	 */
 	public void updateRow(CsvKeyKonto pKeyword) throws FibuException {
 		Trace.println(7, "CsvKeyKontoData.update()");
-		
+
 		try {
 			int i = 1;
 			if (mVersion >= 2) {
@@ -227,7 +228,7 @@ public class CsvKeyKontoData extends DataBase {
 	public void resetVersion() {
 		mVersion = 0;
 	}
-	
+
 	/**
 	 * Die Version, abhängig von der Anzahl Felder in der DB
 	 * 1: companyID, SuchWort, KontoNr, SH
@@ -254,7 +255,7 @@ public class CsvKeyKontoData extends DataBase {
 
 	/**
 	 * Die Anzahl Felder in der DB
-	 * 
+	 *
 	 * @return
 	 * @throws SQLException
 	 */
@@ -276,7 +277,7 @@ public class CsvKeyKontoData extends DataBase {
 
 	/**
 	 * Einen Csv Eintrag suchen
-	 * 
+	 *
 	 * @param pKeyword
 	 * @return
 	 * @throws SQLException
@@ -380,7 +381,7 @@ public class CsvKeyKontoData extends DataBase {
 
 		/**
 		 * Konstruktur, setzt den ReadSet.
-		 * 
+		 *
 		 * @param companyId
 		 */
 		CsvKeywordIterator(int companyId) {

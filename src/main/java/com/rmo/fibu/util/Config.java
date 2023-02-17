@@ -507,7 +507,7 @@ public class Config {
 		writeWindowPdfSetup();
 	}
 
-	
+
 	/**
 	 * Position und Grösse des Windows
 	 */
@@ -639,25 +639,6 @@ public class Config {
 		}
 	}
 
-	/** Einen float-Werte von den Properties lesen */
-	// private double readDouble(String property) throws FibuException {
-	// try {
-	// String value = mProperties.getProperty(property);
-	// if (value == null) return 0.0;
-	// return Double.parseDouble(value);
-	// }
-	// catch (NumberFormatException ex) {
-	// throw new FibuException ("Property: '" +property +"' falsches Format \n"
-	// + "Fehler: " +ex.getMessage());
-	// }
-	// }
-
-	/** Einen double-Werte in ein Property schreiben */
-	// private void writeDouble(String property, double value) throws
-	// FibuException {
-	// String strValue = Double.toString(value);
-	// mProperties.setProperty(property, strValue);
-	// }
 
 	/** Einen int-Werte in ein Property schreiben */
 	private static void writeInt(String property, int value) {

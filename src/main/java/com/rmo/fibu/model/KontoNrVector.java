@@ -34,7 +34,7 @@ public class KontoNrVector extends Vector<String> {
             }
         }
     }
-    
+
     /** Auf die gewünsche Nummer setzen */
     public int getIndex(String kontoNummer) {
        KontoData lKontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
@@ -43,7 +43,7 @@ public class KontoNrVector extends Vector<String> {
         int ktoNr = Integer.parseInt(kontoNummer);
         int index = 0;
         boolean found = false;
-        
+
         while (index < max) {
             try {
                 lKonto = lKontoData.readAt(index);
@@ -62,12 +62,12 @@ public class KontoNrVector extends Vector<String> {
         }
     	return index;
     }
-    
+
     /** Die Kontonummer einer Zeile als String */
     public String getAsString(int rowNr) {
     	return this.get(rowNr);
     }
-    
+
 	/** Die Kontonummer einer Zeile als int */
     public int getAsInt(int rowNr) {
     	return Integer.valueOf(this.get(rowNr)).intValue();

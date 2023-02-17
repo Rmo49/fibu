@@ -21,7 +21,7 @@ import com.rmo.fibu.util.Trace;
  *
  */
 public class JsonFile {
-	
+
 	/**
 	 * Der FileName des Json-Files
 	 */
@@ -29,7 +29,7 @@ public class JsonFile {
 		String lFileName = Config.sDefaultDir + "/" + Config.sFibuDbName + Config.sJsonExtension;
 		return lFileName;
 	}
-	
+
 	/**
 	 * Check, ob das File exisitert
 	 * @return
@@ -38,7 +38,7 @@ public class JsonFile {
 		File jsonFile = new File(getJsonFileName());
 		return jsonFile.exists();
 	}
-	
+
 	/**
 	 * Das File löschen
 	 */
@@ -47,8 +47,8 @@ public class JsonFile {
 		jsonFile.delete();
 	}
 
-	
-	
+
+
 	/**
 	 * Einlesen alle Daten vom Json file, Zeile um Zeile.
 	 */
@@ -61,8 +61,8 @@ public class JsonFile {
 		} catch (FileNotFoundException ex) {
 			Trace.println(4, ex.getMessage());
 		}
-		
-		List<BuchungCsv> buchungList = new ArrayList<BuchungCsv>();
+
+		List<BuchungCsv> buchungList = new ArrayList<>();
 		// hier werden die Daten eingelesen, Zeile um Zeile
 		BufferedReader br = new BufferedReader(fileIn);
 		try {
@@ -79,11 +79,11 @@ public class JsonFile {
 		} catch (IOException ex) {
 			Trace.println(4, ex.getMessage());
 		}
-		Trace.println(5,"JsonFile.readFromFile() => end");		
+		Trace.println(5,"JsonFile.readFromFile() => end");
 		return buchungList;
 	}
-	
-	
+
+
 	/** Die Buchungen in einer Json-Datei speichern
 	 */
 	public static String saveInFile(String companyName, List<BuchungCsv> buchungList) {
@@ -99,7 +99,7 @@ public class JsonFile {
 			Trace.println(4, ex.getMessage());
 			antwort.append(ex.getMessage());
 		}
-		
+
 		BufferedWriter bw = new BufferedWriter(fileOut);
 		try {
 			bw.append(companyName);

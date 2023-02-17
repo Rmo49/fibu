@@ -26,7 +26,7 @@ public class CsvKeyKonto {
 	}
 
 	// ---- setter und getter
-	
+
 	public int getId() {
 		return Id;
 	}
@@ -34,7 +34,7 @@ public class CsvKeyKonto {
 	public void setId(int Id) {
 		this.Id = Id;
 	}
-	
+
 	public int getCompanyId() {
 		return companyId;
 	}

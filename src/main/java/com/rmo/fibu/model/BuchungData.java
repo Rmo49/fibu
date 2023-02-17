@@ -15,7 +15,8 @@ import com.rmo.fibu.exception.BuchungNotFoundException;
 import com.rmo.fibu.exception.BuchungValueException;
 import com.rmo.fibu.exception.BuchungVorhandenException;
 import com.rmo.fibu.exception.FibuException;
-import com.rmo.fibu.exception.KontoNotFoundException;import com.rmo.fibu.util.Trace;
+import com.rmo.fibu.exception.KontoNotFoundException;
+import com.rmo.fibu.util.Trace;
 
 /** Das Model von Buchung, verwaltet alle Buchungseinträge.
  *  Verbindung zur DB. Stellt (CRUD)-Methoden zur Verfügung.
@@ -72,13 +73,14 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 		super();
 		init();
 	}
-	
+
 	/**
 	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
 	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
 	 */
+	@Override
 	public void checkTableVersion() {
-		
+
 	}
 
 	/** Max. Anzahl Zeilen von Buchungen (in der Tabelle und Temporäre).
@@ -310,7 +312,7 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 		save(pBuchung);
 	}
 
-	/** Check, ob eine Buchung vorhanden ist, 
+	/** Check, ob eine Buchung vorhanden ist,
 	 * @return true wenn gefunden und alle Felder gleichen Inhalt haben.
 	*/
 	public boolean exist(Buchung pBuchung) {
@@ -331,9 +333,9 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 			return false;
 		}
 	}
-	
 
-	/** Check, ob eine potentielle Buchung schon vorhanden ist. 
+
+	/** Check, ob eine potentielle Buchung schon vorhanden ist.
 	 * @return true wenn gefunden und alle Felder gleichen Inhalt haben.
 	*/
 	public Buchung isInDb(Buchung pBuchung) {
@@ -354,14 +356,14 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 			return null;
 		}
 	}
-	
+
 	/** Gibt das Model von Konto zurück.
 	 *  wenn nicht gefunden: KontoNotFoundException.
 	 */
 	public KontoData getKontoData() throws KontoNotFoundException {
 		if (mKontoData == null) {
 			Iterator<?> lBeans = mBeanContext.iterator();
-			
+
 			while (lBeans.hasNext()) {
 				Object lObject = lBeans.next();
 				if (lObject instanceof KontoData) {
@@ -406,9 +408,9 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 			setupDataSet();
 		}
 		catch (SQLException e) {
-			Trace.println(1, "BuchungData.reloadData: " + e.getMessage());		
+			Trace.println(1, "BuchungData.reloadData: " + e.getMessage());
 		}
-		
+
 	}
 
 	/** Setzt das Statement (Connection zur DB)
@@ -427,7 +429,7 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 	 */
 	private void init() {
 		Trace.println(1, "BuchungData.init()");
-		mNewBuchung = new Vector<Buchung>();		
+		mNewBuchung = new Vector<>();
 	}
 
 	/** Listeners dazufügen
@@ -484,9 +486,9 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 			throw new BuchungNotFoundException(e.getMessage());
 		}
 	}
-	
+
 	/** Gibt die aktuelle BuchungId zurück
-	 * Berechnet diese falls am Anfang. 
+	 * Berechnet diese falls am Anfang.
 	 */
 	public long getLastBuchungId() {
 		if (mNextBuchungId < 0) {
@@ -506,8 +508,8 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 		}
 		return mNextBuchungId;
 	}
-	
-	/** Gibt die nächste Belegsnummer zurück 
+
+	/** Gibt die nächste Belegsnummer zurück
 	 */
 	public String getNextBelegNr() {
 		int max = 0;

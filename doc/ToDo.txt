@@ -25,5 +25,3 @@ Erweiterung:
 	Die ausgewählten Buchungen wechseln
 - Summen Fettschrift möglich?
 
-PDF:
-PDFText2HTML <= erkennt keine Tabelle, kann somit PDFTextStripper verwenden

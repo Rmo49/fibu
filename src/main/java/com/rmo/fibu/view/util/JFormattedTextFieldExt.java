@@ -12,7 +12,7 @@ import com.rmo.fibu.util.Config;
 public final class JFormattedTextFieldExt extends JFormattedTextField {
 
 	 /**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -1166831038069002713L;
 

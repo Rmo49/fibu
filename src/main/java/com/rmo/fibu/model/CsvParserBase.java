@@ -70,12 +70,12 @@ public abstract class CsvParserBase {
 			sb.append(CsvParserBase.companyNamePost);
 			sb.append(", ");
 			sb.append(CsvParserBase.companyNameCS);
-			sb.append(", ");			
+			sb.append(", ");
 			sb.append(CsvParserBase.companyNameRaiff);
 		}
 		return sb.toString();
 	}
-	
+
 	/**
 	 * Konstruktor, initialisiert gemeinsame Daten.
 	 * @param file
@@ -86,10 +86,10 @@ public abstract class CsvParserBase {
 					.withSeparator(getSplitChar())
 					.withIgnoreQuotations(false)
 					.build();
-			
+
 			BufferedReader in = new BufferedReader(
 					new InputStreamReader(new FileInputStream(file), getEncoding()));
-			
+
 			reader = new CSVReaderBuilder(in)
 					.withSkipLines(0)
 					.withCSVParser(parser)
@@ -100,14 +100,14 @@ public abstract class CsvParserBase {
 			// sollte nie passieren, da selektiert von Liste
 		}
 	}
-	
+
 	/**
 	 * Startet das parsing, gibt Buchungen zurück
 	 * @return
 	 */
 	public List<BuchungCsv> startParsing(CsvCompany company) {
 		this.mCompany = company;
-		List<BuchungCsv> buchungList = new ArrayList<BuchungCsv>();
+		List<BuchungCsv> buchungList = new ArrayList<>();
 
 		BuchungCsv buchungCvs = nextBuchung();
 		while (buchungCvs != null) {
@@ -116,13 +116,13 @@ public abstract class CsvParserBase {
 			}
 			buchungCvs = nextBuchung();
 		}
-		
+
 		return buchungList;
 	}
-	
-	/** 
+
+	/**
 	 * Die nächste Buchung einlesen, liest so lange, bis eine Zeile mit einem Datum gefunden.
-	 * 
+	 *
 	 * @return BuchungPdf, if BuchungPdf.datum = "" dann keine gültige Buchung, aber Zeile gefunden
 	 * @return null, wenn keine Zeile mehr vorhanden
 	 */
@@ -144,7 +144,7 @@ public abstract class CsvParserBase {
 				if (lineValues.length < 4) {
 					lBuchungCsv.setText(buchungFalsch);
 					lBuchungCsv.setBetrag("0");
-					lBuchungCsv.setHaben(mCompany.getKontoNrDefault());		
+					lBuchungCsv.setHaben(mCompany.getKontoNrDefault());
 				}
 				else {
 					readBuchungsText(lBuchungCsv);
@@ -199,7 +199,7 @@ public abstract class CsvParserBase {
 		return true;
 	}
 
-	
+
 	/**
 	 * lese das Datum.
 	 * Wenn kein Datum wird eine Exception geworfen, sonst das Date zurückgegeben
@@ -244,7 +244,7 @@ public abstract class CsvParserBase {
 		}
 		return txt.toString();
 	}
-	
+
 	/**
 	 * Die führenden + und - und das Tausender Trennzeichen entfernen.
 	 * @param betrag
@@ -259,20 +259,20 @@ public abstract class CsvParserBase {
 			betrag = betrag.substring(0,posTausend) + betrag.substring(posTausend+1, betrag.length());
 		}
 		return betrag;
-	}	
-	
+	}
+
 //------ Was implementiert werden muss -----------------------------------------
 
 	/**
 	 * Die Spalten-Nummer des Datums
 	 */
 	protected abstract int getDateCol();
-	
+
 	/**
 	 * Das Datumsformat der jeweiligen Implementation
 	 */
 	protected abstract DateFormat getDateFormat();
-	
+
 	/**
 	 * Buchungstest lesen, diesen evt. anpassen.
 	 * @param buchung
@@ -285,21 +285,6 @@ public abstract class CsvParserBase {
 	 */
 	protected abstract void readBetrag(BuchungCsv buchung);
 
-	/**
-	 * Die ID der Company
-	 */
-	// TODO delete
-//	protected int getCompanyId() {
-//		return mCompany.getCompanyID();
-//	}
-
-	/**
-	 * Die standard KontoNr
-	 */
-	// TODO delete
-//	protected String getKontoNrDefault() {
-//		return mCompany.getKontoNrDefault();
-//	}
 
 	/**
 	 * Buchungstext muss von Impl. speziell behandelt werden.
@@ -307,7 +292,7 @@ public abstract class CsvParserBase {
 	 * @return
 	 */
 	protected abstract String checkText(String text);
-	
+
 	/**
 	 * Den encoding string, muss von CS oder Postfinance gesetzt werden.
 	 * Siehe auch encoding standard strings
@@ -315,11 +300,11 @@ public abstract class CsvParserBase {
 	 * @return
 	 */
 	protected abstract String getEncoding();
-	
+
 	/**
 	 * The split character of csv file.
 	 * @return
 	 */
 	public abstract char getSplitChar();
-	
+
 }

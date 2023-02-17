@@ -62,7 +62,7 @@ import com.rmo.fibu.util.Trace;
 		setTitle("KontoList");
 		this.setSize(250, 400);
 		this.setLocation(100, 20);
-		// TODO Location verändern, wenn Event von Parent dass verändert
+		// TODO Location verändern, wenn Event von Parent das verändert
 	}
 
 	/** Initialisierung der Tabelle für Konto mit dem Model

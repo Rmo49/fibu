@@ -56,8 +56,9 @@ public class KontoData extends DataBase implements BeanContextServicesListener, 
 	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
 	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
 	 */
+	@Override
 	public void checkTableVersion() {
-		
+
 	}
 
 
@@ -124,7 +125,7 @@ public class KontoData extends DataBase implements BeanContextServicesListener, 
 
 	/**
 	 * Das Konto an der Stelle position (0..x) zurückgeben.
-	 * 
+	 *
 	 * @return Konto an der position, null wenn nicht vorhanden
 	 */
 	public Konto readAt(int position) throws KontoNotFoundException {
@@ -195,7 +196,7 @@ public class KontoData extends DataBase implements BeanContextServicesListener, 
 
 	/**
 	 * verbucht die Buchung im Kontorahmen
-	 * 
+	 *
 	 * @param double pBetrag der Betrag der Buchung
 	 * @para int pKontoNr das Konto auf das verbucht werden soll
 	 * @para boolean pSoll der Betrag steht in der Soll- / Haben-Spalte diese
@@ -301,7 +302,7 @@ public class KontoData extends DataBase implements BeanContextServicesListener, 
 			lKonto.setSaldo(lExcel.getDoubleAt(rowNr, 4));
 			} else {
 				lKonto.setStartSaldo(0);
-				lKonto.setSaldo(0);				
+				lKonto.setSaldo(0);
 			}
 			add(lKonto);
 			Trace.println(7, "add: " + lKonto.toString());

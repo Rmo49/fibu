@@ -130,23 +130,6 @@ public class BuchungMenu {
 			});
 			mnuCsv.add(mnuItem);
 		}
-
-		// zu Test von PDF
-		// TODO löschen wenn PDF funktioniert
-		JMenuItem mnuPdfTest;
-		mnuPdfTest = new JMenuItem("PDF Test");
-		mnuPdfTest.setFont(Config.fontTextBold);
-		mnuCsv.add(mnuPdfTest);
-
-		mnuPdfTest.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-//				mBuchungView.pdfActionMitBox();
-//				mBuchungView.pdfActionMitBoxCoord();
-				mBuchungView.pdfActionMitBoxWord();
-//				mBuchungView.pdfActionMitSpire();
-			}
-		});
 	}
 
 

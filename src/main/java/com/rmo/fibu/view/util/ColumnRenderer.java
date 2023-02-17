@@ -37,7 +37,7 @@ public class ColumnRenderer extends DefaultTableCellRenderer  {
 	/** Initialisiert den Renderer */
 	private void init(){
 		if (mBuchungModel != null) {
-			mBuchungData = (BuchungData) DataBeanContext.getContext().getDataBean(BuchungData.class);		
+			mBuchungData = (BuchungData) DataBeanContext.getContext().getDataBean(BuchungData.class);
 		}
 	}
 
@@ -97,7 +97,7 @@ public class ColumnRenderer extends DefaultTableCellRenderer  {
 				this.setHorizontalTextPosition(SwingConstants.RIGHT);
 			}
 		}
-		return this;					   	
+		return this;
 	}
 
 }

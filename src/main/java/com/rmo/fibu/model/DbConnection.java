@@ -26,7 +26,7 @@ public class DbConnection {
 
 	/**
 	 * Opens the Connection to MySql which is set in Config.
-	 * 
+	 *
 	 * @param dbName
 	 *            the name of database (schema), if null no database is opend
 	 * @return Connection or null if not opened.
@@ -49,7 +49,7 @@ public class DbConnection {
 				sConnection.setAutoCommit(true);
 			}
 		} catch (Exception ex) {
-			throw new FibuRuntimeException(ex + ex.getMessage() + 
+			throw new FibuRuntimeException(ex + ex.getMessage() +
 					"\n Solution: Check config file, Is MySql running? Check Verwaltung > Dienste > MySql57");
 		}
 		return sConnection;
@@ -59,7 +59,7 @@ public class DbConnection {
 	 * Verbindung zur DB noch offen?
 	 * @return
 	 */
-	public static boolean isConnected() {	
+	public static boolean isConnected() {
 		try {
 			if (sConnection == null || sConnection.isClosed()) {
 				return false;
@@ -68,10 +68,10 @@ public class DbConnection {
 		}
 		catch (SQLException e) {
 			// wenn Exception, dann Problem
-			return false; 
+			return false;
 		}
 	}
-		
+
 	/**
 	 * Close the Connection.
 	 */
@@ -92,7 +92,7 @@ public class DbConnection {
 
 	/**
 	 * Returns the Connection to database. If not open, it will setup
-	 * a connection to mySQL, or a specific schema. 
+	 * a connection to mySQL, or a specific schema.
 	 * @return Connection to mySql or a schema
 	 */
 	public static Connection getConnection() throws FibuRuntimeException {
@@ -105,7 +105,7 @@ public class DbConnection {
 			throw new FibuRuntimeException(ex.getMessage());
 		}
 	}
-	
+
 	/**
 	 * @return true Wenn connection zu einer Fibu-DB gesetzt ist
 	 */
@@ -118,5 +118,5 @@ public class DbConnection {
 			return false;
 		}
 	}
-	
+
 }

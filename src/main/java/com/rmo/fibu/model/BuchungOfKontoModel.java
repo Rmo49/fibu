@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
 import javax.swing.table.AbstractTableModel;
 
 import com.rmo.fibu.util.Config;
@@ -40,7 +41,7 @@ public abstract class BuchungOfKontoModel extends AbstractTableModel {
 		public double sollBetrag = -1; // -1 wird nie angezeigt (leerer Text)
 		public double habenBetrag = -1;
 		public double saldo = -1;
-		
+
 	}
 
 	public BuchungOfKontoModel() {
@@ -50,7 +51,7 @@ public abstract class BuchungOfKontoModel extends AbstractTableModel {
 
 	/**
 	 * Setup the new display (Vector)
-	 * 
+	 *
 	 * @param int  konto die kontonummer, die angezeigt werden soll
 	 * @param Date from ab diesem Datum Buchungen anzeigen
 	 */
@@ -58,7 +59,7 @@ public abstract class BuchungOfKontoModel extends AbstractTableModel {
 
 	/**
 	 * Die Liste aller Buchungen des Kontos
-	 * 
+	 *
 	 * @return
 	 */
 	abstract protected List<BuchungRow> getBuchungen();
@@ -95,7 +96,7 @@ public abstract class BuchungOfKontoModel extends AbstractTableModel {
 	public Class<?> getColumnClass(int col) {
 		return getValueAt(0, col).getClass();
 	}
-	
+
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
 		// TODO Momentan noch nicht implementiert, siehe setValueAt()
@@ -190,7 +191,7 @@ public abstract class BuchungOfKontoModel extends AbstractTableModel {
 	}
 
 	/**
-	 * Den Wert in die DB schreiben, 
+	 * Den Wert in die DB schreiben,
 	 */
 	@Override
 	public void setValueAt(Object aValue, int row, int col) {
@@ -216,6 +217,6 @@ public abstract class BuchungOfKontoModel extends AbstractTableModel {
 			break;
 		}
 	}
-	
-	
+
+
 }

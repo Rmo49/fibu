@@ -16,7 +16,7 @@ import com.rmo.fibu.model.CsvKeyKonto;
  *
  */
 public class CsvKeywordDataFrom extends DataModelFrom {
-	
+
 	/**
 	 * Model constructor comment.
 	 */
@@ -24,7 +24,7 @@ public class CsvKeywordDataFrom extends DataModelFrom {
 		super();
 	}
 
-		
+
 	// ----- Iterator ---------------------------------------------
 
 	/** Gibt einen Iterator zurück */
@@ -36,11 +36,12 @@ public class CsvKeywordDataFrom extends DataModelFrom {
 	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
 	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
 	 */
+	@Override
 	public void checkTableVersion() {
-		
+
 	}
-	
-	
+
+
 	/** Iterator über alle Keywords */
 	private class PdfKeywordIterator implements Iterator<CsvKeyKonto> {
 		private Statement mReadStmt;
@@ -57,7 +58,7 @@ public class CsvKeywordDataFrom extends DataModelFrom {
 						.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 				mReadSet = mReadStmt.executeQuery("SELECT * FROM PdfKeyword");
 				mReadSet.beforeFirst();
-				
+
 				// wie viele columns
 				ResultSetMetaData rsmd = mReadSet.getMetaData();
 				mAnzahlCols = rsmd.getColumnCount();
@@ -104,7 +105,7 @@ public class CsvKeywordDataFrom extends DataModelFrom {
 				// die ID nicht kopieren, da AutoIncrement
 				i = 2;
 			}
-			
+
 			pKeyword.setCompanyId(pResult.getInt(i));
 			pKeyword.setSuchWort(pResult.getString(++i));
 			pKeyword.setKontoNr(pResult.getString(++i));

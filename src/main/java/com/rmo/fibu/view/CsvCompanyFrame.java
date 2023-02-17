@@ -49,9 +49,6 @@ public class CsvCompanyFrame extends JFrame {
 	/** Die Daten in der DB */
 	private CsvCompanyData mCompanyData = null;
 
-	/** Die view um Daten einzulesen */
-	private PdfSetupFrame mCsvSetupFrame;
-
 	/**
 	 * Wird gestartet von Buchungen für Einstellungen.
 	 *
@@ -166,7 +163,7 @@ public class CsvCompanyFrame extends JFrame {
 		});
 		flow1.add(btnAdd);
 
-		JButton btnSetup = new JButton("Steuerdaten eingeben");
+		JButton btnSetup = new JButton("PDF Steuerdaten eingeben");
 		btnSetup.setFont(Config.fontTextBold);
 
 		btnSetup.addActionListener(new ActionListener() {
@@ -232,12 +229,10 @@ public class CsvCompanyFrame extends JFrame {
 		}
 		try {
 			CsvCompany lCompany = mTableModel.readAt(selRow);
-			// TODO muss diese Var gespeichert werden?
-			mCsvSetupFrame = null;
-			if (mCsvSetupFrame == null) {
-				mCsvSetupFrame = new PdfSetupFrame(lCompany);
+			if (lCompany.getDocType() == CsvCompany.docTypePdf) {
+				PdfSetupFrame csvSetupFrame = new PdfSetupFrame(lCompany);
+				csvSetupFrame.setVisible(true);
 			}
-			mCsvSetupFrame.setVisible(true);
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(this, ex.getMessage(), "PDF setup", JOptionPane.ERROR_MESSAGE);
 		}
@@ -269,7 +264,6 @@ public class CsvCompanyFrame extends JFrame {
 	@Override
 	public void setVisible(boolean b) {
 		if (!b) {
-			// TODO neue Variablen für dieses Fenster
 			Config.winCsvSetupDim = getSize();
 			Config.winCsvSetupLoc = getLocation();
 			mParent.resetCsvSetupFrame();

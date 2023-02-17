@@ -21,7 +21,7 @@ public class FibuData extends DataBase implements Serializable {
 
 	/**
 	 * FibuData constructor comment.
-	 * 
+	 *
 	 * @exception java.lang.Exception
 	 *                The exception description.
 	 */
@@ -29,13 +29,14 @@ public class FibuData extends DataBase implements Serializable {
 		super();
 	}
 
-	
+
 	/**
 	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
 	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
 	 */
+	@Override
 	public void checkTableVersion() {
-		
+
 	}
 
 
@@ -136,7 +137,7 @@ public class FibuData extends DataBase implements Serializable {
 		}
 	}
 
-	
+
 //	public void releaseService(BeanContextServices bcs, Object requestor,
 //			Object service) {
 //		// do nothing
@@ -146,7 +147,7 @@ public class FibuData extends DataBase implements Serializable {
 	public String getFibuTitel() {
 		return mFibuTitel;
 	}
-	
+
 	public void setFibuName(String name) {
 		mFibuName = name;
 	}

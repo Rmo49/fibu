@@ -11,9 +11,9 @@ import com.rmo.fibu.util.Config;
  *
  */
 public class JTextFiledExt extends JTextField {
-	
+
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -278586863536877235L;
 

@@ -17,7 +17,7 @@ public class BuchungOfKontoModelNormal extends BuchungOfKontoModel {
 
 	private static final long serialVersionUID = -141586862566627777L;
 	/** die Liste mit allen Buchungen eines Kontos */
-	private List<BuchungRow> mBuchungen = new ArrayList<BuchungRow>();
+	private List<BuchungRow> mBuchungen = new ArrayList<>();
 	/** der StartSaldo */
 
 public BuchungOfKontoModelNormal() {

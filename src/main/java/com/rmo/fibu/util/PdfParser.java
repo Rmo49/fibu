@@ -1,13 +1,9 @@
 package com.rmo.fibu.util;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,13 +12,8 @@ import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
-import com.opencsv.CSVParser;
-import com.opencsv.CSVParserBuilder;
-import com.opencsv.CSVReaderBuilder;
-import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.model.BuchungCsv;
 import com.rmo.fibu.model.CsvCompany;
-import com.rmo.fibu.model.DataBeanContext;
 
 
 /**
@@ -31,16 +22,16 @@ import com.rmo.fibu.model.DataBeanContext;
  *
  */
 public class PdfParser {
-	
+
 	private CsvCompany company;
 	private PdfDokument pdfDoku;
-	
+
 	// die Spalte des Datums
 	private final int mDateCol = 1;
 	// das Format der Raiffeisen
 	private final SimpleDateFormat mDateFormat = new SimpleDateFormat("dd.MM.yy");
 	// die Spalte des Buchungtextes
-	
+
 
 	/**
 	 * Initialisierung des Parsers, liest das PDF-Dokument.
@@ -51,7 +42,7 @@ public class PdfParser {
 			// enthält das pdf-Dokument
 			pdfDoku = new PdfDokument(stripper.pdfWords);
 	}
-	
+
 	/**
 	 * PDF mit PDFBox File öffnen und Stripper mit allen Worte zurückgeben
 	 */
@@ -74,18 +65,18 @@ public class PdfParser {
 		}
 		return stripper;
 	}
-	
-	
+
+
 	/**
 	 * Startet das parsing, gibt Buchungen zurück
 	 * @return
 	 */
 	public List<BuchungCsv> startParsing(CsvCompany company) {
 		this.company = company;
-	
+
 		return readAllBuchungen();
 	}
-	
+
 	/**
 	 * Alle Buchungen lesen.
 	 * @param wordBefore
@@ -94,7 +85,7 @@ public class PdfParser {
 	private List<BuchungCsv> readAllBuchungen() {
 		pdfDoku.gotoStart(company.getWordBefore());
 		pdfDoku.gotoNextLine();
-		List<BuchungCsv> buchungen = new ArrayList<BuchungCsv>();
+		List<BuchungCsv> buchungen = new ArrayList<>();
 		List<String> pdfZeile = pdfDoku.nextLine();
 		while (pdfZeile.size() > 0)  {
 			BuchungCsv buchung = makeBuchung(pdfZeile);
@@ -106,7 +97,7 @@ public class PdfParser {
 		return buchungen;
 	}
 
-		
+
 
 	/**
 	 * Von einer Zeile die Buchungen auslesen
@@ -149,16 +140,16 @@ public class PdfParser {
 	    }
 	    return true;
 	}
-	
 
-	
+
+
 	/**
 	 * Die Spalten-Nummer des Datums
 	 */
 	protected int getDateCol() {
 		return mDateCol;
 	}
-	
+
 	/**
 	 * Das verwendete Datumsformat.
 	 */

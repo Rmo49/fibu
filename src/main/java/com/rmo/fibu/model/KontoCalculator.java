@@ -19,7 +19,7 @@ public class KontoCalculator {
 	public KontoCalculator() {
 		mKontoData = (KontoData) DataBeanContext.getContext().getDataBean(
 				KontoData.class);
-		mKonti = new HashMap<String, Konto>(mKontoData.getRowCount());
+		mKonti = new HashMap<>(mKontoData.getRowCount());
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class KontoCalculator {
 
 	/**
 	 * verbucht die Buchung im Kontorahmen (HashMap)
-	 * 
+	 *
 	 * @param double pBetrag der Betrag der Buchung
 	 * @para int pKontoNr das Konto auf das verbucht werden soll
 	 * @para boolean pSoll der Betrag steht in der Soll- / Haben-Spalte diese
@@ -97,9 +97,7 @@ public class KontoCalculator {
 
 	private void saveHashMap() throws KontoNotFoundException {
 		Trace.println(3, "KontoCalculator.saveHashMap()");
-		Iterator<String> iter = mKonti.keySet().iterator();
-		while (iter.hasNext()) {
-			String key = iter.next();
+		for (String key : mKonti.keySet()) {
 			Konto lKonto = mKonti.get(key);
 			mKontoData.add(lKonto);
 		}

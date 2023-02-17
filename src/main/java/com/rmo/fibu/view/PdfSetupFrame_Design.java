@@ -7,18 +7,18 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableModel;
 
 import com.rmo.fibu.util.Config;
 
-public class PdfSetupFrame_B extends JFrame {
+public class PdfSetupFrame_Design extends JFrame {
 
+	private static final long serialVersionUID = -8382082396350983484L;
+	
 	private JPanel contentPane;
 	private JTextField textField;
 	/** Die Daten in der DB */
@@ -35,7 +35,7 @@ public class PdfSetupFrame_B extends JFrame {
 			@Override
 			public void run() {
 				try {
-					PdfSetupFrame_B frame = new PdfSetupFrame_B();
+					PdfSetupFrame_Design frame = new PdfSetupFrame_Design();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -47,10 +47,10 @@ public class PdfSetupFrame_B extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public PdfSetupFrame_B() {
+	public PdfSetupFrame_Design() {
 		setTitle("CsvSetup");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 600, 507);
+		setBounds(100, 100, 600, 388);
 		contentPane = new JPanel();
 		contentPane.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
 
@@ -82,37 +82,6 @@ public class PdfSetupFrame_B extends JFrame {
 
 		contentPane.add(table);
 
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(39, 200, 494, 87);
-		contentPane.add(scrollPane);
-
-		table_1 = new JTable();
-		table_1.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null, null, null, null},
-				{null, null, null, null, null},
-			},
-			new String[] {
-				"1", "2", "3", "4", "5"
-			}
-		) {
-			Class[] columnTypes = new Class[] {
-				String.class, String.class, String.class, String.class, String.class
-			};
-			@Override
-			public Class getColumnClass(int columnIndex) {
-				return columnTypes[columnIndex];
-			}
-			boolean[] columnEditables = new boolean[] {
-				false, false, false, false, false
-			};
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return columnEditables[column];
-			}
-		});
-		scrollPane.setRowHeaderView(table_1);
-
 		JLabel lblNewLabel_1 = new JLabel("Einstellungen für");
 		lblNewLabel_1.setVerticalAlignment(SwingConstants.TOP);
 		lblNewLabel_1.setBounds(22, 11, 87, 14);
@@ -121,6 +90,10 @@ public class PdfSetupFrame_B extends JFrame {
 		JLabel lblCompany = new JLabel("Name");
 		lblCompany.setBounds(136, 11, 48, 14);
 		contentPane.add(lblCompany);
+
+		table_1 = new JTable();
+		table_1.setBounds(107, 170, 1, 1);
+		contentPane.add(table_1);
 	}
 
 // ----- Model der ersten Zeile -------------------------------------------
@@ -132,19 +105,16 @@ public class PdfSetupFrame_B extends JFrame {
 
 		@Override
 		public int getRowCount() {
-			// TODO Auto-generated method stub
 			return 2;
 		}
 
 		@Override
 		public int getColumnCount() {
-			// TODO Auto-generated method stub
 			return 4;
 		}
 
 		@Override
 		public Object getValueAt(int rowIndex, int columnIndex) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
@@ -167,7 +137,6 @@ public class PdfSetupFrame_B extends JFrame {
 
 		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-			// TODO Auto-generated method stub
 			super.setValueAt(aValue, rowIndex, columnIndex);
 		}
 
