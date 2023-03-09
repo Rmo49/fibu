@@ -3,7 +3,11 @@ Fehler:
 - Wenn erste Buchung gespeichert wird, dann stopped Service "Maria DB"
 
 - Fenster von PdfSetupFrame schöner machen
+- Wenn Soll und Haben, dann mit yPos operieren => PdfSetup anpassen
+- Alle DB's anzeigen, auch wenn nicht in der Liste (gilt für Situationen, wenn nicht richtig angelegt).
  
+- Trace auf java.util.logging umstellen, siehe auch Link in Chrome unter Java
+
 - Einlesen von Raiffeisen, Text ist delimiter ; nicht Komma, siehe Zeile mit BLT.
 - Anzeige bei Kontoblatt, wenn Gegenkonto 0 dann nichts anzeigen
 

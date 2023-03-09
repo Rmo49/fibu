@@ -19,6 +19,30 @@ import com.rmo.fibu.util.Trace;
  *
  */
 public class CsvKeyKontoData extends DataBase {
+	
+	private final static String TABLE_NAME = "pdfkeyword";
+	
+	public final static String CREATE_CSVKEYWORD = "CREATE TABLE `" + TABLE_NAME + "`("
+			+ " `ID` int(11) NOT NULL AUTO_INCREMENT, `CompanyID` int,"
+			+ " `SuchWort` varchar(20) NOT NULL,"
+			+ " `KontoNr` varchar(6) DEFAULT NULL,"
+			+ " `SH` varchar(2) DEFAULT NULL,"
+			+ " PRIMARY KEY (`ID`,`CompanyID`) );";
+//			+ " FOREIGN KEY (CompanyID) REFERENCES pdfcompany(CompanyID) );";
+	
+	private final int COLS_V1 = 5;		// Anzahl Cols in der Version1
+	
+	private final static String ADD_COL_V2 = "ALTER TABLE `" + TABLE_NAME + "`"
+			+ "ADD COLUMN `textNeu` VARCHAR(20) NULL DEFAULT NULL AFTER `SH`;";
+
+	public final static String CREATE_CSVKEYWORD_V2 = "CREATE TABLE `" + TABLE_NAME + "`("
+			+ " `ID` int(11) NOT NULL AUTO_INCREMENT, `CompanyID` int,"
+			+ " `SuchWort` varchar(20) NOT NULL,"
+			+ " `KontoNr` varchar(6) DEFAULT NULL,"
+			+ " `SH` varchar(2) DEFAULT NULL,"
+			+ " `textNeu` VARCHAR(20) DEFAULT NULL,"
+			+ " PRIMARY KEY (`ID`,`CompanyID`) );";
+//			+ " FOREIGN KEY (CompanyID) REFERENCES pdfcompany(CompanyID) );";
 
 	/**
 	 * Enthält Connection zur DB. Wird in setupResultset gesetzt, bleibt während
@@ -70,7 +94,27 @@ public class CsvKeyKontoData extends DataBase {
 	 */
 	@Override
 	public void checkTableVersion() {
+		try {
+			if (FibuDataBase.tableExist(TABLE_NAME)) {
+				int colsAnzahl = getAnzahlCols();
 
+				if (colsAnzahl <= COLS_V1) {
+					addColumnV2();
+				}
+			}
+		} catch (SQLException e) {
+			System.err.println("CsvCompanyData.checkTableVersion: " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Version 1 erweitern
+	 * @throws SQLException
+	 */
+	private void addColumnV2() throws SQLException {
+		Statement stmt = getConnection().createStatement();
+		stmt.execute(ADD_COL_V2);
+		stmt.close();
 	}
 
 
@@ -253,6 +297,7 @@ public class CsvKeyKontoData extends DataBase {
 		return mVersion;
 	}
 
+		
 	/**
 	 * Die Anzahl Felder in der DB
 	 *
@@ -263,7 +308,8 @@ public class CsvKeyKontoData extends DataBase {
 		if (mAnzahlCols == 0) {
 			try {
 				Statement stmt = getConnection().createStatement();
-				ResultSet rs = stmt.executeQuery("SELECT * FROM PdfKeyword");
+				String lQuery = "SELECT * from " + TABLE_NAME + ";";
+				ResultSet rs = stmt.executeQuery(lQuery);
 				// wie viele columns
 				ResultSetMetaData rsmd = rs.getMetaData();
 				mAnzahlCols = rsmd.getColumnCount();

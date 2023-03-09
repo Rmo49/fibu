@@ -4,7 +4,7 @@
 
 	<groupId>com.rmo</groupId>
 	<artifactId>fibu</artifactId>
-	<version>4-1</version>
+	<version>5-3</version>
 	<packaging>jar</packaging>
 	
 	<name>fibu</name>
@@ -131,26 +131,20 @@
 		    <artifactId>pdfbox</artifactId>
 		    <version>2.0.27</version>
 		</dependency>
-		<dependency>
+		<!--dependency>
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox-tools</artifactId>
 			<version>2.0.7</version>
-		</dependency>
-<!-- Thanks for using https://jar-download.com -->
+		</dependency -->
 
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
-		<dependency>
+		<!-- dependency>
 		    <groupId>org.slf4j</groupId>
 		    <artifactId>slf4j-api</artifactId>
 		    <version>2.0.6</version>
 		    <scope>runtime</scope>
-		</dependency>
+		</dependency -->
 		<!-- https://www.e-iceblue.com/Download/pdf-for-java.html -->
-	   	<dependency>
-	        <groupId>e-iceblue</groupId>
-	        <artifactId>spire.pdf</artifactId>
-	        <version>9.1.4</version>
-	    </dependency>
 		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-base -->
 		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
 		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-swing -->

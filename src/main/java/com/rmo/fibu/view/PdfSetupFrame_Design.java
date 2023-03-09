@@ -14,6 +14,7 @@ import javax.swing.border.BevelBorder;
 import javax.swing.table.AbstractTableModel;
 
 import com.rmo.fibu.util.Config;
+import javax.swing.JCheckBox;
 
 public class PdfSetupFrame_Design extends JFrame {
 
@@ -94,6 +95,15 @@ public class PdfSetupFrame_Design extends JFrame {
 		table_1 = new JTable();
 		table_1.setBounds(107, 170, 1, 1);
 		contentPane.add(table_1);
+		
+		JCheckBox chckbxNewCheckBox = new JCheckBox("buchen");
+		chckbxNewCheckBox.setBounds(64, 135, 66, 23);
+		contentPane.add(chckbxNewCheckBox);
+		
+		JCheckBox chckbxNewCheckBox_1 = new JCheckBox("gebucht");
+		chckbxNewCheckBox_1.setSelected(true);
+		chckbxNewCheckBox_1.setBounds(64, 166, 78, 23);
+		contentPane.add(chckbxNewCheckBox_1);
 	}
 
 // ----- Model der ersten Zeile -------------------------------------------

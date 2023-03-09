@@ -337,6 +337,7 @@ public class Config {
 		writeWindowKontoplan();
 		writeWindowBilanzen();
 		writeWindowCsvSetup();
+		writeWindowPdfSetup();
 		writeWindowCsvReaderKeyword();
 		writeWindowCsvReaderBuchung();
 		writeList(sFibuNames, ",", sFibuNamesToken);
@@ -499,12 +500,27 @@ public class Config {
 	}
 
 	/**
+	 * Position und Grösse des Windows in das Property schreiben
+	 */
+	private static void writeWindowCsvSetup() throws FibuException {
+		writeWindowConfig(sWinCsvSetup, winCsvSetupLoc, winCsvSetupDim);
+	}
+
+
+	/**
 	 * Position und Grösse des Windows
 	 */
 	private static void readWindowPdfSetup() throws FibuException {
 		winPdfSetupDim = readWindowDimension(sWinPdfSetup);
 		winPdfSetupLoc= readWindowPoint(sWinPdfSetup);
 		writeWindowPdfSetup();
+	}
+
+	/**
+	 * Position und Grösse des Windows in das Property schreiben
+	 */
+	private static void writeWindowPdfSetup() throws FibuException {
+		writeWindowConfig(sWinPdfSetup, winPdfSetupLoc, winPdfSetupDim);
 	}
 
 
@@ -515,20 +531,6 @@ public class Config {
 		winCsvReaderKeywordDim = readWindowDimension(sWinCsvReaderKeyword);
 		winCsvReaderKeywordLoc = readWindowPoint(sWinCsvReaderKeyword);
 		writeWindowCsvReaderKeyword();
-	}
-
-	/**
-	 * Position und Grösse des Windows in das Property schreiben
-	 */
-	private static void writeWindowCsvSetup() throws FibuException {
-		writeWindowConfig(sWinCsvSetup, winCsvSetupLoc, winCsvSetupDim);
-	}
-
-	/**
-	 * Position und Grösse des Windows in das Property schreiben
-	 */
-	private static void writeWindowPdfSetup() throws FibuException {
-		writeWindowConfig(sWinPdfSetup, winPdfSetupLoc, winPdfSetupDim);
 	}
 
 	/**
@@ -563,8 +565,8 @@ public class Config {
 		int width = readInt(winName + ".width");
 		int height = readInt(winName + ".height");
 		if (width < 0) {
-			width = 400;
-			height = 600;
+			width = 600;
+			height = 400;
 		}
 		return new Dimension(width, height);
 	}

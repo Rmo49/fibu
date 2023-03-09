@@ -24,18 +24,18 @@ public class CsvCompanyData extends DataBase {
 	/**
 	 * Das SQL Statement für die Erstellung
 	 */
-	public final static String CREATE_CSVCOMPANY_V1 = "CREATE TABLE `pdfcompany` ("
+	public final static String CREATE_CSVCOMPANY_V1 = "CREATE TABLE `" + TABLE_NAME + "` ("
 			 + "`CompanyID` int AUTO_INCREMENT PRIMARY KEY, "
 			 + "`CompanyName` varchar(20) NOT NULL, "
 			 + "`KontoNrDefault` varchar(6) DEFAULT NULL, "
 			 + "`DirPath` varchar(100) DEFAULT NULL );";
 
-	private final static String ADD_COL_V2 = "ALTER TABLE `pdfcompany`"
+	private final static String ADD_COL_V2 = "ALTER TABLE " + TABLE_NAME + "`"
 			+ " ADD COLUMN `TypeOfDoc` SMALLINT NULL DEFAULT NULL AFTER `DirPath`;";
 
 	private final static String SET_INIT_V2 = "UPDATE `pdfcompany` SET `TypeOfDoc`=1 WHERE `TypeOfDoc` is NULL;";
 
-	public final static String CREATE_CSVCOMPANY_V2 = "CREATE TABLE `pdfcompany` ("
+	public final static String CREATE_CSVCOMPANY_V2 = "CREATE TABLE `" + TABLE_NAME + "` ("
 			 + "`CompanyID` int AUTO_INCREMENT PRIMARY KEY, "
 			 + "`CompanyName` varchar(20) NOT NULL, "
 			 + "`KontoNrDefault` varchar(6) DEFAULT NULL, "

@@ -30,13 +30,6 @@ public class FibuDataBase {
 			+ "StartSaldo decimal(12,2) DEFAULT NULL, Saldo decimal(12,2) DEFAULT NULL, "
 			+ "IstSollKto char(1) DEFAULT b'0', PRIMARY KEY (KontoNr) );";
 
-	private final static String CREATE_CSVKEYWORD = "CREATE TABLE `pdfkeyword` ("
-			+ "`ID` int(11) NOT NULL AUTO_INCREMENT, `CompanyID` int, "
-			+ "`SuchWort` varchar(20) NOT NULL, "
-			+ " `KontoNr` varchar(6) DEFAULT NULL, "
-			+ " `SH` varchar(2) DEFAULT NULL, "
-			+ " PRIMARY KEY (`ID`,`CompanyID`) );";
-//			+ " FOREIGN KEY (CompanyID) REFERENCES pdfcompany(CompanyID) );";
 
 	private final static String CREATE_BUCHUNG = "CREATE TABLE buchungen ("
 			+ "ID int(11) NOT NULL AUTO_INCREMENT, Datum date DEFAULT NULL, "
@@ -75,7 +68,7 @@ public class FibuDataBase {
 			statement.execute(CREATE_KONTORAHMEN);
 			statement.execute(CREATE_BUCHUNG);
 			statement.execute(CsvCompanyData.CREATE_CSVCOMPANY_V2);
-			statement.execute(CREATE_CSVKEYWORD);
+			statement.execute(CsvKeyKontoData.CREATE_CSVKEYWORD);
 			statement.close();
 			Config.sFibuTitel = "Fibu Name";
 			vonBisDatumSetzen();
