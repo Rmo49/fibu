@@ -57,7 +57,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	private static final long serialVersionUID = 1201522139173678122L;
 
 	/** Die Grösse der Spalten */
-	private static final int TEXT_WIDTH = 30;
+	private static final int TEXT_WIDTH = 48;
 	private static final int DEFAULT_WIDTH = 4;
 
 	// der Name des Institus von dem csv-buchungen eingelesen werden.
