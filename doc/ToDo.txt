@@ -6,6 +6,7 @@ Fehler:
 - Wenn Soll und Haben, dann mit yPos operieren => PdfSetup anpassen
 - Alle DB's anzeigen, auch wenn nicht in der Liste (gilt für Situationen, wenn nicht richtig angelegt).
  
+- Bilanz auch als PDF sichern
 - Trace auf java.util.logging umstellen, siehe auch Link in Chrome unter Java
 
 - Einlesen von Raiffeisen, Text ist delimiter ; nicht Komma, siehe Zeile mit BLT.
@@ -14,7 +15,6 @@ Fehler:
 - Kontoplan kein refresh nach Datenspeicherung (2x Speichern drücken)
 
 Erweiterung:
-- Einlesen von PDF (Cumulus)
 - Wenn alte DB geöffnet dann Tabellen auf neue Version migrieren (siehe checkTableVersion())
 - Wenn Fibu kopieren fertig [Schliessen] Button einbauen und aktivieren.
 - Alle DB's von der Datenbank lesen und anzeigen, auch wenn unvollständig (evt. über Config)

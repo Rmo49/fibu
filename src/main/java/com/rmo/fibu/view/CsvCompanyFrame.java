@@ -84,7 +84,7 @@ public class CsvCompanyFrame extends JFrame {
 	}
 
 	/**
-	 * Tabelle setzen
+	 * Tabelle für die Anzeige setzen
 	 *
 	 * @return
 	 */

@@ -61,7 +61,7 @@ public class FormattedDocument extends PlainDocument {
 			super.remove(offs, len);
 		} catch (ParseException e) {
 			Toolkit.getDefaultToolkit().beep();
-			System.err.println("remove: could not parse: " + proposedResult);
+			Trace.println(1, "error remove: could not parse: " + proposedResult);
 		}
 	}
 }

@@ -858,7 +858,7 @@ public class FibuView extends JFrame
 		try {
 			layout = (SpringLayout) parent.getLayout();
 		} catch (ClassCastException exc) {
-			System.err.println("The first argument to makeCompactGrid must use SpringLayout.");
+			Trace.println(1, "error: The first argument to makeCompactGrid must use SpringLayout.");
 			return;
 		}
 

@@ -61,7 +61,7 @@ public class PdfParser {
 			// hier werden die Worte in den Stripper geschrieben
 			stripper.writeText(document, dummy);
 		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
+			Trace.println(1, "error: " + ex.getMessage());
 		}
 		return stripper;
 	}

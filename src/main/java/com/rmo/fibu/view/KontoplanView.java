@@ -273,7 +273,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 			// show Form and go
 			this.setVisible(true);
 		} catch (Exception e) {
-			System.out.println("Konto-Exception");
+			Trace.println(1, "Konto-Exception");
 		}
 	}
 

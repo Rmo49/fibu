@@ -24,7 +24,6 @@ import com.rmo.fibu.util.Trace;
  *  Datenbank geschrieben werden (evt. diese zuerst auf File schreiben).
  *  Hat auch einen (internen) Iterator für lesen etc..
 */
-
 public class BuchungData extends DataBase implements BeanContextMembershipListener, Serializable {
 	private static final long serialVersionUID = -3172925095948099368L;
 
@@ -711,19 +710,20 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 
 	/**
 	 * Andere Context-Member dazugefügt. (nicht impl.)
-	 */
+	 */	
 	@Override
 	public void childrenAdded(BeanContextMembershipEvent bcme) {
-		Trace.println(4, "BuchungData.childrenAdded() called, not impl.");
+		// Trace.println(4, "BuchungData.childrenAdded() called, not impl.");
 	}
-
+	
 	/**
 	 * Andere Context-Member entfernen. (nicht impl.)
 	 */
 	@Override
 	public void childrenRemoved(BeanContextMembershipEvent bcme) {
-		Trace.println(4, "BuchungData.childrenRemoved) called, not impl.");
+		// Trace.println(4, "BuchungData.childrenRemoved) called, not impl.");
 	}
+	
 	/** Die Nummer der BuchungId bis zu dieser gesichert wurde
 	 */
 	public long getIdSaved() {

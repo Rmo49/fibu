@@ -90,7 +90,7 @@ private void setup() {
 		add(new FibuDataFrom());
 	}
 	catch (Exception e) {
-		Trace.println(1, "Fehler in DataBeanContext.setup(): " + e.getMessage());
+		Trace.println(1, "Error in DataBeanContext.setup(): " + e.getMessage());
 	}
 }
 
@@ -102,7 +102,7 @@ public static void removeAll() {
 		sDataBeanContext = null;
 	}
 	catch (Exception e) {
-		Trace.println(1, "Fehler in DataBeanContext.removeAll(): " + e.getMessage());
+		Trace.println(1, "Error in DataBeanContext.removeAll(): " + e.getMessage());
 	}
 }
 

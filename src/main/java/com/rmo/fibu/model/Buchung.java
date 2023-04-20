@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.rmo.fibu.exception.BuchungValueException;
 import com.rmo.fibu.util.Datum;
+import com.rmo.fibu.util.Trace;
 
 /** Eine Buchung, wird für den Datenaustausch zwischen View und Model verwendet
  */
@@ -42,7 +43,7 @@ public class Buchung {
             setDatum(datum);
         }
         catch (ParseException e) {
-            System.out.println("falsches Datum: " + datum);
+        	Trace.println(1, "error: falsches Datum: " + datum);
         }
         mBeleg = beleg;
         mBuchungText = buchungsText;

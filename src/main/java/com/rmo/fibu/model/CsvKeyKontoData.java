@@ -103,7 +103,7 @@ public class CsvKeyKontoData extends DataBase {
 				}
 			}
 		} catch (SQLException e) {
-			System.err.println("CsvCompanyData.checkTableVersion: " + e.getMessage());
+			Trace.println(1, "error in: CsvCompanyData.checkTableVersion: " + e.getMessage());
 		}
 	}
 
@@ -314,7 +314,7 @@ public class CsvKeyKontoData extends DataBase {
 				ResultSetMetaData rsmd = rs.getMetaData();
 				mAnzahlCols = rsmd.getColumnCount();
 			} catch (SQLException e) {
-				System.err.println("CsvKeyKontoData.getAnzahlCols: " + e.getMessage());
+				Trace.println(1, "error in: CsvKeyKontoData.getAnzahlCols: " + e.getMessage());
 				mAnzahlCols = 0;
 			}
 		}
@@ -408,7 +408,7 @@ public class CsvKeyKontoData extends DataBase {
 				lResult.close();
 			}
 		} catch (SQLException e) {
-			System.err.println("PdfKeyword.getMaxRows: " + e.getMessage());
+			Trace.println(1, "errir in: PdfKeyword.getMaxRows: " + e.getMessage());
 			mMaxRows = 0;
 		}
 	}

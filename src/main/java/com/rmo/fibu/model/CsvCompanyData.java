@@ -59,8 +59,9 @@ public class CsvCompanyData extends DataBase {
 
 	private final int COLS_V2 = 5;		// Anzahl Cols in der Version 2
 	private final int COLS_V3 = 7;		// Anzahl Cols in der Version 3
-
-
+	// die Anzahl Columns in der DB
+	private int colsAnzahl = -1;
+	
 	/**
 	 * Die Anzahl Rows in der Tabelle. Wird beim Start berechnet, dann immer
 	 * updated, da Probleme bei vielen Zugriffen
@@ -106,7 +107,7 @@ public class CsvCompanyData extends DataBase {
 	public void checkTableVersion() {
 		try {
 			if (FibuDataBase.tableExist(TABLE_NAME)) {
-				int colsAnzahl = getNumberOfCols();
+				colsAnzahl = getNumberOfCols();
 
 				if (colsAnzahl < COLS_V2) {
 					addColumnV2();
@@ -123,7 +124,7 @@ public class CsvCompanyData extends DataBase {
 				stmt.close();
 			}
 		} catch (SQLException e) {
-			System.err.println("CsvCompanyData.checkTableVersion: " + e.getMessage());
+			Trace.println(3, "CsvCompanyData.checkTableVersion: " + e.getMessage());
 		}
 	}
 
@@ -143,7 +144,7 @@ public class CsvCompanyData extends DataBase {
 				lResult.close();
 			}
 		} catch (SQLException e) {
-			System.err.println("CsvCompanyData.getMaxRows: " + e.getMessage());
+			Trace.println(1, "error in: CsvCompanyData.getMaxRows: " + e.getMessage());
 			mMaxRows = 0;
 		}
 		return mMaxRows;
@@ -507,9 +508,10 @@ public class CsvCompanyData extends DataBase {
 				lCompany.setKontoNrDefault(mReadSet.getString(3));
 				lCompany.setDirPath(mReadSet.getString(4));
 				lCompany.setDocType(mReadSet.getInt(5));
-				lCompany.setWordBefore(mReadSet.getString(6));
-				lCompany.setSpaltenArray(mReadSet.getString(7));
-
+				if (colsAnzahl > COLS_V2) {
+					lCompany.setWordBefore(mReadSet.getString(6));
+					lCompany.setSpaltenArray(mReadSet.getString(7));
+				}
 				return lCompany;
 			} catch (SQLException ex) {
 				throw new NoSuchElementException(ex.getMessage());

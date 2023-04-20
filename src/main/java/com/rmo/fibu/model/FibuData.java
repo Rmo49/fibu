@@ -40,21 +40,13 @@ public class FibuData extends DataBase implements Serializable {
 	}
 
 
-	/**
-	 * getService
-	 */
-//	public Iterator<?> getCurrentServiceSelectors(BeanContextServices bcs,
-//			Class<?> serviceClass) {
-//		return null; // do nothing
-//	}
-
 	/** Lazy Instanzierung. */
 	public static FibuData getFibuData() {
 		if (sFibuData == null) {
 			try {
 				sFibuData = new FibuData();
 			} catch (Exception e) {
-				System.err.println("Fehler beim öffnen");
+				Trace.println(1, "Error beim öffnen der Fibu");
 			}
 		}
 		return sFibuData;

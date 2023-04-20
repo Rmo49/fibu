@@ -50,7 +50,7 @@ import com.rmo.fibu.util.Trace;
  * Wird über CsvReaderKeywordFrame gestartet, oder direkt von MainFrame
  * aufgerufen. Das ausgewählte file wird im Konstruktur übergeben. Liest
  * Buchungen von CSV ein siehe datenEinlesen, schreibt in Tabelle. Wenn
- * "Buchungstext anpassen" dann wird Belegnummer und die Kontonummern
+ * "Buchungstext anpassen" dann wird der Text angepasst und die Kontonummern
  * eingetragen => changeAction Wenn "Speichern" dann saveAction
  */
 public class CsvReaderBuchungFrame extends JFrame {
@@ -370,6 +370,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 		// tag für next words lesen, also den "/"
 		int posTag = -1;
 		if (keywordText != null) {
+			keywordText = keywordText.trim();
 			posTag = keywordText.indexOf(tagStart);
 		}
 		int anzWorte = 0;
@@ -676,8 +677,16 @@ public class CsvReaderBuchungFrame extends JFrame {
 		else {
 			PdfParser pdfParser = new PdfParser(mFile);
 			mBuchungList = pdfParser.startParsing(mCompany);
+			if (mBuchungList.size() <= 0) {
+				StringBuffer sb = new StringBuffer(100);
+				sb.append("Kein Setup für: ");
+				sb.append(mCompanyName);
+				sb.append(" gefunden. \n");
+				sb.append("PDF Steuerdaten anpassen in: Setup > [PDF Steuerdaten eingeben]");
+				JOptionPane.showMessageDialog(this, sb.toString(), "PDF Datei selektieren", JOptionPane.ERROR_MESSAGE);
+				return;				
+			}
 		}
-
 		Trace.println(5, "CsvReaderBuchungFrame.csvEinlesen() => end Parsing");
 	}
 

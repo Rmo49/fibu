@@ -15,6 +15,8 @@ public class CsvParserRaiff extends CsvParserBase {
 	private final int mTextCol = 2;
 	// die Spalte des Betrages
 	private final int mBetragCol = 3;
+	// der Trennchar zwischen Buchung-Einträgen
+	private final char mTrennChar = ';';
 
 	public CsvParserRaiff(File file) {
 		super(file);
@@ -58,7 +60,7 @@ public class CsvParserRaiff extends CsvParserBase {
 	@Override
 	protected String checkText(String text) {
 		// nach erstem Komma ausblenden
-		int posX = text.indexOf(",", 0);
+		int posX = text.indexOf(mTrennChar, 0);
 		if (posX > 0) {
 			text = text.substring(0, posX);
 		}
