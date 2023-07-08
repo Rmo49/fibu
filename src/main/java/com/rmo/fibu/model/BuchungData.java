@@ -171,7 +171,7 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 	 *  Diese müssen mit saveNewBuchung() definitiv gespeichert werden.
 	 */
 	public void add(Buchung pBuchung) {
-		Trace.println(2, "BuchungData.add(" +pBuchung.toString() +')');
+		Trace.println(4, "BuchungData.add(" +pBuchung.toString() +')');
 		// neuen Recordset anlegen, falls vorher nicht gelesen
 		// wenn ID < 0, dann nicht gelesen, neue dazufügen
 		if (pBuchung.getID() < 0) {
@@ -710,12 +710,12 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 
 	/**
 	 * Andere Context-Member dazugefügt. (nicht impl.)
-	 */	
+	 */
 	@Override
 	public void childrenAdded(BeanContextMembershipEvent bcme) {
 		// Trace.println(4, "BuchungData.childrenAdded() called, not impl.");
 	}
-	
+
 	/**
 	 * Andere Context-Member entfernen. (nicht impl.)
 	 */
@@ -723,7 +723,7 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 	public void childrenRemoved(BeanContextMembershipEvent bcme) {
 		// Trace.println(4, "BuchungData.childrenRemoved) called, not impl.");
 	}
-	
+
 	/** Die Nummer der BuchungId bis zu dieser gesichert wurde
 	 */
 	public long getIdSaved() {

@@ -24,7 +24,7 @@ public class KontoMouseAdapter extends MouseAdapter {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		Trace.println(4, "KontoMouseAdapter.mouseClicked()");
+		Trace.println(5, "KontoMouseAdapter.mouseClicked()");
 		e.consume();
 		mKontoField.setCaretPosition(mKontoField.getText().length());
 	}

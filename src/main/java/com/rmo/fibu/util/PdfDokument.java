@@ -15,7 +15,7 @@ public class PdfDokument {
 
 	// alle Worte des PDF-Dokuments
 	private List<PdfWordLocation> allWords;
-	// der Iterator über alle Worte, wird von mehreren Methoden verwendet
+	// der Iterator über alle Worte des Dokumentes, wird von mehreren Methoden verwendet
 	private Iterator<PdfWordLocation> iterAllWords = null;
 	// die zuletzt gelesene Zeile
 	private int lastY = 0;
@@ -72,8 +72,7 @@ public class PdfDokument {
 
 
 	/**
-	 * Liest eine Zeile auf der Position (lastY), in pdfWordLast setht bereits das erste Wort
-	 * @param wort
+	 * Liest eine Zeile auf der Position (lastY), in pdfWordLast steht bereits das erste Wort
 	 * @return Liste von Worten einer xPos (auch Wortgruppe möglich)
 	 */
 	public List<String> nextLine() {
@@ -83,7 +82,7 @@ public class PdfDokument {
 		// pdfWordLast enthält das ersten Wort
 		int lastX = pdfWordLast.posX;
 		while (iterAllWords.hasNext()) {
-			if ((pdfWordLast.posX != lastX)) {
+			if ((pdfWordLast.posX != lastX) || (pdfWordLast.posY != lastY)) {
 				// neues Wort oder neue Zeile
 				// zuerst bestehendes Wort sichern, das im Buffer liegt
 				if (strBuffer.length() > 0) {

@@ -19,9 +19,9 @@ import com.rmo.fibu.util.Trace;
  *
  */
 public class CsvKeyKontoData extends DataBase {
-	
+
 	private final static String TABLE_NAME = "pdfkeyword";
-	
+
 	public final static String CREATE_CSVKEYWORD = "CREATE TABLE `" + TABLE_NAME + "`("
 			+ " `ID` int(11) NOT NULL AUTO_INCREMENT, `CompanyID` int,"
 			+ " `SuchWort` varchar(20) NOT NULL,"
@@ -29,9 +29,9 @@ public class CsvKeyKontoData extends DataBase {
 			+ " `SH` varchar(2) DEFAULT NULL,"
 			+ " PRIMARY KEY (`ID`,`CompanyID`) );";
 //			+ " FOREIGN KEY (CompanyID) REFERENCES pdfcompany(CompanyID) );";
-	
+
 	private final int COLS_V1 = 5;		// Anzahl Cols in der Version1
-	
+
 	private final static String ADD_COL_V2 = "ALTER TABLE `" + TABLE_NAME + "`"
 			+ "ADD COLUMN `textNeu` VARCHAR(20) NULL DEFAULT NULL AFTER `SH`;";
 
@@ -297,7 +297,7 @@ public class CsvKeyKontoData extends DataBase {
 		return mVersion;
 	}
 
-		
+
 	/**
 	 * Die Anzahl Felder in der DB
 	 *

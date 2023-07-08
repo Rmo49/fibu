@@ -30,8 +30,8 @@ public class CsvCompanyData extends DataBase {
 			 + "`KontoNrDefault` varchar(6) DEFAULT NULL, "
 			 + "`DirPath` varchar(100) DEFAULT NULL );";
 
-	private final static String ADD_COL_V2 = "ALTER TABLE " + TABLE_NAME + "`"
-			+ " ADD COLUMN `TypeOfDoc` SMALLINT NULL DEFAULT NULL AFTER `DirPath`;";
+	private final static String ADD_COL_V2 = "ALTER TABLE " + TABLE_NAME
+			+ " ADD COLUMN TypeOfDoc SMALLINT(6) DEFAULT 1;";
 
 	private final static String SET_INIT_V2 = "UPDATE `pdfcompany` SET `TypeOfDoc`=1 WHERE `TypeOfDoc` is NULL;";
 
@@ -61,7 +61,7 @@ public class CsvCompanyData extends DataBase {
 	private final int COLS_V3 = 7;		// Anzahl Cols in der Version 3
 	// die Anzahl Columns in der DB
 	private int colsAnzahl = -1;
-	
+
 	/**
 	 * Die Anzahl Rows in der Tabelle. Wird beim Start berechnet, dann immer
 	 * updated, da Probleme bei vielen Zugriffen
@@ -307,6 +307,10 @@ public class CsvCompanyData extends DataBase {
 	 */
 	private CsvCompany copyCompanyValues() throws SQLException {
 		CsvCompany lCompany = new CsvCompany();
+		mReadSetAll = null;	// zurücksetzen, da nicht von Anfang liest
+		setupReadSetAll();
+		
+		mReadSetAll.next();
 		lCompany.setCompanyID(mReadSetAll.getInt(1));
 		lCompany.setCompanyName(mReadSetAll.getString(2));
 		lCompany.setKontoNrDefault(mReadSetAll.getString(3));

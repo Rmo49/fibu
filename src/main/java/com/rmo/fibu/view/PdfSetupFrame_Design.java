@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.EventQueue;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -14,12 +15,11 @@ import javax.swing.border.BevelBorder;
 import javax.swing.table.AbstractTableModel;
 
 import com.rmo.fibu.util.Config;
-import javax.swing.JCheckBox;
 
 public class PdfSetupFrame_Design extends JFrame {
 
 	private static final long serialVersionUID = -8382082396350983484L;
-	
+
 	private JPanel contentPane;
 	private JTextField textField;
 	/** Die Daten in der DB */
@@ -95,11 +95,11 @@ public class PdfSetupFrame_Design extends JFrame {
 		table_1 = new JTable();
 		table_1.setBounds(107, 170, 1, 1);
 		contentPane.add(table_1);
-		
+
 		JCheckBox chckbxNewCheckBox = new JCheckBox("buchen");
 		chckbxNewCheckBox.setBounds(64, 135, 66, 23);
 		contentPane.add(chckbxNewCheckBox);
-		
+
 		JCheckBox chckbxNewCheckBox_1 = new JCheckBox("gebucht");
 		chckbxNewCheckBox_1.setSelected(true);
 		chckbxNewCheckBox_1.setBounds(64, 166, 78, 23);

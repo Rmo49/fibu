@@ -57,7 +57,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	private static final long serialVersionUID = 1201522139173678122L;
 
 	/** Die Grösse der Spalten */
-	private static final int TEXT_WIDTH = 48;
+	private static final int TEXT_WIDTH = 30;
 	private static final int DEFAULT_WIDTH = 4;
 
 	// der Name des Institus von dem csv-buchungen eingelesen werden.
@@ -115,6 +115,8 @@ public class CsvReaderBuchungFrame extends JFrame {
 		if (mCompanyName.length() < 1) {
 			mBuchungList = JsonFile.readFromFile();
 			if (mBuchungList.size() > 0) {
+				Trace.println(5, "Anzahl Buchungen gefunden: " + mBuchungList.size());
+
 				mCompanyName = mBuchungList.get(0).getCompanyName();
 				try {
 					CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataBean(CsvCompanyData.class);
@@ -210,7 +212,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 		btnChange.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				changeAction();
+				buchungenAnpassen();
 			}
 		});
 		flow.add(btnChange);
@@ -242,7 +244,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	/**
 	 * Alle Buchungen anpassen Buchungstext und Konto falls Tag gefunden in Keyword.
 	 */
-	private void changeAction() {
+	private void buchungenAnpassen() {
 		Iterator<BuchungCsv> iter = mBuchungList.iterator();
 		// Iteration über alle Buchungen
 		while (iter.hasNext()) {
@@ -257,7 +259,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 * Text gelöscht, bzw. ersetzt mit dem neuen Text
 	 */
 	protected void buchungAnpassen(BuchungCsv buchungCsv) {
-		Trace.println(4, "CsvReaderBuchungFrame.buchungAnpassen()");
+		Trace.println(7, "CsvReaderBuchungFrame.buchungAnpassen()");
 		if (buchungCsv == null) {
 			return;
 		}
@@ -684,7 +686,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 				sb.append(" gefunden. \n");
 				sb.append("PDF Steuerdaten anpassen in: Setup > [PDF Steuerdaten eingeben]");
 				JOptionPane.showMessageDialog(this, sb.toString(), "PDF Datei selektieren", JOptionPane.ERROR_MESSAGE);
-				return;				
+				return;
 			}
 		}
 		Trace.println(5, "CsvReaderBuchungFrame.csvEinlesen() => end Parsing");

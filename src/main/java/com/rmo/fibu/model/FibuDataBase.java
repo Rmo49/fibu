@@ -92,7 +92,7 @@ public class FibuDataBase {
 		// ruft alle checks in den Data Klassen
 		DataBeanContext.getContext().checkAllTableVersions();
 		// alle Konti neu berechnen
-		Trace.println(1, "FibuDataBase.openFibu, Konto calculate");
+		Trace.println(2, "FibuDataBase.openFibu, Konto calculate");
 		KontoCalculator calculator = new KontoCalculator();
 		calculator.calculateSaldo();
 	}

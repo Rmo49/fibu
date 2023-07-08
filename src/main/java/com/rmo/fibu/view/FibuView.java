@@ -15,6 +15,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.text.ParseException;
 import java.util.Locale;
+import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -33,6 +34,9 @@ import javax.swing.ListSelectionModel;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
 import javax.swing.SwingConstants;
+
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.FibuRuntimeException;
@@ -109,6 +113,8 @@ public class FibuView extends JFrame
 	JMenuItem mnuBeenden = new JMenuItem();
 	JMenuItem mnuJournal = new JMenuItem();
 	JMenuItem mnuKontoListDrucken = new JMenuItem();
+
+//	private static Logger logger = Logger.getLogger(FibuView.class.getName());
 
 	/**
 	 * Konstruktor
@@ -558,7 +564,7 @@ public class FibuView extends JFrame
 			// wenn ok: Buttons aktivieren
 			enableButtons(true);
 			setFibuDaten(dbName);
-			checkPendingCsv();
+			checkPendingBookings();
 		} catch (FibuException ex) {
 			showMessage("Probleme beim Fibu öffnen", ex);
 		} catch (FibuRuntimeException ex) {
@@ -578,10 +584,15 @@ public class FibuView extends JFrame
 	/**
 	 * Ist das file von csv noch vorhanden, wenn ja, Frame öffnen
 	 */
-	private void checkPendingCsv() {
+	private void checkPendingBookings() {
+		Trace.println(2, "FibuView.checkPendingBookings()");
 		if (JsonFile.exist()) {
+			Trace.println(3, "File gefunden");
 			mCsvBuchung = new CsvReaderBuchungFrame("");
 			mCsvBuchung.setVisible(true);
+		}
+		else {
+			Trace.println(3, "kein File gefunden");
 		}
 	}
 

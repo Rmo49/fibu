@@ -35,6 +35,7 @@ public class JsonFile {
 	 * @return
 	 */
 	public static boolean exist() {
+		Trace.println(3, "JsonFile: " + getJsonFileName());
 		File jsonFile = new File(getJsonFileName());
 		return jsonFile.exists();
 	}

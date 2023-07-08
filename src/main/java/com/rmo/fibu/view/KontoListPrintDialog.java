@@ -23,8 +23,7 @@ import com.rmo.fibu.util.Trace;
 
 /** Druckt die gesamte Liste aller Konti, zeigt den Fortschritt an.
  */
-public class KontoListPrintDialog
-extends JDialog
+public class KontoListPrintDialog extends JDialog
 {
 	private static final long serialVersionUID = -7874240576377106790L;
 	/** Anzeige des Fortschrittes */

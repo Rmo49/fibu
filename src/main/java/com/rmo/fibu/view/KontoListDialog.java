@@ -2,10 +2,12 @@ package com.rmo.fibu.view;
 
 
 import javax.swing.BoundedRangeModel;
-import javax.swing.JInternalFrame;
+import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
@@ -26,43 +28,75 @@ import com.rmo.fibu.util.Trace;
  * Grösse und Position wird vom parent-Fenster gesteuert.
  */
 
- public class KontoListFrame extends JInternalFrame //implements KontoListener, Runnable
- {
-	private static final long serialVersionUID = -1430502678322062915L;
+ public class KontoListDialog {
+//	private static final long serialVersionUID = -1430502678322062915L;
+	/** Die Verbindung zur aufrufenden Klasse */
+	private BuchungEingabe	mEingabe = null;
+	/** KontoDialog damit die KontoListe free floating ist */
+	private JDialog 		mKontoDialog;
+	/** KontoListe für die Anzeige aller Konti */
+	private JScrollPane		mKontoScrollPane;
 	private KontoData   	mKontoData = null;      // die Verbindung zur DB
 	/** Das Model zur Tabelle */
 	private KontoModel		mKontoTableModel;
 	/** Die Liste aller KontoNummern, für Prüfungen */
 	private KontoNrVector	mKontoNr = null;
 
-	private JScrollPane		jScrollTable = new JScrollPane();
-    private JTable 			jKontoTable = new JTable();
+    private JTable 			mKontoTable = new JTable();
 
 	/**
-	 * KontoplanView constructor.
+	 * KontoListScrollPane constructor.
 	 * startet initialiserung des Frames
 	 */
-	public KontoListFrame() {
+	public KontoListDialog(BuchungEingabe eingabe) {
+		super();
+		mEingabe = eingabe;
 		// title resizable closable maximizable iconifiable
-		super("Konto Liste", false, false, false, false);
 		mKontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
 		// beim Data als Observer anmelden
 		//mKtoData.addKtoObserver(this);
-		init();
+//		init();
 	}
 
 	/**
 	 * Initialisieren aller Ressourcen.
 	 */
-	private void init() {
-		this.getContentPane().add(jScrollTable);
-		jScrollTable.getViewport().add(jKontoTable, null);
+	public void init() {
 		initTableKonto();
+		initKontoList();
 
-//		setTitle("KontoList");
 //		this.setSize(250, 400);
 //		this.setLocation(100, 20);
 	}
+
+	/** Initialisierung des Anzeige-Bereiches: Kontoliste in ScrollPane
+	 * in einem DesktopPane.
+	 */
+	private void initKontoList() {
+		Trace.println(4,"BuchungEingabe.initKontoList()");
+
+		mKontoDialog = new JDialog();
+		mKontoScrollPane = new JScrollPane(mKontoTable);
+
+		// Listener, wenn etwas selektiert wird in der KontoListe
+//		ListSelectionModel rowSM = mKontoScrollPane.getTable().getSelectionModel();
+//		rowSM.addListSelectionListener(new ListSelectionListener() {
+//			@Override
+//			public void valueChanged(ListSelectionEvent e) {
+//				if (mHasKontoLostFocus) {
+//					ListSelectionModel lsm = (ListSelectionModel)e.getSource();
+//					mLastField.setText(mKontoScrollPane.getKontoNrAt(lsm.getAnchorSelectionIndex()));
+//				}
+//			}
+//		});
+
+		mKontoDialog.add(mKontoScrollPane);
+
+		mKontoDialog.setTitle("Konto Liste");
+		setKontoDialogSize();
+	}
+
+
 
 	/** Initialisierung der Tabelle für Konto mit dem Model
 	 */
@@ -70,14 +104,14 @@ import com.rmo.fibu.util.Trace;
 		Trace.println(3,"KontoListFrame.initTable()");
 		// ----- die Tabelle mit dem Model
 		mKontoTableModel = new KontoModel();
-		jKontoTable.setModel(mKontoTableModel);
-		jKontoTable.setFont(Config.fontText);
-		jKontoTable.setRowHeight(Config.windowTextSize + 4);
-		mKontoTableModel.addTableModelListener(jKontoTable);
+		mKontoTable.setModel(mKontoTableModel);
+		mKontoTable.setFont(Config.fontText);
+		mKontoTable.setRowHeight(Config.windowTextSize + 4);
+		mKontoTableModel.addTableModelListener(mKontoTable);
 		// die Breite der Cols setzen
 		TableColumn column = null;
 		for (int i = 0; i <= 1; i++) {
-			column = jKontoTable.getColumnModel().getColumn(i);
+			column = mKontoTable.getColumnModel().getColumn(i);
 			switch (i) {
 				case 0: column.setPreferredWidth(50);   break;
 				case 1: column.setPreferredWidth(200);   break;
@@ -86,17 +120,34 @@ import com.rmo.fibu.util.Trace;
 					column.setPreferredWidth(80);
 			}
 		}
-		jKontoTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		mKontoTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		mKontoNr = new KontoNrVector();
+
+		// wenn eine Zeile selektiert wurde
+		mKontoTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				int index = mKontoTable.getSelectedRow();
+				Object kontoNr = mKontoTableModel.getValueAt(index, 0);
+				mEingabe.kontoSelected((Integer)kontoNr);
+				Trace.println(6, "KontoListScrollPane.ListSelectionListener, Index: " + index);
+			}
+		});
 	}
 
-	public void hideKontoList() {
-		this.hide();
+
+	public JDialog getDialog() {
+		return mKontoDialog;
 	}
 
-	public void showKontoList() {
-		this.show();
+	/** Grösse und Position der Kontoliste berechnen */
+	private void setKontoDialogSize() {
+		mKontoDialog.setSize(270, 440);
+		mKontoScrollPane.setSize(250, 400);
+		mKontoScrollPane.setLocation(0, 0);
 	}
+
 
 	/** Setzt den Cursor auf das entsprechende Konto.
 	 * @param ktoNr kann auch nur ein Teil der Nr enthalten.
@@ -108,15 +159,15 @@ import com.rmo.fibu.util.Trace;
 		// prüfen, ob eine gültige KontoNr
 		int rowNr = checkNr(ktoNr);
 		// Scrollbar berechnen und bewegen
-		BoundedRangeModel scrollRange = jScrollTable.getVerticalScrollBar().getModel();
+		BoundedRangeModel scrollRange = mKontoScrollPane.getVerticalScrollBar().getModel();
 		float faktor = (float)rowNr / (float)mKontoNr.size();
 		int max = scrollRange.getMaximum();
 		int value = Float.valueOf(max * faktor).intValue();
 		//value -= scrollRange.getExtent();
 		scrollRange.setValue(value);
 		// bewegt die scrollbar, wenn ganz oben = 0
-		jScrollTable.getVerticalScrollBar().setValue(value);
-		jKontoTable.setRowSelectionInterval(rowNr, rowNr);
+		mKontoScrollPane.getVerticalScrollBar().setValue(value);
+		mKontoTable.setRowSelectionInterval(rowNr, rowNr);
 
 		return expandKontoNr (ktoNr, rowNr);
 	}
@@ -162,7 +213,7 @@ import com.rmo.fibu.util.Trace;
 	}
 
 	public JTable getTable() {
-		return jKontoTable;
+		return mKontoTable;
 	}
 
 	/** Die KontoNummer einer Zeile */
@@ -176,23 +227,6 @@ import com.rmo.fibu.util.Trace;
 		return null;
 	}
 
-	/** Beenden der Anzeige */
-	@Override
-	public void dispose() {
-	  super.dispose();
-	  //@todo close
-	  //mKontoData.close();
-	}
-
-	public void run() {
-	  try {
-		// show Form and go
-		this.show();
-	  }
-	  catch (Exception e) {
-		  Trace.println(1, "Konto-Exception");
-	  }
-	}
 
 	//----- Model der Konto-Tabelle ----------------------------
 	/** Die Klasse hält eine Verbindung zu den KontoDaten
