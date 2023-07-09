@@ -88,9 +88,9 @@ public class PdfSetupFrame_Design extends JFrame {
 		lblNewLabel_1.setBounds(22, 11, 87, 14);
 		contentPane.add(lblNewLabel_1);
 
-		JLabel lblCompany = new JLabel("Name");
-		lblCompany.setBounds(136, 11, 48, 14);
-		contentPane.add(lblCompany);
+		JLabel lblBank = new JLabel("Name");
+		lblBank.setBounds(136, 11, 48, 14);
+		contentPane.add(lblBank);
 
 		table_1 = new JTable();
 		table_1.setBounds(107, 170, 1, 1);

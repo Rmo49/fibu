@@ -41,7 +41,7 @@ import javax.swing.SwingConstants;
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.FibuRuntimeException;
 import com.rmo.fibu.model.BuchungData;
-import com.rmo.fibu.model.CsvCompany;
+import com.rmo.fibu.model.CsvBank;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.DbConnection;
 import com.rmo.fibu.model.FibuData;
@@ -479,9 +479,9 @@ public class FibuView extends JFrame
 	}
 
 	void testAction (ActionEvent e) {
-		CsvCompany company = new CsvCompany();
-		company.setCompanyName("Cumulus");
-		PdfSetupFrame setup = new PdfSetupFrame(company);
+		CsvBank bank = new CsvBank();
+		bank.setBankName("Cumulus");
+		PdfSetupFrame setup = new PdfSetupFrame(bank);
 		setup.leseBuchungsZeileTest();
 	}
 

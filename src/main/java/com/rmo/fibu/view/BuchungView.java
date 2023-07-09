@@ -24,7 +24,7 @@ import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.FibuRuntimeException;
 import com.rmo.fibu.model.Buchung;
 import com.rmo.fibu.model.BuchungData;
-import com.rmo.fibu.model.CsvCompany;
+import com.rmo.fibu.model.CsvBank;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.DbConnection;
 import com.rmo.fibu.util.Config;
@@ -52,8 +52,8 @@ public class BuchungView extends JFrame implements BuchungInterface {
 	private BuchungListFrame	mBuchungListe;
 	/** Die view um Buchungen einzulesen */
 	private CsvReaderKeywordFrame		mCsvFrame;
-	/** Csv Setup, Einstellungen der Companys */
-	private CsvCompanyFrame				mCsvSetup;
+	/** Csv Setup, Einstellungen der Banks */
+	private CsvBankFrame				mCsvSetup;
 	/** Das Model zu dieser View */
 	private BuchungData     	mBuchungData = null;
 	/** Die Eingabefelder für eine Buchung */
@@ -552,18 +552,18 @@ public class BuchungView extends JFrame implements BuchungInterface {
 	 */
 	public void csvSetup() {
 		if (mCsvSetup == null) {
-			mCsvSetup = new CsvCompanyFrame(this);
+			mCsvSetup = new CsvBankFrame(this);
 		}
 		mCsvSetup.setVisible(true);
 	}
 
 	/**
-	 * Aufruf der View für CSV einlesen, mit der companyId
+	 * Aufruf der View für CSV einlesen, mit der bankId
 	 * @param pCompany
 	 */
-	public void csvAction (CsvCompany company) {
+	public void csvAction (CsvBank bank) {
 		if (mCsvFrame == null) {
-			mCsvFrame = new CsvReaderKeywordFrame(company, this);
+			mCsvFrame = new CsvReaderKeywordFrame(bank, this);
 		}
 		if (mCsvFrame.init()) {
 			mCsvFrame.setVisible(true);

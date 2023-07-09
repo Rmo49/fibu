@@ -1,19 +1,19 @@
 package com.rmo.fibu.model;
 
 /**
- * Die Company von der CSV- oder PDF-files eingelesen werden.
+ * Die Bank von der CSV- oder PDF-files eingelesen werden.
  * @author Ruedi
  *
  */
-public class CsvCompany {
+public class CsvBank {
 
 	static final public int docTypeCsv = 1;
 	static final public int docTypePdf = 2;
 	static final public String[] docTypes = { "CSV", "PDF"};
 
 
-	private int companyID;
-	private String companyName;
+	private int bankID;
+	private String bankName;
 	private String kontoNrDefault;
 	private String dirPath;
 	private int docType = 1;	// 1=default
@@ -30,31 +30,31 @@ public class CsvCompany {
 	private int anzahlSpalten = 0; // die höchste Nummer der Spalten
 
 
-	public CsvCompany() {
+	public CsvBank() {
 	}
 
-	public CsvCompany(String companyName, String kontoNrDefault, String dirPath, int docType) {
-		this.companyName = companyName;
+	public CsvBank(String bankName, String kontoNrDefault, String dirPath, int docType) {
+		this.bankName = bankName;
 		this.kontoNrDefault = kontoNrDefault;
 		this.dirPath = dirPath;
 		this.docType = docType;
 	}
 
 	// ---- setter und getter
-	public int getCompanyID() {
-		return companyID;
+	public int getBankID() {
+		return bankID;
 	}
 
-	public void setCompanyID(int companyID) {
-		this.companyID=companyID;
+	public void setBankID(int companyID) {
+		this.bankID=companyID;
 	}
 
-	public String getCompanyName() {
-		return companyName;
+	public String getBankName() {
+		return bankName;
 	}
 
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
+	public void setBankName(String companyName) {
+		this.bankName = companyName;
 	}
 
 	public String getKontoNrDefault() {

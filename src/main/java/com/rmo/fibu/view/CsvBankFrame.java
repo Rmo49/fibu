@@ -20,8 +20,8 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
 import com.rmo.fibu.exception.FibuException;
-import com.rmo.fibu.model.CsvCompany;
-import com.rmo.fibu.model.CsvCompanyData;
+import com.rmo.fibu.model.CsvBank;
+import com.rmo.fibu.model.CsvBankData;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.KontoNrVector;
 import com.rmo.fibu.util.Config;
@@ -32,7 +32,7 @@ import com.rmo.fibu.util.Trace;
  * Eine Auswahl von dateien anzeigen, wenn ein File selektiert, wird das file an
  * CsvReaderTableFrame weitergegeben.
  */
-public class CsvCompanyFrame extends JFrame {
+public class CsvBankFrame extends JFrame {
 
 	private static final long serialVersionUID = 1310342465892805867L;
 	/** Die Breite der Columns */
@@ -45,16 +45,16 @@ public class CsvCompanyFrame extends JFrame {
 	// view der tabelle
 	private JTable mTableView = null;
 	/** Das interne Model zur Tabelle */
-	private CsvCompanyModel mTableModel;
+	private CsvBankModel mTableModel;
 	/** Die Daten in der DB */
-	private CsvCompanyData mCompanyData = null;
+	private CsvBankData mBankData = null;
 
 	/**
 	 * Wird gestartet von Buchungen für Einstellungen.
 	 *
 	 * @param pParent Referenz zu den Buchungen
 	 */
-	public CsvCompanyFrame(BuchungView pParent) {
+	public CsvBankFrame(BuchungView pParent) {
 		super("Setup für CSV und PDF einlesen");
 		mParent = pParent;
 		init();
@@ -64,9 +64,9 @@ public class CsvCompanyFrame extends JFrame {
 	 * Start der Initialisierung, muss von jedem Konstruktor aufgerufen werden.
 	 */
 	private void init() {
-		Trace.println(1, "CsvCompanyFrame.init()");
+		Trace.println(1, "CsvBankFrame.init()");
 		// Verbindung zur DB
-		mCompanyData = (CsvCompanyData) DataBeanContext.getContext().getDataBean(CsvCompanyData.class);
+		mBankData = (CsvBankData) DataBeanContext.getContext().getDataBean(CsvBankData.class);
 //		datenEinlesen();
 		initView();
 		this.setVisible(true);
@@ -89,7 +89,7 @@ public class CsvCompanyFrame extends JFrame {
 	 * @return
 	 */
 	private Container initTable() {
-		mTableModel = new CsvCompanyModel();
+		mTableModel = new CsvBankModel();
 
 		mTableView = new JTable(mTableModel);
 		mTableView.getTableHeader().setFont(Config.fontText);
@@ -136,7 +136,7 @@ public class CsvCompanyFrame extends JFrame {
 	 */
 	private void setColDocType() {
 		JComboBox<String> comboBoxDocType = new JComboBox<>();
-		comboBoxDocType.setModel(new DefaultComboBoxModel<>(CsvCompany.docTypes));
+		comboBoxDocType.setModel(new DefaultComboBoxModel<>(CsvBank.docTypes));
 		comboBoxDocType.setFont(Config.fontText);
 		TableColumn docColumn = mTableView.getColumnModel().getColumn(4);
 		docColumn.setCellEditor(new DefaultCellEditor(comboBoxDocType));
@@ -202,13 +202,13 @@ public class CsvCompanyFrame extends JFrame {
 	 * Einen Eintrag in der DB dazufügen
 	 */
 	private void addAction() {
-		CsvCompany lCompany = new CsvCompany();
-		lCompany.setCompanyID(0);
-		lCompany.setCompanyName(" ");
-		lCompany.setKontoNrDefault(" ");
-		lCompany.setDirPath(" ");
+		CsvBank lBank = new CsvBank();
+		lBank.setBankID(0);
+		lBank.setBankName(" ");
+		lBank.setKontoNrDefault(" ");
+		lBank.setDirPath(" ");
 		try {
-			mCompanyData.addData(lCompany);
+			mBankData.addData(lBank);
 			mTableModel.fireTableDataChanged();
 		} catch (FibuException ex2) {
 			JOptionPane.showMessageDialog(this, ex2.getMessage(), "\"Fehler in DB", JOptionPane.ERROR_MESSAGE);
@@ -228,9 +228,9 @@ public class CsvCompanyFrame extends JFrame {
 			return;
 		}
 		try {
-			CsvCompany lCompany = mTableModel.readAt(selRow);
-			if (lCompany.getDocType() == CsvCompany.docTypePdf) {
-				PdfSetupFrame csvSetupFrame = new PdfSetupFrame(lCompany);
+			CsvBank lBank = mTableModel.readAt(selRow);
+			if (lBank.getDocType() == CsvBank.docTypePdf) {
+				PdfSetupFrame csvSetupFrame = new PdfSetupFrame(lBank);
 				csvSetupFrame.setVisible(true);
 			}
 		} catch (Exception ex) {
@@ -245,14 +245,14 @@ public class CsvCompanyFrame extends JFrame {
 		int rowNr = mTableView.getSelectedRow();
 		if (rowNr >= 0) {
 			try {
-				CsvCompany lCompany = mTableModel.readAt(rowNr);
-				int answer = JOptionPane.showConfirmDialog(this, lCompany.getCompanyName() + " wirklich löschen?",
+				CsvBank lBank = mTableModel.readAt(rowNr);
+				int answer = JOptionPane.showConfirmDialog(this, lBank.getBankName() + " wirklich löschen?",
 						"Eintrag löschen", JOptionPane.YES_NO_OPTION);
 				if (answer == JOptionPane.NO_OPTION) {
 					return;
 				}
 				// hier YES
-				mCompanyData.deleteRow(lCompany);
+				mBankData.deleteRow(lBank);
 				mTableModel.fireTableDataChanged();
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(this, ex.getMessage(), "Fehler beim löschen", JOptionPane.ERROR_MESSAGE);
@@ -274,7 +274,7 @@ public class CsvCompanyFrame extends JFrame {
 // ----- Model der Keyword-Tabelle ---------------------------------------------
 
 	/** Schnittstelle zum Daten-Objekt KontoData */
-	private class CsvCompanyModel extends AbstractTableModel {
+	private class CsvBankModel extends AbstractTableModel {
 
 		private static final long serialVersionUID = -3805602970105237582L;
 
@@ -285,16 +285,16 @@ public class CsvCompanyFrame extends JFrame {
 
 		@Override
 		public int getRowCount() {
-			return mCompanyData.getRowCount();
+			return mBankData.getRowCount();
 		}
 
 		@Override
 		public String getColumnName(int col) {
 			switch (col) {
 			case 0:
-				return "CompanyID";
+				return "BankID";
 			case 1:
-				return "Company Name";
+				return "Bank Name";
 			case 2:
 				return "KontoNr";
 			case 3:
@@ -327,28 +327,28 @@ public class CsvCompanyFrame extends JFrame {
 		 */
 		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-			CsvCompany lCompany = null;
+			CsvBank lBank = null;
 			try {
-				lCompany = mCompanyData.readAt(rowIndex);
+				lBank = mBankData.readAt(rowIndex);
 			} catch (FibuException ex) {
 				return;
 			}
 			if (columnIndex == 0) {
 				String i = (String) aValue;
 				int x = Integer.valueOf(i);
-				lCompany.setCompanyID(x);
+				lBank.setBankID(x);
 			} else if (columnIndex == 1) {
-				lCompany.setCompanyName((String) aValue);
+				lBank.setBankName((String) aValue);
 			} else if (columnIndex == 2) {
-				lCompany.setKontoNrDefault((String) aValue);
+				lBank.setKontoNrDefault((String) aValue);
 			} else if (columnIndex == 3) {
-				lCompany.setDirPath((String) aValue);
+				lBank.setDirPath((String) aValue);
 			} else if (columnIndex == 4) {
-				lCompany.setDocString((String) aValue);
+				lBank.setDocString((String) aValue);
 			}
 
 			try {
-				mCompanyData.updateAt(rowIndex, lCompany);
+				mBankData.updateAt(rowIndex, lBank);
 				mTableModel.fireTableDataChanged();
 			} catch (FibuException ex) {
 				JOptionPane.showMessageDialog(null, ex.getMessage(), "Suchwort ändern", JOptionPane.ERROR_MESSAGE);
@@ -359,15 +359,15 @@ public class CsvCompanyFrame extends JFrame {
 		/**
 		 * Den Eintrag an der Stelle position (0..x) zurückgeben.
 		 *
-		 * @return Company an der position, null wenn nicht vorhanden
+		 * @return Bank an der position, null wenn nicht vorhanden
 		 */
-		public CsvCompany readAt(int row) throws FibuException {
-			Trace.println(7, "CsvCompany.readAt()");
+		public CsvBank readAt(int row) throws FibuException {
+			Trace.println(7, "CsvBank.readAt()");
 			try {
-				CsvCompany lCompany = mCompanyData.readAt(row);
-				return lCompany;
+				CsvBank lBank = mBankData.readAt(row);
+				return lBank;
 			} catch (FibuException ex) {
-				Trace.println(3, "CsvCompany.readAt() " + ex.getMessage());
+				Trace.println(3, "CsvBank.readAt() " + ex.getMessage());
 			}
 			return null;
 		}
@@ -379,18 +379,18 @@ public class CsvCompanyFrame extends JFrame {
 		public Object getValueAt(int row, int col) {
 			Trace.println(7, "CsvKeywordModel.getValueAt(" + row + ',' + col + ')');
 			try {
-				CsvCompany lCompany = mCompanyData.readAt(row);
+				CsvBank lBank = mBankData.readAt(row);
 				switch (col) {
 				case 0:
-					return lCompany.getCompanyID();
+					return lBank.getBankID();
 				case 1:
-					return lCompany.getCompanyName();
+					return lBank.getBankName();
 				case 2:
-					return lCompany.getKontoNrDefault();
+					return lBank.getKontoNrDefault();
 				case 3:
-					return lCompany.getDirPath();
+					return lBank.getDirPath();
 				case 4:
-					return lCompany.getDocString();
+					return lBank.getDocString();
 				}
 			} catch (FibuException ex) {
 				Trace.println(3, "getValueAt() " + ex.getMessage());

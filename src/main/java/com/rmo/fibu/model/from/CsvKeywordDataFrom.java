@@ -106,7 +106,7 @@ public class CsvKeywordDataFrom extends DataModelFrom {
 				i = 2;
 			}
 
-			pKeyword.setCompanyId(pResult.getInt(i));
+			pKeyword.setBankId(pResult.getInt(i));
 			pKeyword.setSuchWort(pResult.getString(++i));
 			pKeyword.setKontoNr(pResult.getString(++i));
 			pKeyword.setSh(pResult.getString(++i));

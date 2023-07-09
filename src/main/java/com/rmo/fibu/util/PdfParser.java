@@ -13,7 +13,7 @@ import java.util.List;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import com.rmo.fibu.model.BuchungCsv;
-import com.rmo.fibu.model.CsvCompany;
+import com.rmo.fibu.model.CsvBank;
 
 
 /**
@@ -23,7 +23,7 @@ import com.rmo.fibu.model.CsvCompany;
  */
 public class PdfParser {
 
-	private CsvCompany company;
+	private CsvBank bank;
 	private PdfDokument pdfDoku;
 
 	// die Spalte des Datums
@@ -71,8 +71,8 @@ public class PdfParser {
 	 * Startet das parsing, gibt Buchungen zurück
 	 * @return
 	 */
-	public List<BuchungCsv> startParsing(CsvCompany company) {
-		this.company = company;
+	public List<BuchungCsv> startParsing(CsvBank bank) {
+		this.bank = bank;
 
 		return readAllBuchungen();
 	}
@@ -83,7 +83,7 @@ public class PdfParser {
 	 * @return
 	 */
 	private List<BuchungCsv> readAllBuchungen() {
-		pdfDoku.gotoStart(company.getWordBefore());
+		pdfDoku.gotoStart(bank.getWordBefore());
 		pdfDoku.gotoNextLine();
 		List<BuchungCsv> buchungen = new ArrayList<>();
 		List<String> pdfZeile = pdfDoku.nextLine();
@@ -104,15 +104,15 @@ public class PdfParser {
 	 * @return
 	 */
 	private BuchungCsv makeBuchung(List <String> pdfZeile) {
-		if (pdfZeile.size() >= company.getAnzahlSpalten()) {
+		if (pdfZeile.size() >= bank.getAnzahlSpalten()) {
 			BuchungCsv buchung = new BuchungCsv();
-			String datum = pdfZeile.get(company.getSpalteDatum()-1);
+			String datum = pdfZeile.get(bank.getSpalteDatum()-1);
 			if (isDatum(datum)) {
 				buchung.setDatum(datum);
-				buchung.setText(pdfZeile.get( company.getSpalteText()-1) );
+				buchung.setText(pdfZeile.get( bank.getSpalteText()-1) );
 				// TODO wenn soll und haben unterschiedlich
-				buchung.setBetrag(pdfZeile.get( company.getSpalteSoll()-1) );
-				buchung.setHaben(company.getKontoNrDefault());
+				buchung.setBetrag(pdfZeile.get( bank.getSpalteSoll()-1) );
+				buchung.setHaben(bank.getKontoNrDefault());
 			}
 			else {
 				// wenn kein Datum, dann keine Buchung

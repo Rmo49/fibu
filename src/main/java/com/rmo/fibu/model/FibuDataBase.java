@@ -67,7 +67,7 @@ public class FibuDataBase {
 			statement.execute(CREATE_FIBUDATEN);
 			statement.execute(CREATE_KONTORAHMEN);
 			statement.execute(CREATE_BUCHUNG);
-			statement.execute(CsvCompanyData.CREATE_CSVCOMPANY_V2);
+			statement.execute(CsvBankData.CREATE_CSVBANK_V2);
 			statement.execute(CsvKeyKontoData.CREATE_CSVKEYWORD);
 			statement.close();
 			Config.sFibuTitel = "Fibu Name";

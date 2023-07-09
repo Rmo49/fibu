@@ -103,7 +103,7 @@ public class CsvKeyKontoData extends DataBase {
 				}
 			}
 		} catch (SQLException e) {
-			Trace.println(1, "error in: CsvCompanyData.checkTableVersion: " + e.getMessage());
+			Trace.println(1, "error in: CsvBankData.checkTableVersion: " + e.getMessage());
 		}
 	}
 
@@ -164,14 +164,14 @@ public class CsvKeyKontoData extends DataBase {
 	public CsvKeyKonto readAt(int companyId, int position) throws FibuException {
 		Trace.println(7, "CsvKeyKontoData.readAt()");
 		CsvKeyKonto lKeyword = new CsvKeyKonto();
-		lKeyword.setCompanyId(companyId);
+		lKeyword.setBankId(companyId);
 		try {
 			setupReadSet(companyId);
 			if (mResultSet.absolute(position + 1)) {
 				// erste Version: companyID, SuchWort, KontoNr, SH
 				if (mVersion == 1) {
 					lKeyword.setId(0);
-					lKeyword.setCompanyId(companyId);
+					lKeyword.setBankId(companyId);
 					lKeyword.setSuchWort(mResultSet.getString(2));
 					lKeyword.setKontoNr(mResultSet.getString(3));
 					lKeyword.setSh(mResultSet.getString(4));
@@ -179,7 +179,7 @@ public class CsvKeyKontoData extends DataBase {
 				// 2. Version: ID, companyID, SuchWort, KontoNr, SH
 				if (mVersion == 2) {
 					lKeyword.setId(mResultSet.getInt(1));
-					lKeyword.setCompanyId(companyId);
+					lKeyword.setBankId(companyId);
 					lKeyword.setSuchWort(mResultSet.getString(3));
 					lKeyword.setKontoNr(mResultSet.getString(4));
 					lKeyword.setSh(mResultSet.getString(5));
@@ -187,7 +187,7 @@ public class CsvKeyKontoData extends DataBase {
 				// 3. Version: ID, companyID, SuchWort, KontoNr, SH, TextNeu
 				if (mVersion == 3) {
 					lKeyword.setId(mResultSet.getInt(1));
-					lKeyword.setCompanyId(companyId);
+					lKeyword.setBankId(companyId);
 					lKeyword.setSuchWort(mResultSet.getString(3));
 					lKeyword.setKontoNr(mResultSet.getString(4));
 					lKeyword.setSh(mResultSet.getString(5));
@@ -209,14 +209,14 @@ public class CsvKeyKontoData extends DataBase {
 	public void updateAt(int position, CsvKeyKonto pKeyword) throws FibuException {
 		Trace.println(7, "CsvKeyKontoData.updateAt()");
 		try {
-			setupReadSet(pKeyword.getCompanyId());
+			setupReadSet(pKeyword.getBankId());
 			if (mResultSet.absolute(position + 1)) {
 				int i = 1;
 				if (mVersion >= 2) {
 					i++;
 				}
 //				mResultSet.updateInt(1, pKeyword.getId());
-				mResultSet.updateInt(i, pKeyword.getCompanyId());
+				mResultSet.updateInt(i, pKeyword.getBankId());
 				mResultSet.updateString(++i, pKeyword.getSuchWort());
 				mResultSet.updateString(++i, pKeyword.getKontoNr());
 				mResultSet.updateString(++i, pKeyword.getSh());
@@ -244,7 +244,7 @@ public class CsvKeyKontoData extends DataBase {
 			if (mVersion >= 2) {
 				i++;
 			}
-			mResultSet.updateInt(i, pKeyword.getCompanyId());
+			mResultSet.updateInt(i, pKeyword.getBankId());
 			mResultSet.updateString(++i, pKeyword.getSuchWort());
 			mResultSet.updateString(++i, pKeyword.getKontoNr());
 			mResultSet.updateString(++i, pKeyword.getSh());
@@ -329,10 +329,10 @@ public class CsvKeyKontoData extends DataBase {
 	 * @throws SQLException
 	 */
 	private boolean findRow(CsvKeyKonto pKeyword) throws SQLException {
-		setupReadSet(pKeyword.getCompanyId());
+		setupReadSet(pKeyword.getBankId());
 		mResultSet.beforeFirst();
 		while (mResultSet.next()) {
-			if (mResultSet.getInt(2) == pKeyword.getCompanyId()) {
+			if (mResultSet.getInt(2) == pKeyword.getBankId()) {
 				if (mResultSet.getString(3).equalsIgnoreCase(pKeyword.getSuchWort())) {
 					return true;
 				}
@@ -376,7 +376,7 @@ public class CsvKeyKontoData extends DataBase {
 				lQuery.append("', '");
 			}
 		}
-		lQuery.append(pKeyword.getCompanyId());
+		lQuery.append(pKeyword.getBankId());
 		lQuery.append("', '");
 		lQuery.append(pKeyword.getSuchWort());
 		lQuery.append("', '");
@@ -482,7 +482,7 @@ public class CsvKeyKontoData extends DataBase {
 			pKeyword.setId(pResult.getInt(i));
 			i++;
 		}
-		pKeyword.setCompanyId(pResult.getInt(i));
+		pKeyword.setBankId(pResult.getInt(i));
 		pKeyword.setSuchWort(pResult.getString(++i));
 		pKeyword.setKontoNr(pResult.getString(++i));
 		pKeyword.setSh(pResult.getString(++i));

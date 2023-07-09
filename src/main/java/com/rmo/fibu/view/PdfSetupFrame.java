@@ -37,8 +37,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.FibuRuntimeException;
-import com.rmo.fibu.model.CsvCompany;
-import com.rmo.fibu.model.CsvCompanyData;
+import com.rmo.fibu.model.CsvBank;
+import com.rmo.fibu.model.CsvBankData;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.PdfDokument;
@@ -57,7 +57,7 @@ public class PdfSetupFrame extends JFrame
 	private static final long serialVersionUID = -6429166001920978382L;
 
 	// die View Elemente
-	private CsvCompany mCompany;
+	private CsvBank mBank;
 
 	private JTextField mWordBefore;
 	private JButton mBtnSearch;
@@ -79,7 +79,7 @@ public class PdfSetupFrame extends JFrame
 	private File mPdfFile;
 
 	/** Verbindung zur DB */
-	private CsvCompanyData mCompanyData = null;
+	private CsvBankData mBankData = null;
 
 
 	/**
@@ -87,9 +87,9 @@ public class PdfSetupFrame extends JFrame
 	 *
 	 * @param pParent Referenz zu den Buchungen
 	 */
-	public PdfSetupFrame(CsvCompany company) {
+	public PdfSetupFrame(CsvBank bank) {
 		super("Steuerdaten eingeben für PDF-Datei");
-		mCompany = company;
+		mBank = bank;
 		init();
 	}
 
@@ -109,11 +109,11 @@ public class PdfSetupFrame extends JFrame
 	 */
 	private void readData() {
 		// Verbindung zur DB
-		mWordBefore.setText(mCompany.getWordBefore());
-		mDatumSpalte.setText(Integer.toString(mCompany.getSpalteDatum()));
-		mTextSpalte.setText (Integer.toString(mCompany.getSpalteText()));
-		mSollSpalte.setText (Integer.toString(mCompany.getSpalteSoll()));
-		mHabenSplalte.setText (Integer.toString(mCompany.getSpalteHaben()));
+		mWordBefore.setText(mBank.getWordBefore());
+		mDatumSpalte.setText(Integer.toString(mBank.getSpalteDatum()));
+		mTextSpalte.setText (Integer.toString(mBank.getSpalteText()));
+		mSollSpalte.setText (Integer.toString(mBank.getSpalteSoll()));
+		mHabenSplalte.setText (Integer.toString(mBank.getSpalteHaben()));
 	}
 
 
@@ -138,7 +138,7 @@ public class PdfSetupFrame extends JFrame
 		blackline = BorderFactory.createLineBorder(Color.black);
 		JLabel lLabel;
 
-		lLabel = new JLabel("Steuerdaten für: " + mCompany.getCompanyName());
+		lLabel = new JLabel("Steuerdaten für: " + mBank.getBankName());
 		lLabel.setFont(Config.fontText);
 		lLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		allPanel.add(lLabel);
@@ -290,15 +290,15 @@ public class PdfSetupFrame extends JFrame
 	 */
 	private File selectPdfFile() {
 		// prüfen, ob eintrag im Feld directory
-		if (mCompany.getDirPath() == null) {
+		if (mBank.getDirPath() == null) {
 			JOptionPane.showMessageDialog(this, "PDF-Directory fehlt", "CSV einlesen", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 		try {
-			File file = new File(mCompany.getDirPath());
+			File file = new File(mBank.getDirPath());
 			if (file.exists()) {
 				// save the new name
-				Config.sCsvFileName = mCompany.getDirPath();
+				Config.sCsvFileName = mBank.getDirPath();
 				JFileChooser chooser = new JFileChooser();
 				chooser.setCurrentDirectory(file);
 				chooser.setFileFilter(new FileNameExtensionFilter("PDF", "pdf"));
@@ -309,7 +309,7 @@ public class PdfSetupFrame extends JFrame
 					return null;
 				}
 			} else {
-				JOptionPane.showMessageDialog(this, "'" + mCompany.getDirPath() + "' ist kein Directory",
+				JOptionPane.showMessageDialog(this, "'" + mBank.getDirPath() + "' ist kein Directory",
 						"PDF Datei selektieren", JOptionPane.ERROR_MESSAGE);
 
 			}
@@ -357,16 +357,16 @@ public class PdfSetupFrame extends JFrame
 	 * In der DB speichern
 	 */
 	private void speichern() {
-		mCompany.setWordBefore(mWordBefore.getText());
-		mCompany.setSpalteDatum(mDatumSpalte.getText());
-		mCompany.setSpalteText(mTextSpalte.getText());
-		mCompany.setSpalteSoll(mSollSpalte.getText());
-		mCompany.setSpalteHaben(mHabenSplalte.getText());
-		mCompany.setSpaltenArray(mCompany.getSpaltenArray());
+		mBank.setWordBefore(mWordBefore.getText());
+		mBank.setSpalteDatum(mDatumSpalte.getText());
+		mBank.setSpalteText(mTextSpalte.getText());
+		mBank.setSpalteSoll(mSollSpalte.getText());
+		mBank.setSpalteHaben(mHabenSplalte.getText());
+		mBank.setSpaltenArray(mBank.getSpaltenArray());
 
 		try {
-			mCompanyData = (CsvCompanyData) DataBeanContext.getContext().getDataBean(CsvCompanyData.class);
-			mCompanyData.addData(mCompany);
+			mBankData = (CsvBankData) DataBeanContext.getContext().getDataBean(CsvBankData.class);
+			mBankData.addData(mBank);
 		}
 		catch (FibuException ex) {
 			Trace.println(3, "PdfSetupFrame.readData() Fehler: " + ex.getMessage());

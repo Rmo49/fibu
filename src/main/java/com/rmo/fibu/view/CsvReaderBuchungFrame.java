@@ -31,8 +31,8 @@ import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.model.Buchung;
 import com.rmo.fibu.model.BuchungCsv;
 import com.rmo.fibu.model.BuchungData;
-import com.rmo.fibu.model.CsvCompany;
-import com.rmo.fibu.model.CsvCompanyData;
+import com.rmo.fibu.model.CsvBank;
+import com.rmo.fibu.model.CsvBankData;
 import com.rmo.fibu.model.CsvKeyKonto;
 import com.rmo.fibu.model.CsvKeyKontoData;
 import com.rmo.fibu.model.CsvParserBase;
@@ -61,8 +61,8 @@ public class CsvReaderBuchungFrame extends JFrame {
 	private static final int DEFAULT_WIDTH = 4;
 
 	// der Name des Institus von dem csv-buchungen eingelesen werden.
-	private String mCompanyName = null;
-	private CsvCompany mCompany = null;
+	private String mBankName = null;
+	private CsvBank mBank = null;
 	// file von dem gelesen werden soll
 	private File mFile = null;
 	// view elemente
@@ -85,23 +85,23 @@ public class CsvReaderBuchungFrame extends JFrame {
 	/**
 	 * Konstruktor für einlesen von jsonFile
 	 *
-	 * @param companyName
+	 * @param bankName
 	 */
-	public CsvReaderBuchungFrame(String companyName) {
+	public CsvReaderBuchungFrame(String bankName) {
 		super("CSV Buchungen noch nicht gespeichert");
-		this.mCompanyName = companyName;
+		this.mBankName = bankName;
 		init();
 	}
 
 	/**
 	 * Construtor needs filename with CSV-data
 	 */
-	public CsvReaderBuchungFrame(File file, CsvCompany company) {
+	public CsvReaderBuchungFrame(File file, CsvBank bank) {
 		super("CSV Buchungen anpassen");
 		Trace.println(3, "CsvReaderBuchungFrame(file: " + file.getAbsolutePath() + ")");
 		this.mFile = file;
-		this.mCompany = company;
-		this.mCompanyName = company.getCompanyName();
+		this.mBank = bank;
+		this.mBankName = bank.getBankName();
 		init();
 	}
 
@@ -111,16 +111,16 @@ public class CsvReaderBuchungFrame extends JFrame {
 	private void init() {
 		Trace.println(4, "CsvReaderBuchungFrame.init()");
 //		mKeywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
-		// wenn Company nicht gesetzt, dann von json einlesen
-		if (mCompanyName.length() < 1) {
+		// wenn Bank nicht gesetzt, dann von json einlesen
+		if (mBankName.length() < 1) {
 			mBuchungList = JsonFile.readFromFile();
 			if (mBuchungList.size() > 0) {
 				Trace.println(5, "Anzahl Buchungen gefunden: " + mBuchungList.size());
 
-				mCompanyName = mBuchungList.get(0).getCompanyName();
+				mBankName = mBuchungList.get(0).getCompanyName();
 				try {
-					CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataBean(CsvCompanyData.class);
-					this.mCompany = companyData.readData(mCompanyName);
+					CsvBankData bankData = (CsvBankData) DataBeanContext.getContext().getDataBean(CsvBankData.class);
+					this.mBank = bankData.readData(mBankName);
 				}
 				catch (FibuException ex) {
 					Trace.println(1, "CsvReaderBuchungFrame Exception: " + ex.getMessage());
@@ -151,7 +151,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 * @return
 	 */
 	private Container initTable() {
-//		mKeywordModel = new CsvKeywordModel(mCompany.getCompanyID());
+//		mKeywordModel = new CsvKeywordModel(mBank.getBankID());
 		mBuchungModel = new CsvBuchungModel();
 		mTableView = new JTable(mBuchungModel);
 		mTableView.getTableHeader().setFont(Config.fontText);
@@ -264,7 +264,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 			return;
 		}
 		CsvKeyKontoData keywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
-		Iterator<CsvKeyKonto> lIter = keywordData.getIterator(mCompany.getCompanyID());
+		Iterator<CsvKeyKonto> lIter = keywordData.getIterator(mBank.getBankID());
 		int pos = -1;
 		// Iteration über alle Keywörter
 		while (lIter.hasNext()) {
@@ -425,12 +425,12 @@ public class CsvReaderBuchungFrame extends JFrame {
 	}
 
 	/**
-	 * Die ID der Company
+	 * Die ID der Bank
 	 */
-//	protected int getCompanyId() {
-//		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
+//	protected int getBankId() {
+//		CsvBankData bankData = (CsvBankData) DataBeanContext.getContext().getDataObject(CsvBankData.class);
 //		try {
-//			return companyData.readData(mCompanyName).getCompanyID();
+//			return bankData.readData(mBankName).getBankID();
 //		} catch (FibuException ex) {
 //			// do nothing
 //		}
@@ -441,7 +441,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 * Die standard KontoNr
 	 */
 	protected String getKontoNrDefault() {
-		return mCompany.getKontoNrDefault();
+		return mBank.getKontoNrDefault();
 	}
 
 	/**
@@ -477,7 +477,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 * In einen Json-File speichern.
 	 */
 	private void saveInDatei() {
-		String antwort = JsonFile.saveInFile(mCompanyName, mBuchungList);
+		String antwort = JsonFile.saveInFile(mBankName, mBuchungList);
 //		mBuchungModel.fireTableDataChanged();
 		JOptionPane.showMessageDialog(this, antwort, "Sichern in Datei", JOptionPane.INFORMATION_MESSAGE);
 	}
@@ -649,19 +649,19 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 */
 	private void csvEinlesen() {
 		Trace.println(5, "CsvReaderBuchungFrame.csvEinlesen()");
-		if (mCompany.getDocType() == CsvCompany.docTypeCsv) {
+		if (mBank.getDocType() == CsvBank.docTypeCsv) {
 
 			CsvParserBase parser = null;
-			if (mCompanyName.equalsIgnoreCase(CsvParserBase.companyNamePost)) {
+			if (mBankName.equalsIgnoreCase(CsvParserBase.companyNamePost)) {
 				parser = new CsvParserPost(mFile);
-			} else if (mCompanyName.equalsIgnoreCase(CsvParserBase.companyNameCS)) {
+			} else if (mBankName.equalsIgnoreCase(CsvParserBase.companyNameCS)) {
 				parser = new CsvParserCs(mFile);
-			} else if (mCompanyName.equalsIgnoreCase(CsvParserBase.companyNameRaiff)) {
+			} else if (mBankName.equalsIgnoreCase(CsvParserBase.companyNameRaiff)) {
 				parser = new CsvParserRaiff(mFile);
 			} else {
 				StringBuffer sb = new StringBuffer(100);
 				sb.append("Kein Setup für: ");
-				sb.append(mCompanyName);
+				sb.append(mBankName);
 				sb.append("\n Impmentationen vorhanden von: ");
 				sb.append(CsvParserBase.companyNamePost);
 				sb.append(", ");
@@ -674,15 +674,15 @@ public class CsvReaderBuchungFrame extends JFrame {
 			}
 			// hier werden die Daten eingelesen, Zeile um Zeile
 			Trace.println(5, "CsvReaderBuchungFrame.datenEinlesen() => start Parsing");
-			mBuchungList = parser.startParsing(mCompany);
+			mBuchungList = parser.startParsing(mBank);
 		}
 		else {
 			PdfParser pdfParser = new PdfParser(mFile);
-			mBuchungList = pdfParser.startParsing(mCompany);
+			mBuchungList = pdfParser.startParsing(mBank);
 			if (mBuchungList.size() <= 0) {
 				StringBuffer sb = new StringBuffer(100);
 				sb.append("Kein Setup für: ");
-				sb.append(mCompanyName);
+				sb.append(mBankName);
 				sb.append(" gefunden. \n");
 				sb.append("PDF Steuerdaten anpassen in: Setup > [PDF Steuerdaten eingeben]");
 				JOptionPane.showMessageDialog(this, sb.toString(), "PDF Datei selektieren", JOptionPane.ERROR_MESSAGE);

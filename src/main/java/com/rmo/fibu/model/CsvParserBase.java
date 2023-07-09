@@ -31,7 +31,7 @@ public abstract class CsvParserBase {
 	static public String	companyNameRaiff = "Raiffeisen";
 	static private String	buchungFalsch = ">>> Fehlerhafte Buchung in CSV file <<<";
 
-	protected CsvCompany		mCompany = null;
+	protected CsvBank		mCompany = null;
 	// file von dem gelesen werden soll
 	protected CSVReader			reader = null;
 //	protected BufferedReader	br = null;
@@ -105,8 +105,8 @@ public abstract class CsvParserBase {
 	 * Startet das parsing, gibt Buchungen zurück
 	 * @return
 	 */
-	public List<BuchungCsv> startParsing(CsvCompany company) {
-		this.mCompany = company;
+	public List<BuchungCsv> startParsing(CsvBank bank) {
+		this.mCompany = bank;
 		List<BuchungCsv> buchungList = new ArrayList<>();
 
 		BuchungCsv buchungCvs = nextBuchung();

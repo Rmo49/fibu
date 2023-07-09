@@ -9,8 +9,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import com.rmo.fibu.model.CsvCompany;
-import com.rmo.fibu.model.CsvCompanyData;
+import com.rmo.fibu.model.CsvBank;
+import com.rmo.fibu.model.CsvBankData;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.util.Config;
 
@@ -113,19 +113,19 @@ public class BuchungMenu {
 	 * @param mnuCsv
 	 */
 	private void insertCsvMenu(JMenu mnuCsv) {
-		CsvCompanyData 	mCompanyData = null;
-		mCompanyData = (CsvCompanyData) DataBeanContext.getContext().getDataBean(CsvCompanyData.class);
-		Iterator<CsvCompany> iter = mCompanyData.getIterator();
+		CsvBankData 	mBankData = null;
+		mBankData = (CsvBankData) DataBeanContext.getContext().getDataBean(CsvBankData.class);
+		Iterator<CsvBank> iter = mBankData.getIterator();
 		JMenuItem mnuItem;
 		while (iter.hasNext()) {
-			CsvCompany company = iter.next();
-			mnuItem = new JMenuItem(company.getCompanyName());
+			CsvBank bank = iter.next();
+			mnuItem = new JMenuItem(bank.getBankName());
 			mnuItem.setFont(Config.fontTextBold);
 
 			mnuItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					mBuchungView.csvAction(company);
+					mBuchungView.csvAction(bank);
 				}
 			});
 			mnuCsv.add(mnuItem);

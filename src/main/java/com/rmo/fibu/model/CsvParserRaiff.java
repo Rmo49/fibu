@@ -86,11 +86,11 @@ public class CsvParserRaiff extends CsvParserBase {
 	}
 
 	/**
-	 * Die ID der Company
+	 * Die ID der Bank
 	 */
 //	@Override
 //	protected int getCompanyId() {
-//		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
+//		CsvBankData companyData = (CsvBankData) DataBeanContext.getContext().getDataObject(CsvBankData.class);
 //		try {
 //			return companyData.readData(CsvParserBase.companyNameRaiff).getCompanyID();
 //		}
@@ -105,7 +105,7 @@ public class CsvParserRaiff extends CsvParserBase {
 	 */
 //	@Override
 //	protected String getKontoNrDefault() {
-//		CsvCompanyData companyData = (CsvCompanyData) DataBeanContext.getContext().getDataObject(CsvCompanyData.class);
+//		CsvBankData companyData = (CsvBankData) DataBeanContext.getContext().getDataObject(CsvBankData.class);
 //		try {
 //			return companyData.readData(CsvParserBase.companyNameRaiff).getKontoNrDefault();
 //		}

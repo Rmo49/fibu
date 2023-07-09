@@ -7,8 +7,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.rmo.fibu.exception.FibuException;
-import com.rmo.fibu.model.CsvCompany;
-import com.rmo.fibu.model.CsvCompanyData;
+import com.rmo.fibu.model.CsvBank;
+import com.rmo.fibu.model.CsvBankData;
 import com.rmo.fibu.model.CsvKeyKonto;
 import com.rmo.fibu.model.CsvKeyKontoData;
 import com.rmo.fibu.model.CsvParserBase;
@@ -22,8 +22,8 @@ public class CsvKeywordDataTest {
 
 	private static final String dbName = "FibuLeer";
 	private static String companyName = CsvParserBase.companyNamePost;
-	private static CsvCompany mCompany = null;
-	private static CsvCompanyData mCompanyData = null;
+	private static CsvBank mCompany = null;
+	private static CsvBankData mCompanyData = null;
 
 	private CsvKeyKontoData mKeywordData = null;
 
@@ -36,17 +36,17 @@ public class CsvKeywordDataTest {
 		DbHandling.makeDb(dbName);
 		DbConnection.open(dbName);
 		try {
-			mCompanyData = (CsvCompanyData) DataBeanContext.getContext().getDataBean(CsvCompanyData.class);
-			CsvCompany lCompany = new CsvCompany();
-			lCompany.setCompanyID(0);
-			lCompany.setCompanyName(companyName);
+			mCompanyData = (CsvBankData) DataBeanContext.getContext().getDataBean(CsvBankData.class);
+			CsvBank lCompany = new CsvBank();
+			lCompany.setBankID(0);
+			lCompany.setBankName(companyName);
 			lCompany.setDirPath("dir");
 			lCompany.setKontoNrDefault("1000");
 			mCompanyData.addData(lCompany);
 			mCompany = mCompanyData.readData(companyName);
 		} catch (FibuException ex) {
 			fail(ex.getMessage());
-			mCompany.getCompanyID();
+			mCompany.getBankID();
 		}		
 		
 	}

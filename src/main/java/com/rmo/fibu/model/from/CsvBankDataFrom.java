@@ -6,20 +6,20 @@ import java.sql.Statement;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import com.rmo.fibu.model.CsvCompany;
+import com.rmo.fibu.model.CsvBank;
 
 /**
- * Model der gespeicherten Company von denen CSV gelesen werden.
+ * Model der gespeicherten Bank von denen CSV gelesen werden.
  * Auslesen über Iterator, wird für kopieren verwendet.
  * @author Ruedi
  *
  */
-public class CsvCompanyDataFrom extends DataModelFrom {
+public class CsvBankDataFrom extends DataModelFrom {
 
 	/**
 	 * Model constructor comment.
 	 */
-	public CsvCompanyDataFrom() throws Exception {
+	public CsvBankDataFrom() throws Exception {
 		super();
 	}
 
@@ -34,24 +34,24 @@ public class CsvCompanyDataFrom extends DataModelFrom {
 
 
 
-	private void copyToPdfCompany(ResultSet mReadSet, CsvCompany lCompany) throws SQLException {
-		lCompany.setCompanyID(mReadSet.getInt(1));
-		lCompany.setCompanyName(mReadSet.getString(2));
-		lCompany.setKontoNrDefault(mReadSet.getString(3));
+	private void copyToPdfBank(ResultSet mReadSet, CsvBank lBank) throws SQLException {
+		lBank.setBankID(mReadSet.getInt(1));
+		lBank.setBankName(mReadSet.getString(2));
+		lBank.setKontoNrDefault(mReadSet.getString(3));
 		String path = mReadSet.getString(4);
 		path = path.replace('\\', '/');
-		lCompany.setDirPath(path);
+		lBank.setDirPath(path);
 	}
 
 	// ----- Iterator ---------------------------------------------
 
 	/** Gibt einen Iterator zurück */
-	public Iterator<CsvCompany> getIterator() {
+	public Iterator<CsvBank> getIterator() {
 		return new PdfIterator();
 	}
 
 	/** Iterator über alle Konti */
-	private class PdfIterator implements Iterator<CsvCompany> {
+	private class PdfIterator implements Iterator<CsvBank> {
 		private Statement mReadStmt;
 		private ResultSet mReadSet;
 
@@ -81,10 +81,10 @@ public class CsvCompanyDataFrom extends DataModelFrom {
 		}
 
 		@Override
-		public CsvCompany next() throws NoSuchElementException {
+		public CsvBank next() throws NoSuchElementException {
 			try {
-				CsvCompany lPdfCompay = new CsvCompany();
-				copyToPdfCompany(mReadSet, lPdfCompay);
+				CsvBank lPdfCompay = new CsvBank();
+				copyToPdfBank(mReadSet, lPdfCompay);
 				return lPdfCompay;
 			} catch (SQLException ex) {
 				throw new NoSuchElementException(ex.getMessage());

@@ -8,7 +8,7 @@ package com.rmo.fibu.model;
 public class CsvKeyKonto {
 
 	private int Id;
-	private int companyId;
+	private int bankId;
 	private String suchWort;
 	private String kontoNr;
 	private String sh;
@@ -17,8 +17,8 @@ public class CsvKeyKonto {
 	public CsvKeyKonto() {
 	}
 
-	public CsvKeyKonto(int companyId, String suchWort, String kontoNr, String sh, String textNeu) {
-		this.companyId = companyId;
+	public CsvKeyKonto(int bankId, String suchWort, String kontoNr, String sh, String textNeu) {
+		this.bankId = bankId;
 		this.suchWort = suchWort;
 		this.kontoNr = kontoNr;
 		this.sh = sh;
@@ -35,12 +35,12 @@ public class CsvKeyKonto {
 		this.Id = Id;
 	}
 
-	public int getCompanyId() {
-		return companyId;
+	public int getBankId() {
+		return bankId;
 	}
 
-	public void setCompanyId(int companyId) {
-		this.companyId = companyId;
+	public void setBankId(int companyId) {
+		this.bankId = companyId;
 	}
 
 	public String getSuchWort() {

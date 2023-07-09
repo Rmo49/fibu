@@ -24,8 +24,8 @@ import javax.swing.WindowConstants;
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.FibuRuntimeException;
 import com.rmo.fibu.exception.KontoNotFoundException;
-import com.rmo.fibu.model.CsvCompany;
-import com.rmo.fibu.model.CsvCompanyData;
+import com.rmo.fibu.model.CsvBank;
+import com.rmo.fibu.model.CsvBankData;
 import com.rmo.fibu.model.CsvKeyKonto;
 import com.rmo.fibu.model.CsvKeyKontoData;
 import com.rmo.fibu.model.DataBeanContext;
@@ -33,7 +33,7 @@ import com.rmo.fibu.model.DbConnection;
 import com.rmo.fibu.model.FibuData;
 import com.rmo.fibu.model.Konto;
 import com.rmo.fibu.model.KontoData;
-import com.rmo.fibu.model.from.CsvCompanyDataFrom;
+import com.rmo.fibu.model.from.CsvBankDataFrom;
 import com.rmo.fibu.model.from.CsvKeywordDataFrom;
 import com.rmo.fibu.model.from.FibuDataBaseFrom;
 import com.rmo.fibu.model.from.FibuDataFrom;
@@ -202,7 +202,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 		}
 		copyFibuTitel();
 		copyKonto();
-		copyCsvCompany();
+		copyCsvBank();
 		copyCvsKeywords();
 
 		btnKopieren.setEnabled(false);
@@ -272,28 +272,28 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 	}
 
 	/**
-	 * Kopiert die Company daten für CSV.
+	 * Kopiert die Bank daten für CSV.
 	 */
-	private void copyCsvCompany() {
-		CsvCompanyDataFrom mPdfCompanyDataFrom = (CsvCompanyDataFrom) DataBeanContext.getContext()
-				.getDataBean(CsvCompanyDataFrom.class);
-		Iterator<CsvCompany> iterFrom = mPdfCompanyDataFrom.getIterator();
-		CsvCompanyData mPdfCompanyData = (CsvCompanyData) DataBeanContext.getContext()
-				.getDataBean(CsvCompanyData.class);
-		CsvCompany lPdfCompany = new CsvCompany();
+	private void copyCsvBank() {
+		CsvBankDataFrom mPdfBankDataFrom = (CsvBankDataFrom) DataBeanContext.getContext()
+				.getDataBean(CsvBankDataFrom.class);
+		Iterator<CsvBank> iterFrom = mPdfBankDataFrom.getIterator();
+		CsvBankData mPdfBankData = (CsvBankData) DataBeanContext.getContext()
+				.getDataBean(CsvBankData.class);
+		CsvBank lPdfBank = new CsvBank();
 		while (iterFrom.hasNext()) {
-			CsvCompany lPdfCompanyFrom = iterFrom.next();
-			lPdfCompany.setCompanyID(lPdfCompanyFrom.getCompanyID());
-			lPdfCompany.setCompanyName(lPdfCompanyFrom.getCompanyName());
-			lPdfCompany.setDirPath(lPdfCompanyFrom.getDirPath());
-			lPdfCompany.setKontoNrDefault(lPdfCompanyFrom.getKontoNrDefault());
-			lPdfCompany.setDocType(lPdfCompanyFrom.getDocType());
-			if (lPdfCompany.getDocType() == 0) {
+			CsvBank lPdfBankFrom = iterFrom.next();
+			lPdfBank.setBankID(lPdfBankFrom.getBankID());
+			lPdfBank.setBankName(lPdfBankFrom.getBankName());
+			lPdfBank.setDirPath(lPdfBankFrom.getDirPath());
+			lPdfBank.setKontoNrDefault(lPdfBankFrom.getKontoNrDefault());
+			lPdfBank.setDocType(lPdfBankFrom.getDocType());
+			if (lPdfBank.getDocType() == 0) {
 				// das ist der default, wenn nichts gesetzt
-				lPdfCompany.setDocType(1);
+				lPdfBank.setDocType(1);
 			}
 			try {
-				mPdfCompanyData.addData(lPdfCompany);
+				mPdfBankData.addData(lPdfBank);
 			} catch (FibuException ex) {
 				message.setText("Fehler bei PdfCompany anlegen: " + ex.getMessage());
 			}
@@ -312,7 +312,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 		CsvKeyKonto lCvsKeyword = new CsvKeyKonto();
 		while (iterFrom.hasNext()) {
 			CsvKeyKonto lCvsKeywordFrom = iterFrom.next();
-			lCvsKeyword.setCompanyId(lCvsKeywordFrom.getCompanyId());
+			lCvsKeyword.setBankId(lCvsKeywordFrom.getBankId());
 			lCvsKeyword.setKontoNr(lCvsKeywordFrom.getKontoNr());
 			lCvsKeyword.setSh(lCvsKeywordFrom.getSh());
 			lCvsKeyword.setSuchWort(lCvsKeywordFrom.getSuchWort());

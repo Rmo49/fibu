@@ -3,7 +3,7 @@ package com.rmo.fibu.model;
 import java.beans.beancontext.BeanContextSupport;
 import java.util.Iterator;
 
-import com.rmo.fibu.model.from.CsvCompanyDataFrom;
+import com.rmo.fibu.model.from.CsvBankDataFrom;
 import com.rmo.fibu.model.from.CsvKeywordDataFrom;
 import com.rmo.fibu.model.from.FibuDataFrom;
 import com.rmo.fibu.model.from.KontoDataFrom;
@@ -79,8 +79,8 @@ private void setup() {
 		add(new BuchungData());
 		add(new KontoData());
 		add(new KontoDataFrom());
-		add(new CsvCompanyData());
-		add(new CsvCompanyDataFrom());
+		add(new CsvBankData());
+		add(new CsvBankDataFrom());
 		add(new CsvKeyKontoData());
 		add(new CsvKeywordDataFrom());
 
