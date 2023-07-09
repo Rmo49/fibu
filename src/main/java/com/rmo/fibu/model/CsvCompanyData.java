@@ -205,7 +205,7 @@ public class CsvCompanyData extends DataBase {
 		try {
 			if (findRow(companyName)) {
 				mReadSetName.refreshRow();
-				return copyCompanyValues();
+				return copyCompanyValues(mReadSetName);
 			} else {
 				throw new FibuException("CompanyName: " + companyName);
 			}
@@ -223,7 +223,7 @@ public class CsvCompanyData extends DataBase {
 		try {
 			if (findRow(companyId)) {
 				mReadSetName.refreshRow();
-				return copyCompanyValues();
+				return copyCompanyValues(mReadSetName);
 			} else {
 				throw new FibuException("CompanyId: " + companyId);
 			}
@@ -250,7 +250,7 @@ public class CsvCompanyData extends DataBase {
 			setupReadSetAll();
 			if (mReadSetAll.absolute(row + 1)) {
 //				mReadSetName.refreshRow();
-				return copyCompanyValues();
+				return copyCompanyValues(mReadSetAll);
 			} else {
 				throw new FibuException("CsvCompanyData: Zeile nicht gefunden");
 			}
@@ -305,19 +305,19 @@ public class CsvCompanyData extends DataBase {
 	/**
 	 * Die Wert vom ReadSet in das Objekt kopieren
 	 */
-	private CsvCompany copyCompanyValues() throws SQLException {
+	private CsvCompany copyCompanyValues(ResultSet readSet) throws SQLException {
 		CsvCompany lCompany = new CsvCompany();
-		mReadSetAll = null;	// zurücksetzen, da nicht von Anfang liest
-		setupReadSetAll();
-		
-		mReadSetAll.next();
-		lCompany.setCompanyID(mReadSetAll.getInt(1));
-		lCompany.setCompanyName(mReadSetAll.getString(2));
-		lCompany.setKontoNrDefault(mReadSetAll.getString(3));
-		lCompany.setDirPath(mReadSetAll.getString(4));
-		lCompany.setDocType(mReadSetAll.getInt(5));
-		lCompany.setWordBefore(mReadSetAll.getString(6));
-		lCompany.setSpaltenArray(mReadSetAll.getString(7));
+//		mReadSetAll = null;	// zurücksetzen, da nicht von Anfang liest
+//		setupReadSetAll();
+//		
+//		mReadSetAll.next();
+		lCompany.setCompanyID(readSet.getInt(1));
+		lCompany.setCompanyName(readSet.getString(2));
+		lCompany.setKontoNrDefault(readSet.getString(3));
+		lCompany.setDirPath(readSet.getString(4));
+		lCompany.setDocType(readSet.getInt(5));
+		lCompany.setWordBefore(readSet.getString(6));
+		lCompany.setSpaltenArray(readSet.getString(7));
 		return lCompany;
 	}
 
