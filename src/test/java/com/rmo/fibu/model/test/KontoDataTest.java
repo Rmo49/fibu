@@ -28,7 +28,7 @@ public class KontoDataTest {
 	private static  Konto mKonto3001;
 	private static  Konto mKonto3002;
 	private static  Konto mKonto1000Update;
-	
+
 
 	/** Setup Test-Objects
 	 */
@@ -47,7 +47,7 @@ public class KontoDataTest {
 		mKonto3002 = new Konto(3002, "Konto 3002", 92.50, 0, false);
 		mKonto1000Update = new Konto(1000, "Konto 1000 new", 10.1, 100.10, false);
 	}
-	
+
 
 	/** Einige Konto dazufügen.
 	 */
@@ -155,7 +155,7 @@ public class KontoDataTest {
 		Assert.assertEquals("Saldo", expected.getSaldo(), actual.getSaldo(), 0.1);
 		Assert.assertEquals("IstSollKto", expected.isSollKonto() , actual.isSollKonto());
 	}
-	
+
 	@AfterClass
 	public static void afterClass() {
 		DbHandling.deleteDb(dbName);

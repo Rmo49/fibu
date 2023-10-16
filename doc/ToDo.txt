@@ -1,27 +1,13 @@
-Fehler:
-- Wenn bei CSV Buchungen anpassen, "Speichern in Fibu" gedrückt dann stopped der Service "Maria DB" <= verifiziert!
-- Wenn erste Buchung gespeichert wird, dann stopped Service "Maria DB"
-- siehe: BuchungData.save => addRow (wenn noch nicht vorhanden)
-- BuchungData.addRow =>
 
-- Widnows Tools > Ereignisanzeige: Windows-Protokolle / Anwendung
-InnoDB: Write to file ib_logfile0 failed at offset 1937408, 4096 bytes should have been written, 
-only 0 were written. Operating system error number 203. 
-Check that your OS and file system support files of this size.
-Check also that the disk is not full or a disk quota exceeded.
+Fehler Buchung
+- Wenn zweite Buchung eingegben, dann Fehler: Eingabe fehlt <= nicht beim Debug (4.9.23)
 
-[FATAL] InnoDB: write("ib_logfile0") returned I/O error
-D:\Daten\MariaDB\data\ib_logfile0
-2.5.23, gesetzt in D:\Daten\MariaDB\data\my.ini: innodb_buffer_pool_size=1G
-3.5.23, innodb_buffer_pool_size=1G auskommentiert
-7.3.23, innodb_buffer_pool_size=8G, immer noch Probleme
-9.3.23, innodb_buffer_pool_size=2000M
-
-siehe auch: D:\Daten\MariaDB\dataSurface-RMO.err
----------------------------------
-
-- BuchungView: BuchungListFrame nicht als Frame sonder auch Panel wie Eingaben
+Buchung
+- Tab funktioniert nicht mehr
 - wenn Tab im Soll-Feld, springt nicht zu Haben
+- Kann Kontonummer nicht manuell eingeben.
+
+- BuchungView: BuchungListFrame nicht als Frame sondern auch Panel wie Eingaben
 - wenn eine Buchung bereits blau, und Teil eingegeben, dann kann nicht gespeichert werden
 
 
@@ -51,4 +37,28 @@ Erweiterung:
 	Andere Konto wählen
 	Die ausgewählten Buchungen wechseln
 - Summen Fettschrift möglich?
+
+
+--------------------------------
+Fehler Maria DB
+- Wenn bei CSV Buchungen anpassen, "Speichern in Fibu" gedrückt dann stopped der Service "Maria DB" <= verifiziert!
+- Wenn erste Buchung gespeichert wird, dann stopped Service "Maria DB"
+- siehe: BuchungData.save => addRow (wenn noch nicht vorhanden)
+- BuchungData.addRow =>
+
+- Widnows Tools > Ereignisanzeige: Windows-Protokolle / Anwendung
+InnoDB: Write to file ib_logfile0 failed at offset 1937408, 4096 bytes should have been written, 
+only 0 were written. Operating system error number 203. 
+Check that your OS and file system support files of this size.
+Check also that the disk is not full or a disk quota exceeded.
+
+[FATAL] InnoDB: write("ib_logfile0") returned I/O error
+D:\Daten\MariaDB\data\ib_logfile0
+2.5.23, gesetzt in D:\Daten\MariaDB\data\my.ini: innodb_buffer_pool_size=1G
+3.5.23, innodb_buffer_pool_size=1G auskommentiert
+7.3.23, innodb_buffer_pool_size=8G, immer noch Probleme
+9.3.23, innodb_buffer_pool_size=2000M
+
+siehe auch: D:\Daten\MariaDB\dataSurface-RMO.err
+---------------------------------
 

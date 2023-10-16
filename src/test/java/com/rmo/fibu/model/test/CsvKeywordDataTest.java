@@ -47,11 +47,11 @@ public class CsvKeywordDataTest {
 		} catch (FibuException ex) {
 			fail(ex.getMessage());
 			mCompany.getBankID();
-		}		
-		
+		}
+
 	}
 
-	
+
 	@Test
 	public void testAddEmptyRow() {
 		try {
@@ -59,22 +59,22 @@ public class CsvKeywordDataTest {
 			mKeywordData.addEmptyRow(new CsvKeyKonto());
 		} catch (FibuException ex) {
 			fail(ex.getMessage());
-		}		
+		}
 	}
-	
+
 	@Test
 	public void readEmptyRow() {
 		try {
 			mKeywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
 			mKeywordData.addEmptyRow(new CsvKeyKonto());
-//			assertNotNull("Keyword nicht gefunden", lKeyword.getSuchWort());  
+//			assertNotNull("Keyword nicht gefunden", lKeyword.getSuchWort());
 		} catch (FibuException ex) {
 			fail(ex.getMessage());
-		}		
+		}
 
 	}
-	
-	
+
+
 	@AfterClass
 	public static void afterClass() {
 		DbHandling.deleteDb(dbName);

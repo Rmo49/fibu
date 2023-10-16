@@ -2,6 +2,7 @@ package com.rmo.fibu.model;
 
 /**
  * Die Bank von der CSV- oder PDF-files eingelesen werden.
+ * Die Steuerung der einzelnen Spalten und weiter Werte werden in der DB abgelegt.
  * @author Ruedi
  *
  */

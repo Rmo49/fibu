@@ -650,7 +650,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	private void csvEinlesen() {
 		Trace.println(5, "CsvReaderBuchungFrame.csvEinlesen()");
 		if (mBank.getDocType() == CsvBank.docTypeCsv) {
-
+			// wenn von CSV einlesen
 			CsvParserBase parser = null;
 			if (mBankName.equalsIgnoreCase(CsvParserBase.companyNamePost)) {
 				parser = new CsvParserPost(mFile);
@@ -677,6 +677,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 			mBuchungList = parser.startParsing(mBank);
 		}
 		else {
+			// wenn von PDF einlesen
 			PdfParser pdfParser = new PdfParser(mFile);
 			mBuchungList = pdfParser.startParsing(mBank);
 			if (mBuchungList.size() <= 0) {

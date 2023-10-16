@@ -55,7 +55,9 @@ public class BuchungEingabe extends JPanel {
 	private long mId = -1;
 
 	// ----- Temporäre Buchung fuer die naechste Eingabe
-	private Buchung mTempBuchung = new Buchung();
+	private Buchung mTempBuchung; // = new Buchung();
+
+	// wird verwendet für die Vorgabe der nächsten Eingabe
 	private boolean mDatumSame = false;
 	private boolean mBelegSame = false;
 
@@ -181,6 +183,7 @@ public class BuchungEingabe extends JPanel {
 
 		mTfBetrag = new JFormattedTextFieldExt(NumberFormat.getNumberInstance());
 		mTfBetrag.setText("");
+
 		lLayout.setConstraints(mTfBetrag, lConstraints);
 		lPanel.add(mTfBetrag);
 
@@ -273,9 +276,9 @@ public class BuchungEingabe extends JPanel {
 	private void initListenersSoll() {
 		mTfSoll.addFocusListener(new FocusListener() {
 			@Override
-			public void focusGained(FocusEvent e) {
+			public void focusGained(FocusEvent event) {
 				Trace.println(6, "BuchungEingabe SollKonto gain Focus");
-				if (!e.isTemporary()) {
+				if (!event.isTemporary()) {
 					focusGainedEnterField(mTfSoll, mTempBuchung.getSollAsString());
 					showKontoListe();
 					mHasKontoLostFocus = false;
@@ -288,9 +291,9 @@ public class BuchungEingabe extends JPanel {
 			}
 
 			@Override
-			public void focusLost(FocusEvent e) {
+			public void focusLost(FocusEvent event) {
 				Trace.println(6, "BuchungEingabe SollKonto lost Focus");
-				if (!e.isTemporary()) {
+				if (!event.isTemporary()) {
 					focusLostEnterField(mTfSoll);
 					mHasKontoLostFocus = true;
 				}
@@ -299,8 +302,8 @@ public class BuchungEingabe extends JPanel {
 		// überwachung der Tastatur-Eingabe
 		mTfSoll.addKeyListener(new KeyListener() {
 			@Override
-			public void keyTyped(KeyEvent e) {
-				kontoKeyTyped(e, mTfSoll, mTfHaben);
+			public void keyTyped(KeyEvent event) {
+				kontoKeyTyped(event, mTfSoll, mTfHaben);
 			}
 
 			@Override
@@ -328,9 +331,9 @@ public class BuchungEingabe extends JPanel {
 	private void initListenersHaben() {
 		mTfHaben.addFocusListener(new FocusListener() {
 			@Override
-			public void focusGained(FocusEvent e) {
+			public void focusGained(FocusEvent event) {
 				Trace.println(6, "BuchungEingabe HabenKonto gain Focus");
-				if (!e.isTemporary()) {
+				if (!event.isTemporary()) {
 					showKontoListe();
 					mHasKontoLostFocus = false;
 					mFieldToFill = mTfHaben;
@@ -343,9 +346,9 @@ public class BuchungEingabe extends JPanel {
 			}
 
 			@Override
-			public void focusLost(FocusEvent e) {
+			public void focusLost(FocusEvent event) {
 				Trace.println(6, "BuchungEingabe HabenKonto lost Focus");
-				if (!e.isTemporary()) {
+				if (!event.isTemporary()) {
 					focusLostEnterField(mTfHaben);
 					mHasKontoLostFocus = true;
 				}
@@ -395,6 +398,8 @@ public class BuchungEingabe extends JPanel {
 			public void focusLost(FocusEvent e) {
 				if (!e.isTemporary()) {
 					focusLostEnterField(mTfBetrag);
+					String xx = mTfBetrag.getText();
+					System.out.println(xx.toString());
 				}
 			}
 		});
@@ -428,7 +433,7 @@ public class BuchungEingabe extends JPanel {
 		Trace.println(6, "BuchungView.focusLostEnterField()");
 		isTfEmpty(field, true);
 		mParent.enableButtons();
-		mFieldToFill = field;
+//		mFieldToFill = field;
 	}
 
 	/** Parsed das Datum */
@@ -559,6 +564,19 @@ public class BuchungEingabe extends JPanel {
 	}
 
 	/**
+	 * Zum nächsten Feld springen (wenn Tab gedrückt
+	 */
+	public void selectNextField() {
+		if (mFieldToFill.equals(mTfSoll)) {
+			mTfHaben.requestFocus();
+		}
+		else {
+			mTfBetrag.requestFocus();
+		}
+	}
+	
+	
+	/**
 	 * prüft alle Eingabefelder.
 	 *
 	 * @param mark true wenn die Felder markiert werden sollen, die leer sind
@@ -633,6 +651,7 @@ public class BuchungEingabe extends JPanel {
 
 	/**
 	 * prüft die Eingabefelder und kopiert deren Inhalt in Buchung.
+	 * Auch TempBuchung wird gesetzt, damit die Werte der letzten Buchung übernommen werden.
 	 *
 	 * @return Buchung falls alle Felder richtige Werte enthalten, sonst null
 	 */
@@ -663,6 +682,8 @@ public class BuchungEingabe extends JPanel {
 			}
 			lBuchung.setBetrag(betrag);
 			lBuchung.setID(mId);
+			// alle Werte in die temporäre Buchnung kopieren
+			copyToTemp();
 		} catch (Exception pEx) {
 			pEx.printStackTrace(Trace.getPrintWriter());
 			throw new BuchungValueException("Fehler in " + lErrorFeld + ":" + pEx.getMessage());

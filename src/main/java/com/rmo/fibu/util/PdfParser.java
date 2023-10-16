@@ -24,6 +24,7 @@ import com.rmo.fibu.model.CsvBank;
 public class PdfParser {
 
 	private CsvBank bank;
+	// enthält das gesamte Dokument
 	private PdfDokument pdfDoku;
 
 	// die Spalte des Datums
@@ -42,6 +43,17 @@ public class PdfParser {
 			// enthält das pdf-Dokument
 			pdfDoku = new PdfDokument(stripper.pdfWords);
 	}
+
+	/**
+	 * Startet das parsing, gibt alle Buchungen zurück
+	 * @return
+	 */
+	public List<BuchungCsv> startParsing(CsvBank bank) {
+		this.bank = bank;
+
+		return readAllBuchungen();
+	}
+
 
 	/**
 	 * PDF mit PDFBox File öffnen und Stripper mit allen Worte zurückgeben
@@ -68,16 +80,6 @@ public class PdfParser {
 
 
 	/**
-	 * Startet das parsing, gibt Buchungen zurück
-	 * @return
-	 */
-	public List<BuchungCsv> startParsing(CsvBank bank) {
-		this.bank = bank;
-
-		return readAllBuchungen();
-	}
-
-	/**
 	 * Alle Buchungen lesen.
 	 * @param wordBefore
 	 * @return
@@ -86,6 +88,7 @@ public class PdfParser {
 		pdfDoku.gotoStart(bank.getWordBefore());
 		pdfDoku.gotoNextLine();
 		List<BuchungCsv> buchungen = new ArrayList<>();
+		// die eingelesene Zeile
 		List<String> pdfZeile = pdfDoku.nextLine();
 		while (pdfZeile.size() > 0)  {
 			BuchungCsv buchung = makeBuchung(pdfZeile);

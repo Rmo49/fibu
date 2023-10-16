@@ -5,7 +5,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BoundedRangeModel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -163,11 +162,11 @@ import com.rmo.fibu.util.Trace;
 //	}
 
 	/** Grösse und Position der Kontoliste berechnen */
-	private void setKontoDialogSize() {
-		this.setSize(270, 440);
+//	private void setKontoDialogSize() {
+//		this.setSize(270, 440);
 //		mKontoListe.setSize(250, 400);
 //		mKontoListe.setLocation(0, 0);
-	}
+//	}
 
 
 	/** Setzt den Cursor auf das entsprechende Konto.

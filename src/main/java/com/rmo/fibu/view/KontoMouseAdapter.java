@@ -27,5 +27,6 @@ public class KontoMouseAdapter extends MouseAdapter {
 		Trace.println(5, "KontoMouseAdapter.mouseClicked()");
 		e.consume();
 		mKontoField.setCaretPosition(mKontoField.getText().length());
+		mKontoField.requestFocusInWindow();
 	}
 }

@@ -309,7 +309,7 @@ public class CsvBankData extends DataBase {
 		CsvBank lCompany = new CsvBank();
 //		mReadSetAll = null;	// zurücksetzen, da nicht von Anfang liest
 //		setupReadSetAll();
-//		
+//
 //		mReadSetAll.next();
 		lCompany.setBankID(readSet.getInt(1));
 		lCompany.setBankName(readSet.getString(2));

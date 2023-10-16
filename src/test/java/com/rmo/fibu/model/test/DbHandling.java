@@ -5,12 +5,12 @@ import com.rmo.fibu.model.DbConnection;
 import com.rmo.fibu.model.FibuDataBase;
 
 public class DbHandling {
-	
+
 	/**
 	 * Die DB löschen
 	 * return 1, wenn ok
 	 */
-	public static int deleteDb(String dbName) {	
+	public static int deleteDb(String dbName) {
 		if (DbConnection.isFibuOpen()) {
 			try {
 				DbConnection.close();
@@ -23,7 +23,7 @@ public class DbHandling {
 		} catch (FibuException ex) {
 			return -1;
 		}
-		return 1;		
+		return 1;
 	}
 
 	/**
@@ -36,9 +36,9 @@ public class DbHandling {
 			FibuDataBase.newFibu(dbName);
 		} catch (FibuException ex) {
 			return -1;
-		}	
+		}
 		return 1;
 	}
-	
-	
+
+
 }
