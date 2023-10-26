@@ -1,7 +1,5 @@
 package com.rmo.fibu.view;
 
-
-import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -82,19 +80,6 @@ import com.rmo.fibu.util.Trace;
 
 		mKontoDialog = new JDialog();
 		mKontoScrollPane = new JScrollPane(mKontoTable);
-
-		// Listener, wenn etwas selektiert wird in der KontoListe
-//		ListSelectionModel rowSM = mKontoScrollPane.getTable().getSelectionModel();
-//		rowSM.addListSelectionListener(new ListSelectionListener() {
-//			@Override
-//			public void valueChanged(ListSelectionEvent e) {
-//				if (mHasKontoLostFocus) {
-//					ListSelectionModel lsm = (ListSelectionModel)e.getSource();
-//					mLastField.setText(mKontoScrollPane.getKontoNrAt(lsm.getAnchorSelectionIndex()));
-//				}
-//			}
-//		});
-
 		mKontoDialog.add(mKontoScrollPane);
 
 		mKontoDialog.setTitle("Konto Liste");

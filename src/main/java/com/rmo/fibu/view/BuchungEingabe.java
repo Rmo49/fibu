@@ -66,10 +66,6 @@ public class BuchungEingabe extends JPanel {
 	 * der KontoListe selektiert wurde
 	 */
 	private JTextComponent mFieldToFill = null;
-	/**
-	 * Zur Steuerung, damit die Selektion in der Kontoliste übernommen werden kann
-	 */
-	private boolean mHasKontoLostFocus = false;
 
 	/**
 	 * Create the panel.
@@ -335,7 +331,6 @@ public class BuchungEingabe extends JPanel {
 				Trace.println(6, "BuchungEingabe HabenKonto gain Focus");
 				if (!event.isTemporary()) {
 					showKontoListe();
-					mHasKontoLostFocus = false;
 					mFieldToFill = mTfHaben;
 					focusGainedEnterField(mTfHaben, mTempBuchung.getHabenAsString());
 					try {
@@ -350,7 +345,6 @@ public class BuchungEingabe extends JPanel {
 				Trace.println(6, "BuchungEingabe HabenKonto lost Focus");
 				if (!event.isTemporary()) {
 					focusLostEnterField(mTfHaben);
-					mHasKontoLostFocus = true;
 				}
 			}
 		});

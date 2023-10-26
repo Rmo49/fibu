@@ -21,19 +21,17 @@ import com.rmo.fibu.model.KontoNrVector;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Trace;
 
-/** KontoListView: Zeigt die Liste der vorhandenen Konti,
+/** KontoListView: Zeigt die Liste der vorhandenen Konti.
  * wird bei Buchungen verwendet.
  * Die Konti werden in einer JTable angezeigt.
  * Das aktuelle Konto wird in der mitte angezeigt.
  * Grösse und Position wird vom parent-Fenster gesteuert.
+ * 
+ * >>> siehe KontoListDialog, dieser wird neu verwendet
  */
-
  public class KontoListScrollPane extends JScrollPane //implements KontoListener, Runnable
  {
 	private static final long serialVersionUID = -1430502678322062915L;
-	private BuchungEingabe	mEingabe = null;
-	/** KontoListe für die Anzeige aller Konti */
-//	private KontoListScrollPane		mKontoListe;
 	private KontoData   	mKontoData = null;      // die Verbindung zur DB
 	/** Das Model zur Tabelle */
 	private KontoModel		mKontoTableModel;
@@ -47,7 +45,6 @@ import com.rmo.fibu.util.Trace;
 	 * startet initialiserung des Frames
 	 */
 	public KontoListScrollPane(BuchungEingabe eingabe) {
-		mEingabe = eingabe;
 		// title resizable closable maximizable iconifiable
 		mKontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
 		// beim Data als Observer anmelden
@@ -59,45 +56,9 @@ import com.rmo.fibu.util.Trace;
 	 * Initialisieren aller Ressourcen.
 	 */
 	private void init() {
-		initKontoList();
 		initTableKonto();
 		this.getViewport().add(mKontoTable, null);
-
-//		setTitle("KontoList");
-//		this.setSize(250, 400);
-//		this.setLocation(100, 20);
 	}
-
-	/** Initialisierung des Anzeige-Bereiches: Kontoliste
-	 * in einem DesktopPane.
-	 */
-	private void initKontoList() {
-		Trace.println(4,"BuchungEingabe.initKontoList()");
-
-//		JPanel lPane = new JPanel();
-
-//		initKontoListView();
-//		lPane.add(mKontoListe);
-//		 Kontoliste initialisieren, in den Hintergrund
-//		mKontoListe.setVisible(true);
-
-		// Listener, wenn etwas selektiert wird in der KontoListe
-//		ListSelectionModel rowSM = mKontoListe.getTable().getSelectionModel();
-//		rowSM.addListSelectionListener(new ListSelectionListener() {
-//			@Override
-//			public void valueChanged(ListSelectionEvent e) {
-//				if (mHasKontoLostFocus) {
-//					ListSelectionModel lsm = (ListSelectionModel)e.getSource();
-//					mLastField.setText(mKontoListe.getKontoNrAt(lsm.getAnchorSelectionIndex()));
-//				}
-//			}
-//		});
-//
-//		super.setTitle("KontoListe");
-//		this.add(lPane);
-//		setKontoDialogSize();
-	}
-
 
 
 	/** Initialisierung der Tabelle für Konto mit dem Model
@@ -133,40 +94,6 @@ import com.rmo.fibu.util.Trace;
 			}
 		});
 	}
-
-
-//	/** Initialisiert die Anzeige der Konti */
-//	private Container initKontoListView() {
-//		if (mKontoListe == null) {
-//			mKontoListe = new KontoListScrollPane();
-//		}
-//		this.addComponentListener (new ComponentListener() {
-//			@Override
-//			public void componentResized(ComponentEvent e) {
-//				setKontoDialogSize();
-//			}
-//			@Override
-//			public void componentMoved(ComponentEvent e) {
-//
-//			}
-//			@Override
-//			public void componentHidden(ComponentEvent e) {
-//
-//			}
-//			@Override
-//			public void componentShown(ComponentEvent e) {
-//				setKontoDialogSize();
-//			}
-//		});
-//		return mKontoListe;
-//	}
-
-	/** Grösse und Position der Kontoliste berechnen */
-//	private void setKontoDialogSize() {
-//		this.setSize(270, 440);
-//		mKontoListe.setSize(250, 400);
-//		mKontoListe.setLocation(0, 0);
-//	}
 
 
 	/** Setzt den Cursor auf das entsprechende Konto.
