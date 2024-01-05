@@ -19,8 +19,8 @@ import com.rmo.fibu.model.KontoNrVector;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Trace;
 
-/** KontoListView: Zeigt die Liste der vorhandenen Konti,
- * wird bei Buchungen verwendet.
+/** KontoListFrame, Wird momentan nicht verwendet
+ * Zeigt die Liste der vorhandenen Konti, wird bei Buchungen verwendet.
  * Die Konti werden in einer JTable angezeigt.
  * Das aktuelle Konto wird in der mitte angezeigt.
  * Grösse und Position wird vom parent-Fenster gesteuert.
@@ -39,12 +39,12 @@ import com.rmo.fibu.util.Trace;
     private JTable 			jKontoTable = new JTable();
 
 	/**
-	 * KontoplanView constructor.
+	 * KontoListFrame constructor.
 	 * startet initialiserung des Frames
 	 */
 	public KontoListFrame() {
 		// title resizable closable maximizable iconifiable
-		super("Konto Liste", false, false, false, false);
+		super("Konto Liste (Frame)", false, false, false, false);
 		mKontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
 		// beim Data als Observer anmelden
 		//mKtoData.addKtoObserver(this);

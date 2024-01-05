@@ -23,7 +23,7 @@ import com.rmo.fibu.model.KontoNrVector;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Trace;
 
-/** KontoListView: Zeigt die Liste der vorhandenen Konti,
+/** KontoListDialog: Zeigt die Liste der vorhandenen Konti,
  * wird bei Buchungen verwendet.
  * Die Konti werden in einer JTable angezeigt.
  * Das aktuelle Konto wird in der mitte angezeigt.
@@ -48,7 +48,8 @@ import com.rmo.fibu.util.Trace;
 
 	/**
 	 * KontoListScrollPane constructor.
-	 * startet initialiserung des Frames
+	 * startet initialiserung des Frames.
+	 * eingabe zeigt auf den Panel woher aufgerufen
 	 */
 	public KontoListDialog(BuchungEingabe eingabe) {
 		super();
@@ -82,7 +83,7 @@ import com.rmo.fibu.util.Trace;
 		mKontoScrollPane = new JScrollPane(mKontoTable);
 		mKontoDialog.add(mKontoScrollPane);
 
-		mKontoDialog.setTitle("Konto Liste");
+		mKontoDialog.setTitle("Konto Liste (Dialog)");
 		setKontoDialogSize();
 	}
 

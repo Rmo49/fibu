@@ -55,49 +55,28 @@ public class BuchungView extends JFrame implements BuchungInterface {
 	/** Csv Setup, Einstellungen der Banks */
 	private CsvBankFrame				mCsvSetup;
 	/** Das Model zu dieser View */
-	private BuchungData     	mBuchungData = null;
+	private BuchungData     			mBuchungData = null;
 	/** Die Eingabefelder für eine Buchung */
-	private BuchungEingabe mEingabe = null;
+	private BuchungEingabe 				mEingabe = null;
 
 	/** Das Menu und PopUp */
-	private BuchungMenu			mBuchungMenu;
+	private BuchungMenu					mBuchungMenu;
 
-	// Die ID der Buchung, die bearbeitet wird, ist -1 wenn neu.
-	private long            		mId = -1;
-	//----- die Buttons
-	private JButton         mButtonOk;
-	private JButton         mButtonSave;
-	private JButton         mButtonCancel;
-	/** Message-Feld für die Fehlerausgabe */
-	private JLabel          mMessage;
-
-	//----- Temporäre Buchung fuer die naechste Eingabe
-//	private Buchung			mTempBuchung = new Buchung();
-	private boolean         mDatumSame = false;
-	private boolean         mBelegSame = false;
-
-	//----- Status der Eingabefelder
-	/** Die neuen Buchungen sind gesichert */
-	private boolean         mNewBookingsSaved = true;
 	// noch nicht verwendet
 	/** Wenn eine Buchung zur Bearbeitung ausgewählt wurde,
 	 * bis Speichern gedrückt */
-	private boolean       	mChangeing = false;
+//	private boolean       	mChangeing = false;
 
 	/**
 	 * BuchungView constructor comment.
 	 * @param title String
 	 */
 	public BuchungView() {
-		super("Buchung V2.2");
+		super("Buchung V2.3");
 		init();
 	}
 
 	// ----- Zugriff auf Objekte der Buchung View ---------------------
-	public BuchungListFrame getBuchungListe() {
-		return mBuchungListe;
-	}
-
 	/**
 	 * Das CsvReaderFrame löschen, damit beim nächsten mal wieder neu gelesen wird.
 	 */
@@ -125,9 +104,9 @@ public class BuchungView extends JFrame implements BuchungInterface {
 		initView();
 
 		// Buttons setzen
-		enableButtons();
-		mButtonOk.setEnabled(true);
-		mButtonCancel.requestFocus(); // damit nicht Datum den Fokus erhält
+//		enableButtons();
+//		mButtonOk.setEnabled(true);
+//		mButtonCancel.requestFocus(); // damit nicht Datum den Fokus erhält
 		// die letzte Buchung in den Temporären Speicher
 //		mTempBuchung = mBuchungListe.getLastBuchung();
 		// die ID bis zu dieser Buchungen gesichert wurden
@@ -177,8 +156,8 @@ public class BuchungView extends JFrame implements BuchungInterface {
 		mEingabe = new BuchungEingabe(this);
 		lPanel.add(mEingabe.initView());
 
-		lPanel.add(initEnterButtons());
-		lPanel.add(initMessage());
+//		lPanel.add(initButtons());
+//		lPanel.add(initMessage());
 
 //		initListenersDatum();
 //		initListenersBeleg();
@@ -190,76 +169,6 @@ public class BuchungView extends JFrame implements BuchungInterface {
 		return lPanel;
 	}
 
-	/** Initialisierung der Buttons für die Eingabe, inkl. Listener.
-	 */
-	private Container initEnterButtons() {
-		Trace.println(3,"BuchungView.initEnterButtons()");
-		JPanel lPanel = new JPanel(new GridLayout(1,6,3,3));
-		//--- OK Button, die Daten dazufügen
-		mButtonOk = new JButton("OK");
-		mButtonOk.setFont(Config.fontTextBold);
-		lPanel.add(mButtonOk);
-		mButtonOk.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				okActionPerformed();
-			}
-		});
-		// der Button muss requestFocus haben (siehe FoucusListener)
-		mButtonOk.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				if ( e.getKeyChar() == KeyEvent.VK_ENTER ) {
-					e.consume();
-					okActionPerformed();
-				}
-			}
-		});
-		// ist nötig, damit der Ok-Button den Focus erhält, um Enter abzufangen ???
-		mButtonOk.addFocusListener(new FocusListener() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				//mButtonOk.requestFocus();
-			}
-			@Override
-			public void focusLost(FocusEvent e) {
-				// nothing
-				mBuchungListe.scrollToLastEntry();
-			}
-		});
-
-		//--- Save Button, die Daten in der DB speichern
-		mButtonSave = new JButton("Speichern");
-		mButtonSave.setFont(Config.fontTextBold);
-		lPanel.add(mButtonSave);
-		mButtonSave.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				saveActionPerformed();
-			}
-		});
-
-		//--- Cancel Button, die Eingabe löschen
-		mButtonCancel = new JButton("Abbrechen");
-		mButtonCancel.setFont(Config.fontTextBold);
-		lPanel.add(mButtonCancel);
-		mButtonCancel.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				cancelActionPerformed(e);
-			}
-		});
-
-		return lPanel;
-	}
-
-	/** Initialisierung des Message-Feldes
-	 */
-	private Container initMessage() {
-		Trace.println(3,"BuchungView.initMessage()");
-		mMessage = new JLabel("Status:");
-		return mMessage;
-	}
 
 	/**
 	 * Die letzte Buchung der Liste
@@ -268,66 +177,52 @@ public class BuchungView extends JFrame implements BuchungInterface {
 	public Buchung getLastBuchung() {
 		return mBuchungListe.getLastBuchung();
 	}
-
-
-
-	/** prüft, ob eine Buchung eingegeben wird.
-	 * @return true, wenn mehr als 2 Felder ausgefüllt sind
-	 */
-	private boolean enteringBooking() {
-		return mEingabe.hasEnterFieldsEmpty(false) < 3;
-	}
-
-
-	/** Setzt den Standard-String in die Message */
-	private void deleteMessage() {
-		mMessage.setText("Status:");
-	}
-
-	@Override
-	public void setMessage(String text) {
-		mMessage.setText(text);
-	}
-
-	//----- Behandlung der Button-Events --------------------------------
-
-	/** Enables / disables Buttons oder Menus: Ok, Save, Change, Delete.<br>
+	
+	/**
+	 * Die Liste der angezeigten Buchungen
+	 * @return
 	 */
 	@Override
-	public void enableButtons() {
-		Trace.println(5, "BuchungView.enableButtonsManipulate");
-		/* OK: nur aktiv wenn alle Felder bis auf eines ausgefällt,
-		 * (damit OK Button aktiv ist beim letzen Feld
-		 * inaktiv wenn im Modus mChangeing */
-		if (!mChangeing) {
-			mButtonOk.setEnabled(mEingabe.hasEnterFieldsEmpty(false) <= 1);
-		}
-		else {
-			mButtonOk.setEnabled(false);
-		}
-		// Save: aktiv wenn !mNewBookingsSaved oder wenn mChangeing
-		if (!mNewBookingsSaved || mChangeing) {
-			mButtonSave.setEnabled(true);
-		}
-		else {
-			mButtonSave.setEnabled(false);
-		}
-		// Cancel: immer aktiv
-		mButtonCancel.setEnabled(true);
+	public BuchungListFrame getBuchungListe() {
+		return mBuchungListe;
+	}
+	
+	
+	/**
+	 * Verbindung zu der Datenbank
+	 */
+	public BuchungData getBuchungData() {
+		return mBuchungData;
+	}
+	
+	/**
+	 * Ans Ende der Liste scrollen
+	 */
+	public void scrollToEnd() {
+		mBuchungListe.scrollToLastEntry();
+	}
+
+	/**
+	 * Die Menus setzen, je nach Zusstand der Eingabe einer Buchung
+	 * Wird von BuchungEingabe getriggert
+	 */
+	@Override
+	public void setBuchungMenu(boolean enteringBooking, boolean mChangeing) {
 		//Buchung copy, delete: wenn !enteringBooking und !mChangeing
-		if (!enteringBooking() && !mChangeing) {
+		if (!mEingabe.enteringBooking() && !mChangeing) {
+			// TODO muss noch nachgeführt werden
 			mBuchungMenu.setEnableCopy(true);
 			mBuchungMenu.setEnableDelete(true);
 		}
 		else {
+			// TODO muss noch nachgeführt werden
 			mBuchungMenu.setEnableCopy(false);
 			mBuchungMenu.setEnableDelete(false);
 		}
 		// Sort immer true falls es etwas zum sortieren gibt
-//		mBuchungMenu.setEnableSort(mBuchungData.getRowCountNew() > 0 );
-		// TODO stimmt das: den Focus immer auf Save setzen, da sonst Eingabe-Felder den Focus erhalten
-		//mButtonSave.requestFocus();
+		mBuchungMenu.setEnableSort(mBuchungData.getRowCountNew() > 0 );		
 	}
+
 
 	public void showPopup(MouseEvent e) {
 		if (e.isPopupTrigger()) {
@@ -335,134 +230,55 @@ public class BuchungView extends JFrame implements BuchungInterface {
 		}
 	}
 
-	/** Ok-Button wurde gedrückt: Werte prüfen, in Buchung kopieren.
-	 *  Wenn keine Fehler aufgetreten sind, wird true zurückgegeben, sonst
-	 *  false */
-	private boolean okActionPerformed () {
-		Trace.println(3, "BuchungView.okActionPerformed()");
-		// RTODO
-//		hideKontoListe();
-		try {
-			// Die Buchung im Model speichern
-			mBuchungData.add(mEingabe.copyToBuchung());
-			int lastRowNr = mBuchungData.getRowCount()-1;
-			mBuchungListe.fireRowsInserted(lastRowNr-1,lastRowNr);
-			// TODO copyToTemp
-//			copyToTemp();
-			//mBuchungListe.repaint();
-			mNewBookingsSaved = false;
-			mEingabe.clearEingabe();
-			deleteMessage();
-			enableButtons();
-			//mBuchungListe.scrollToLastEntry();
-			return true;
-		}
-		catch (BuchungValueException pEx) {
-			mMessage.setText("Fehler: " + pEx.getMessage() );
-			return false;
-		}
-		finally {
-		    Trace.println(3, "BuchungView.okActionPerformed() ===> end");
-		}
-	}
-
-	/** Save-Button wurde gedrückt.
-	 *  Wenn die bearbeitete Buchung ID > 0, dann nur diese Buchung sichern
-	 *  sonst alle neuen Buchungen sichern. */
-	private boolean saveActionPerformed () {
-		Trace.println(3, "SaveButton->actionPerformed()");
-		// TODO hideKontoListe evt. nicht nötig
-//		mEingabe.hideKontoListe();
-		try {
-			if (mId < 0) {
-				// die neuen Buchungen sichern
-				mBuchungData.saveNew();
-				mNewBookingsSaved = true;
-				mBuchungData.setIdSaved();
-				mBuchungListe.repaint();
-			}
-			else {
-				// Buchung wurde vorher gelesen
-				mBuchungData.save(mEingabe.copyToBuchung());
-				// update buchungListe
-				mBuchungData.reloadData();
-				mEingabe.clearEingabe();
-				mChangeing = false;
-				mBuchungListe.repaint();
-			}
-			enableButtons();
-			deleteMessage();
-			mBuchungListe.fireTableDataChanged();
-			// @todo damit nicht der Betrag den Focus erhält
-			return true;
-		}
-		catch (FibuException pEx) {
-				JOptionPane.showMessageDialog(this, pEx.getMessage(),
-					"Fehler beim speichern", JOptionPane.ERROR_MESSAGE);
-			return false;
-		}
-	}
-
-	/** Cancel-Button wurde gedrückt.
-	 *  Die Eingabe leeren, Buttons zurücksetzen */
-	private void cancelActionPerformed (ActionEvent e) {
-		// TODO hideKontoListe
-//		hideKontoListe();
-		mEingabe.clearEingabe();
-		mChangeing = false;
-		enableButtons();
-		mBuchungListe.repaint();
-	}
-
+	
 	/** Die überschriebene Methode hide, prüft zuerst ob noch gespeichert
 	 *  werden muss */
 	@Override
-	public void setVisible(boolean visible) {
-		Trace.println(3, "BuchungView.setVisible(" + visible +")");
-		if (visible) {
+	public void setVisible(boolean isVisible) {
+		Trace.println(3, "BuchungView.setVisible(" + isVisible +")");
+		if (isVisible) {
 			// nur wenn das Fenster geöffnet wird.
-			super.setVisible(visible);
+			super.setVisible(isVisible);
 			return;
 		}
-		if ( enteringBooking() ) {
+		if ( mEingabe.enteringBooking() ) {
 			// Bestägigung einholen
 			int answer = JOptionPane.showConfirmDialog(
 				this, "Offene Eingabe noch übernehmen", "Buchungen",
 				JOptionPane.YES_NO_OPTION);
-			if (answer == JOptionPane.YES_OPTION) {
-				if (!okActionPerformed()) {
-					return;
-				}
+			if (answer == JOptionPane.NO_OPTION) {
+				mEingabe.clearEingabe();
+				super.setVisible(isVisible);
 			}
 			else {
-				cancelActionPerformed(null);
+				// wenn noch übernehmen dann immer noch anzeigen
+				return;
 			}
 		}
-		if (! mNewBookingsSaved) {
+		if (! mEingabe.newBookingSaved()) {
 			// Bestägigung einholen
 			int answer = JOptionPane.showConfirmDialog(
-				this, "Speichern vor verlassen", "Buchungen",
+				this, "Noch nicht gespeichert, trotzdem verlassen", "Buchungen",
 				JOptionPane.YES_NO_CANCEL_OPTION);
 			if (answer == JOptionPane.CANCEL_OPTION) {
 				return;
 			}
 			if (answer == JOptionPane.YES_OPTION) {
-				if (! saveActionPerformed()) {
-					return;
-				}
-				mNewBookingsSaved = true;
+				// temporäre Buchung löschen
+				mBuchungData.deleteNewBookings();
+				super.setVisible(isVisible);
 			}
 			else {
-				mBuchungData.deleteNew();
-				mNewBookingsSaved = true;
+				// nicht verlassen, noch speichern
+				return;
 			}
 		}
 		if (mCsvSetup != null) {
-			mCsvSetup.setVisible(visible);
+			mCsvSetup.setVisible(isVisible);
 			mCsvSetup = null;
 		}
 		if (mCsvFrame != null) {
-			mCsvFrame.setVisible(visible);
+			mCsvFrame.setVisible(isVisible);
 			mCsvFrame = null;
 		}
 		super.setVisible(false);
@@ -474,37 +290,31 @@ public class BuchungView extends JFrame implements BuchungInterface {
 		try {
 			mBuchungData.saveNew();
 			mBuchungListe.repaint();
-			mBuchungData.deleteNew();
-			enableButtons();
+			mBuchungData.deleteNewBookings();
+//			enableButtons();
 		}
 		catch (FibuException pEx) {
-			mMessage.setText("Fehler: " + pEx.getMessage() );
 		}
 	}
 
-	/** Change-Button wurde gedrückt.
+	/** Change-Button wurde gedrückt: Eine Buchung ändern.
 	 *  Die gewählte Zeile editieren (in die Eingabe kopieren)
 	*/
 	public void copyActionPerformed () {
 		Trace.println(3, "BuchungView.copyActionPerformed()");
 
 		// sollte nie vorkommen
-		if ( enteringBooking() ) {
+		if ( mEingabe.enteringBooking() ) {
 			JOptionPane.showMessageDialog(this, "Eingabe zuerst sichern oder abbrechen",
 				"ändern", JOptionPane.ERROR_MESSAGE);
 				return;
 		}
-		mButtonOk.setEnabled(false);
-		mEingabe.clearEingabe();
 		int [] lRowNrs = mBuchungListe.getSelectedRows();
 		// vorerst nur erste selektierte Zeile bearbeiten
 		if (lRowNrs.length > 0) {
 			try {
 				Buchung lBuchung = mBuchungData.read(getId(lRowNrs[0]));
-				mId = lBuchung.getID();
-				mEingabe.copyToGui(lBuchung);
-				mChangeing = true;
-				enableButtons();
+				mEingabe.copyToFields(lBuchung);
 			}
 			catch (FibuException ex) {
 				JOptionPane.showMessageDialog(this, ex.getMessage(),
@@ -546,6 +356,17 @@ public class BuchungView extends JFrame implements BuchungInterface {
 			}
 		}
 	}
+	
+	/**
+	 * Gemäss Interface muss diese Methode impl. werden.
+	 * Wird in okAction aufgerufen
+	 */
+	public void addBuchungData(Buchung buchung) {
+		mBuchungData.add(buchung);
+		int lastRowNr = mBuchungData.getRowCount()-1;
+		mBuchungListe.fireRowsInserted(lastRowNr-1,lastRowNr);
+	}
+
 
 	/**
 	 * Einstellungen für CSV

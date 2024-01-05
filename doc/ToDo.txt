@@ -1,18 +1,19 @@
 
-Fehler Buchung
-- Wenn zweite Buchung eingegben, dann Fehler: Eingabe fehlt <= nicht beim Debug (4.9.23)
+Kontoblatt
+- wenn ein Kontoblatt geöffnet, sollte an das Ende springen, wie bei Buchungen
 
 Buchung
+- wenn Buchung bearbeiten, null-Pointer
+
 - Tab funktioniert nicht mehr
-- wenn Tab im Soll-Feld, springt nicht zu Haben
+- wenn Tab im Soll-Feld, springt nicht zu Haben <= fokus auf Liste, evt. spezielle Action falls tab gewählt
+- Wenn in Soll und Haben, dann mit yPos operieren => PdfSetup anpassen
 - Kann Kontonummer nicht manuell eingeben.
 
+- Evt. Buchung Eingabe ein eigenes Frame?
 - BuchungView: BuchungListFrame nicht als Frame sondern auch Panel wie Eingaben
 - wenn eine Buchung bereits blau, und Teil eingegeben, dann kann nicht gespeichert werden
 
-
-- Fenster von PdfSetupFrame schöner machen
-- Wenn Soll und Haben, dann mit yPos operieren => PdfSetup anpassen
 - Alle DB's anzeigen, auch wenn nicht in der Liste (gilt für Situationen, wenn nicht richtig angelegt).
  
 - Bilanz auch als PDF sichern
@@ -37,6 +38,10 @@ Erweiterung:
 	Andere Konto wählen
 	Die ausgewählten Buchungen wechseln
 - Summen Fettschrift möglich?
+
+-----neu Januar 2024 -----------
+Buttons von BuchungView nach BuchungEingabe, inkl. Message
+
 
 
 --------------------------------

@@ -9,19 +9,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
 import com.rmo.fibu.exception.BuchungValueException;
+import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.KontoNotFoundException;
 import com.rmo.fibu.model.Buchung;
 import com.rmo.fibu.util.Config;
@@ -30,11 +35,11 @@ import com.rmo.fibu.util.Trace;
 import com.rmo.fibu.view.util.JFormattedTextFieldExt;
 import com.rmo.fibu.view.util.JTextFiledExt;
 
+/**
+ * Eingabe aller Werte einer Buchung.
+ */
 public class BuchungEingabe extends JPanel {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 2924698558789708812L;
 	/** Das Objekt wo die Eingabe eingebettet ist */
 	private BuchungInterface mParent;
@@ -53,6 +58,15 @@ public class BuchungEingabe extends JPanel {
 	private JFormattedTextField mTfBetrag;
 	// Die ID der Buchung, die bearbeitet wird, ist -1 wenn neu.
 	private long mId = -1;
+	
+	//----- die Buttons
+	private JButton         mButtonOk;
+	private JButton         mButtonSave;
+	private JButton         mButtonCancel;
+	
+	/** Message-Feld für die Fehlerausgabe */
+	private JLabel          mMessage;
+
 
 	// ----- Temporäre Buchung fuer die naechste Eingabe
 	private Buchung mTempBuchung; // = new Buchung();
@@ -60,6 +74,12 @@ public class BuchungEingabe extends JPanel {
 	// wird verwendet für die Vorgabe der nächsten Eingabe
 	private boolean mDatumSame = false;
 	private boolean mBelegSame = false;
+	
+	/** Wenn eine Buchung zur Bearbeitung ausgewählt wurde,
+	 * bis Speichern gedrückt */
+	private boolean mChangeing = false;
+	/** Die neuen Buchungen sind gesichert */
+	private boolean mNewBookingsSaved = true;
 
 	/**
 	 * Das Feld, das zuletzt den Focus verloren hat, wird verwendet, wenn etwas in
@@ -87,6 +107,10 @@ public class BuchungEingabe extends JPanel {
 
 		JPanel lPanel = new JPanel(new GridLayout(0, 1));
 		lPanel.add(initEnterFields());
+		lPanel.add(initButtons());
+		lPanel.add(initMessage());
+		lPanel.setBorder(BorderFactory.createLineBorder(Color.red));
+
 		mKontoListDialog = new KontoListDialog(this);
 		mKontoListDialog.init();
 
@@ -96,6 +120,8 @@ public class BuchungEingabe extends JPanel {
 		initListenersSoll();
 		initListenersHaben();
 		initListenersBetrag();
+		
+		enableButtons();
 
 		return lPanel;
 	}
@@ -185,6 +211,119 @@ public class BuchungEingabe extends JPanel {
 
 		return lPanel;
 	}
+	
+
+	/** Initialisierung der Buttons für die Eingabe, inkl. Listener.
+	 */
+	private Container initButtons() {
+		Trace.println(3,"BuchungEingabe.initEnterButtons()");
+		JPanel lPanel = new JPanel(new GridLayout(1,6,3,3));
+		//--- OK Button, die Daten dazufügen
+		mButtonOk = new JButton("OK");
+		mButtonOk.setFont(Config.fontTextBold);
+		lPanel.add(mButtonOk);
+		mButtonOk.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				okActionPerformed();
+			}
+		});
+		
+		// der Button muss requestFocus haben (siehe FoucusListener)
+		mButtonOk.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if ( e.getKeyChar() == KeyEvent.VK_ENTER ) {
+					e.consume();
+					okActionPerformed();
+				}
+			}
+		});
+		
+		// ist nötig, damit der Ok-Button den Focus erhält, um Enter abzufangen ???
+		mButtonOk.addFocusListener(new FocusListener() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				//mButtonOk.requestFocus();
+			}
+			@Override
+			public void focusLost(FocusEvent e) {
+				// nothing
+				mParent.scrollToEnd();
+			}
+		});
+
+		//--- Save Button, die Daten in der DB speichern
+		mButtonSave = new JButton("Speichern");
+		mButtonSave.setFont(Config.fontTextBold);
+		lPanel.add(mButtonSave);
+		mButtonSave.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				saveActionPerformed();
+			}
+		});
+
+		//--- Cancel Button, die Eingabe löschen
+		mButtonCancel = new JButton("Abbrechen");
+		mButtonCancel.setFont(Config.fontTextBold);
+		lPanel.add(mButtonCancel);
+		mButtonCancel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cancelActionPerformed(e);
+			}
+		});
+
+		return lPanel;
+	}
+	
+	/** Initialisierung des Message-Feldes
+	 */
+	private Container initMessage() {
+		Trace.println(3,"BuchungView.initMessage()");
+		mMessage = new JLabel("Status:");
+		return mMessage;
+	}
+
+
+	
+	
+	/** Enables / disables Buttons oder Menus: Ok, Save, Change, Delete.<br>
+	 */
+	public void enableButtons() {
+		Trace.println(5, "BuchungEingabe.enableButtons");
+		/* OK: nur aktiv wenn alle Felder bis auf eines ausgefällt,
+		 * (damit OK Button aktiv ist beim letzen Feld
+		 * inaktiv wenn im Modus mChangeing */
+		if (!mChangeing) {
+			mButtonOk.setEnabled(hasEnterFieldsEmpty(false) <= 1);
+		}
+		else {
+			mButtonOk.setEnabled(false);
+		}
+		// Save: aktiv wenn !mNewBookingsSaved oder wenn mChangeing
+		if (!mNewBookingsSaved || mChangeing) {
+			mButtonSave.setEnabled(true);
+		}
+		else {
+			mButtonSave.setEnabled(false);
+		}
+		// Cancel: immer aktiv
+		mButtonCancel.setEnabled(true);
+		mParent.setBuchungMenu(enteringBooking(), mChangeing);
+		// TODO stimmt das: den Focus immer auf Save setzen, da sonst Eingabe-Felder den Focus erhalten
+		//mButtonSave.requestFocus();
+	}
+	
+	/** prüft, ob eine Buchung eingegeben wird.
+	 * @return true, wenn mehr als 2 Felder ausgefüllt sind
+	 */
+	public boolean enteringBooking() {
+		return hasEnterFieldsEmpty(false) < 3;
+	}
+
+
 
 	// --- Listener ----------------------------------------------
 
@@ -201,7 +340,7 @@ public class BuchungEingabe extends JPanel {
 				}
 				// TODO evt. implementieren
 				// gehe zum letzten Eintrag in der Buchungsliste
-//				mBuchungListe.scrollToLastEntry();
+				mParent.scrollToEnd();
 			}
 
 			@Override
@@ -277,7 +416,7 @@ public class BuchungEingabe extends JPanel {
 				if (!event.isTemporary()) {
 					focusGainedEnterField(mTfSoll, mTempBuchung.getSollAsString());
 					showKontoListe();
-					mHasKontoLostFocus = false;
+					//mHasKontoLostFocus = false;
 					mFieldToFill = mTfSoll;
 					try {
 						mKontoListDialog.selectRow(mTfSoll.getText());
@@ -291,7 +430,7 @@ public class BuchungEingabe extends JPanel {
 				Trace.println(6, "BuchungEingabe SollKonto lost Focus");
 				if (!event.isTemporary()) {
 					focusLostEnterField(mTfSoll);
-					mHasKontoLostFocus = true;
+					//mHasKontoLostFocus = true;
 				}
 			}
 		});
@@ -426,7 +565,7 @@ public class BuchungEingabe extends JPanel {
 	private void focusLostEnterField(JTextComponent field) {
 		Trace.println(6, "BuchungView.focusLostEnterField()");
 		isTfEmpty(field, true);
-		mParent.enableButtons();
+		enableButtons();
 //		mFieldToFill = field;
 	}
 
@@ -445,10 +584,10 @@ public class BuchungEingabe extends JPanel {
 			isTfEmpty(mTfDatum, true);
 			// TODOdeleteMessage
 //			deleteMessage();
-			mParent.enableButtons();
+			enableButtons();
 		} catch (ParseException pEx) {
 			mTfDatum.setBackground(Color.yellow);
-			mParent.setMessage("Fehler: " + pEx.getMessage());
+			setMessage("Fehler: " + pEx.getMessage());
 		}
 	}
 
@@ -464,7 +603,7 @@ public class BuchungEingabe extends JPanel {
 		} else {
 			mTfBeleg.setText(Config.addOne(mTempBuchung.getBeleg()));
 		}
-		mParent.enableButtons();
+		enableButtons();
 	}
 
 	/** Beleg Eingaben prüfen, ob etwas eingegeben, Feld markieren */
@@ -473,7 +612,7 @@ public class BuchungEingabe extends JPanel {
 		if (mTfBeleg.getText() == null || mTfBeleg.getText().length() > 0)
 			return;
 		isTfEmpty(mTfBeleg, true);
-		mParent.enableButtons();
+		enableButtons();
 	}
 
 	/**
@@ -570,6 +709,99 @@ public class BuchungEingabe extends JPanel {
 	}
 	
 	
+	
+	/** Ok-Button wurde gedrückt: Werte prüfen, in Buchung kopieren.
+	 *  Wenn keine Fehler aufgetreten sind, wird true zurückgegeben, sonst
+	 *  false */
+	private boolean okActionPerformed () {
+		Trace.println(3, "BuchungView.okActionPerformed()");
+		// RTODO
+//		hideKontoListe();
+		try {
+			// Die Buchung im Model speichern
+			mParent.getBuchungData().add(copyToBuchung());
+			int lastRowNr = mParent.getBuchungData().getRowCount()-1;
+			mParent.getBuchungListe().fireRowsInserted(lastRowNr-1,lastRowNr);
+			if (getMid() < 0) {
+				mNewBookingsSaved = false;
+			}
+			
+			copyToTemp();
+			//mBuchungListe.repaint();
+			clearEingabe();
+			deleteMessage();
+			enableButtons();
+			mParent.scrollToEnd();
+			return true;
+		}
+		catch (BuchungValueException pEx) {
+			mMessage.setText("Fehler: " + pEx.getMessage() );
+			return false;
+		}
+		finally {
+		    Trace.println(3, "BuchungView.okActionPerformed() ===> end");
+		}
+	}
+	
+	/** Save-Button wurde gedrückt.
+	 *  Wenn die bearbeitete Buchung ID > 0, dann nur diese Buchung sichern
+	 *  sonst alle neuen Buchungen sichern. */
+	private boolean saveActionPerformed () {
+		Trace.println(3, "BuchungEingabe.SaveButton->actionPerformed()");
+		hideKontoListe();
+		try {
+			if (getMid() < 0) {
+				// die neuen Buchungen sichern
+				mParent.getBuchungData().saveNew();
+				mNewBookingsSaved = true;
+				mParent.getBuchungData().setIdSaved();
+				// TODO testen wie lösen
+				mParent.getBuchungListe().repaint();
+			}
+			else {
+				// Buchung wurde vorher gelesen
+				mParent.getBuchungData().save(copyToBuchung());
+				// update buchungListe
+				mParent.getBuchungData().reloadData();
+				clearEingabe();
+				mChangeing = false;
+				// TODO testen wie lösen
+				mParent.getBuchungListe().repaint();
+			}
+			enableButtons();
+			deleteMessage();
+			// TODO braucht es das noch?
+//			mBuchungListe.fireTableDataChanged();
+			// @todo damit nicht der Betrag den Focus erhält
+			return true;
+		}
+		catch (FibuException pEx) {
+				JOptionPane.showMessageDialog(this, pEx.getMessage(),
+					"Fehler beim speichern", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+	}
+
+	/** Cancel-Button wurde gedrückt.
+	 *  Die Eingabe leeren, Buttons zurücksetzen */
+	private void cancelActionPerformed (ActionEvent e) {
+		// TODO hideKontoListe
+//		hideKontoListe();
+		clearEingabe();
+		mChangeing = false;
+		enableButtons();
+		// TODO testen, ob nötig
+//		mBuchungListe.repaint();
+	}
+
+	/**
+	 * Gibt es noch nicht gespeicherte Buchungen?
+	 * @return
+	 */
+	public boolean newBookingSaved() {
+		return mNewBookingsSaved;
+	}
+	
 	/**
 	 * prüft alle Eingabefelder.
 	 *
@@ -614,6 +846,9 @@ public class BuchungEingabe extends JPanel {
 		mId = -1;
 	}
 
+	public long getMid() {
+		return mId;
+	}
 	/** Kopiert den Inhalt der Eingabefelder in den temporären Speicher */
 	private void copyToTemp() {
 		try {
@@ -686,10 +921,17 @@ public class BuchungEingabe extends JPanel {
 	}
 
 	/**
-	 * prüft die Eingabefelder und kopiert deren Inhalt in Buchung.
+	 * Nimmt eine Buchung entgegen.
+	 * Prüft die Eingabefelder und kopiert deren Inhalt in Buchung.
+	 * Setzt die Buttons entsprechend
 	 */
-	public void copyToGui(Buchung pBuchung) {
+	public void copyToFields(Buchung pBuchung) {
 		Trace.println(4, "BuchungView.copyToGui()");
+		mButtonOk.setEnabled(false);
+		clearEingabe();
+		mChangeing = true;
+		enableButtons();
+
 		mTfDatum.setText(pBuchung.getDatumAsString());
 		mTfBeleg.setText(pBuchung.getBeleg());
 		mTfText.setText(pBuchung.getBuchungText());
@@ -716,5 +958,15 @@ public class BuchungEingabe extends JPanel {
 		// TODO mHasKontoLostFocus wird das noch gebraucht?
 //		mHasKontoLostFocus = false;
 	}
+	
+	/** Setzt den Standard-String in die Message */
+	private void deleteMessage() {
+		mMessage.setText("Status:");
+	}
+
+	public void setMessage(String text) {
+		mMessage.setText(text);
+	}
+
 
 }

@@ -30,8 +30,7 @@ import com.rmo.fibu.view.util.DoubleRenderer;
  * @author Ruedi
  *
  */
-public class BuchungListFrame
-	extends JInternalFrame
+public class BuchungListFrame extends JInternalFrame
 	implements MouseListener, ComponentListener {
 
 	private static final long serialVersionUID = 3288908916928770193L;

@@ -207,7 +207,8 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 	/** Den temporären Speicher (neue Buchungen) in die DB schreiben.
 	 *  Den temp. Speicher leeren, falls die Buchungen keinen Fehler haben */
 	public void saveNew() throws FibuException {
-		Trace.println(2, "BuchungData.saveNew()");
+		Trace.println(3, "BuchungData.saveNew()");
+
 		saveNewBookings();
 		// prüfen ob keine Fehler, wenn nicht entfernen aus der Liste
 		for (int i = 0; i < mNewBuchung.size(); i++) {
@@ -221,14 +222,14 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 
 	/** Die neuen Buchungen vom temporären Speicher in die DB schreiben */
 	private void saveNewBookings() throws FibuException {
-		Trace.println(2, "BuchungData.saveNewBookings()");
+		Trace.println(4, "BuchungData.saveNewBookings()");
 		for (int i = 0; i < mNewBuchung.size(); i++) {
 			save(mNewBuchung.elementAt(i));
 		}
 	}
 
 	/** Alle neuen (noch nicht gespeicherten) Buchungen löschen */
-	public void deleteNew() {
+	public void deleteNewBookings() {
 		mNewBuchung.removeAllElements();
 	}
 
@@ -311,6 +312,7 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 		save(pBuchung);
 	}
 
+	
 	/** Check, ob eine Buchung vorhanden ist,
 	 * @return true wenn gefunden und alle Felder gleichen Inhalt haben.
 	*/
@@ -355,6 +357,7 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 			return null;
 		}
 	}
+	
 
 	/** Gibt das Model von Konto zurück.
 	 *  wenn nicht gefunden: KontoNotFoundException.
