@@ -185,7 +185,7 @@ public class BuchungSelectDialog extends JDialog {
 			return;
 		}
 		mSerachRow++;
-		BuchungListFrame lBuchungListe = mBuchungView.getBuchungListe();
+		BuchungenFrame lBuchungListe = mBuchungView.getBuchungListe();
 		// Nach Beleg suchen, falls eingegeben
 		if (mSollKonto.getText() != null && mSollKonto.getText().length() > 0) {
 			while (mSerachRow < lBuchungListe.getRowCount() ) {

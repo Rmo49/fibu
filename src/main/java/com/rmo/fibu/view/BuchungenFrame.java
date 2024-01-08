@@ -25,12 +25,12 @@ import com.rmo.fibu.view.util.ColumnRenderer;
 import com.rmo.fibu.view.util.DoubleRenderer;
 
 
-/** Die Anzeige der Buchungsliste.
+/** Die Anzeige der Buchungen. Bestent aus einer Tabelle in einem Scrollpane.
  * Aufbau:
  * @author Ruedi
  *
  */
-public class BuchungListFrame extends JInternalFrame
+public class BuchungenFrame extends BuchungenBaseFrame
 	implements MouseListener, ComponentListener {
 
 	private static final long serialVersionUID = 3288908916928770193L;
@@ -48,7 +48,7 @@ public class BuchungListFrame extends JInternalFrame
 	/**
 	 *
 	 */
-	public BuchungListFrame(BuchungView parent) {
+	public BuchungenFrame(BuchungView parent) {
 		// title resizable closable maximizable iconifiable
 		super("Buchung Liste", true, false, true, false);
 		mBuchungView = parent;
@@ -60,7 +60,7 @@ public class BuchungListFrame extends JInternalFrame
 	  * Start der Initialisierung, muss von jedem Konstruktor aufgerufen werden.
 	  */
 	 private void init() {
-		 Trace.println(1,"BuchungListFrame.init()");
+		 Trace.println(1,"BuchungenFrame.init()");
 		 mBuchungData = (BuchungData) DataBeanContext.getContext().getDataBean(BuchungData.class);
 		 initView();
 	 }
@@ -68,7 +68,7 @@ public class BuchungListFrame extends JInternalFrame
 	/** Initialisierung der View:
 	 */
 	private void initView() {
-		Trace.println(2,"BuchungListFrame.initView()");
+		Trace.println(2,"BuchungenFrame.initView()");
 		getContentPane().add(initTable());
 		setTitle("Buchungen");
 		this.setSize(500, 400);
@@ -197,7 +197,7 @@ public class BuchungListFrame extends JInternalFrame
 
 	/** Gibt den Inhalt der Letzten Buchung zurück */
 	public Buchung getLastBuchung() {
-		Trace.println(3,"BuchungListFrame.getLastBuchung()");
+		Trace.println(3,"BuchungenFrame.getLastBuchung()");
 		Buchung lBuchung = new Buchung();
 		try {
 		lBuchung.setDatum(mBuchungTable.getValueAt(mBuchungTable.getRowCount()-1,0).toString());
@@ -262,4 +262,19 @@ public class BuchungListFrame extends JInternalFrame
 	public JScrollPane getScroller() {
 		return mBuchungScroller;
 	}
+
+	@Override
+	public void repaintBuchungen() {
+		mBuchungTable.repaint();
+		
+	}
+	
+	/**
+	 * Meldung, dass Zeilen eingefüft wurden
+	 */
+	public void rowsInserted(int firstRow, int lastRow) {
+		this.fireRowsInserted(firstRow, lastRow);
+	}
+	
 }
+

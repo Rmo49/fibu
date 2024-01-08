@@ -256,7 +256,7 @@ public class BuchungSuchDialog extends JDialog {
 	private void searchActionPerformed () {
 		Trace.println(3, "SearchButton->actionPerformed()");
 		mSerachRow++;
-		BuchungListFrame lBuchungListe = mBuchungView.getBuchungListe();
+		BuchungenFrame lBuchungListe = mBuchungView.getBuchungListe();
 
 		// Nach Text suchen, falls eingegeben
 		if ( mSuchText.getText() != null && mSuchText.getText().length() > 0) {

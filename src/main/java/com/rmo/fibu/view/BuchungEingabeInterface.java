@@ -9,7 +9,7 @@ import com.rmo.fibu.model.BuchungData;
  * @author ruedi
  *
  */
-public interface BuchungInterface {
+public interface BuchungEingabeInterface {
 	/**
 	 * Die letzte Buchung in der Liste
 	 * @return letzte Buchdung
@@ -29,13 +29,14 @@ public interface BuchungInterface {
 	public void setBuchungMenu(boolean enteringBooking, boolean mChangeing);
 	
 	/**
-	 * Ans Ende der Liste scrollen
+	 * Die Liste der Buchungen soll ans Ende der Liste scrollen
 	 */
 	public void scrollToEnd();
 	
 	/**
-	 * Die Liste der angezeigten Buchungen
-	 * @return
+	 * Die Anzeige der Buchungen in BuchungView und KontoView
+	 * @return Basisklasse BuchungenBaseFrame
 	 */
-	public BuchungListFrame getBuchungListe();
+	public BuchungenBaseFrame getBuchungenFrame();
+		
 }

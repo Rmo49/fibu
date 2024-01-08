@@ -93,6 +93,9 @@ public class Buchung {
 
     //----- getter mehtoden ------------------------------
 	public String getBeleg() {
+		if (mBeleg == null) {
+			return "";
+		}
 		return mBeleg;
 	}
 	public double getBetrag() {
@@ -122,9 +125,15 @@ public class Buchung {
 	}
 
 	public Datum getDatum() {
-		return mDatum;
+		if (mDatum == null) {
+			return new Datum();
+		}
+ 		return mDatum;
 	}
 	public String getDatumAsString() {
+		if (mDatum == null) {
+			return "";
+		}
         return mDatum.toString();
 	}
 

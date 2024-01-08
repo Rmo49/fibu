@@ -29,6 +29,7 @@ import com.rmo.fibu.exception.BuchungValueException;
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.KontoNotFoundException;
 import com.rmo.fibu.model.Buchung;
+import com.rmo.fibu.model.BuchungOfKontoModel;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Datum;
 import com.rmo.fibu.util.Trace;
@@ -42,10 +43,11 @@ public class BuchungEingabe extends JPanel {
 
 	private static final long serialVersionUID = 2924698558789708812L;
 	/** Das Objekt wo die Eingabe eingebettet ist */
-	private BuchungInterface mParent;
+	private BuchungEingabeInterface mParent;
 
 	private KontoListDialog mKontoListDialog;
-
+	private BuchungOfKontoModel mKontoBuchungen = null;
+	
 	/** KontoListe für die Anzeige aller Konti */
 //	private KontoListScrollPane		mKontoListe;
 
@@ -60,12 +62,12 @@ public class BuchungEingabe extends JPanel {
 	private long mId = -1;
 	
 	//----- die Buttons
-	private JButton         mButtonOk;
-	private JButton         mButtonSave;
-	private JButton         mButtonCancel;
+	private JButton     mButtonOk;
+	private JButton     mButtonSave;
+	private JButton     mButtonCancel;
 	
 	/** Message-Feld für die Fehlerausgabe */
-	private JLabel          mMessage;
+	private JLabel		mMessage;
 
 
 	// ----- Temporäre Buchung fuer die naechste Eingabe
@@ -90,10 +92,20 @@ public class BuchungEingabe extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	public BuchungEingabe(BuchungInterface parent) {
+	public BuchungEingabe(BuchungEingabeInterface parent) {
 		Trace.println(3, "BuchungEingabe.Konstruktor");
 		mParent = parent;
 	}
+	
+	/**
+	 * Create the panel, ein zweiter Konstruktor mit anderen Daten
+	 */
+	public BuchungEingabe(BuchungEingabeInterface parent, BuchungOfKontoModel kontoBuchungen) {
+		Trace.println(3, "BuchungEingabe.Konstruktor");
+		mParent = parent;
+		mKontoBuchungen = kontoBuchungen;
+	}
+
 
 	/**
 	 * Initialisiertung der View
@@ -721,7 +733,8 @@ public class BuchungEingabe extends JPanel {
 			// Die Buchung im Model speichern
 			mParent.getBuchungData().add(copyToBuchung());
 			int lastRowNr = mParent.getBuchungData().getRowCount()-1;
-			mParent.getBuchungListe().fireRowsInserted(lastRowNr-1,lastRowNr);
+			// TODO prüfen, ob noch notwendig
+			mParent.getBuchungenFrame().rowsInserted(lastRowNr-1, lastRowNr);
 			if (getMid() < 0) {
 				mNewBookingsSaved = false;
 			}
@@ -755,8 +768,6 @@ public class BuchungEingabe extends JPanel {
 				mParent.getBuchungData().saveNew();
 				mNewBookingsSaved = true;
 				mParent.getBuchungData().setIdSaved();
-				// TODO testen wie lösen
-				mParent.getBuchungListe().repaint();
 			}
 			else {
 				// Buchung wurde vorher gelesen
@@ -765,13 +776,14 @@ public class BuchungEingabe extends JPanel {
 				mParent.getBuchungData().reloadData();
 				clearEingabe();
 				mChangeing = false;
-				// TODO testen wie lösen
-				mParent.getBuchungListe().repaint();
 			}
 			enableButtons();
 			deleteMessage();
 			// TODO braucht es das noch?
-//			mBuchungListe.fireTableDataChanged();
+			if (mKontoBuchungen != null) {
+				mKontoBuchungen.fireTableDataChanged();
+			}
+			mParent.getBuchungenFrame().repaintBuchungen();
 			// @todo damit nicht der Betrag den Focus erhält
 			return true;
 		}

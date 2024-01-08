@@ -1,5 +1,6 @@
 
 Kontoblatt
+- refresh funktioniert noch nicht nach Aenderung
 - wenn ein Kontoblatt geöffnet, sollte an das Ende springen, wie bei Buchungen
 
 Buchung

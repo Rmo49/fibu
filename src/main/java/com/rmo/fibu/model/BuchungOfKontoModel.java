@@ -7,6 +7,8 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
+import com.rmo.fibu.exception.BuchungNotFoundException;
+import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Trace;
 
@@ -38,7 +40,7 @@ public abstract class BuchungOfKontoModel extends AbstractTableModel {
 		public String beleg;
 		public String text;
 		public int gegenKonto;
-		public double sollBetrag = -1; // -1 wird nie angezeigt (leerer Text)
+		public double sollBetrag = -1; // wenn -1 wird nie angezeigt (leerer Text)
 		public double habenBetrag = -1;
 		public double saldo = -1;
 
@@ -163,6 +165,25 @@ public abstract class BuchungOfKontoModel extends AbstractTableModel {
 		return lRow;
 	}
 
+	/**
+	 * Die Buchung auf der Zeile zurückgeben
+	 * @param row die Zeilennummer
+	 * @return gefundene Buchung
+	 */
+	public Buchung getBuchungAt(int row) {
+		BuchungRow lRow = null;
+		lRow = getBuchungen().get(row);
+		Buchung lBuchung = null;
+		try {
+			lBuchung  = mBuchungData.read(lRow.ID);
+		}
+		catch (FibuException ex) {
+			
+		}
+		return lBuchung;
+	}
+	
+	
 	/**
 	 * Gibt den Wert an der Koordinate row / col zurück.
 	 */

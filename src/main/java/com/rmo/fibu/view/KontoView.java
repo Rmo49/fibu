@@ -28,6 +28,7 @@ import javax.swing.table.TableColumn;
 
 import com.rmo.fibu.exception.FibuRuntimeException;
 import com.rmo.fibu.exception.KontoNotFoundException;
+import com.rmo.fibu.model.Buchung;
 import com.rmo.fibu.model.BuchungOfKontoModel;
 import com.rmo.fibu.model.BuchungOfKontoModelNormal;
 import com.rmo.fibu.model.BuchungOfKontoModelSorted;
@@ -58,26 +59,23 @@ public class KontoView extends JFrame
 	private final Dimension datumAbSize = new Dimension(8 * Config.windowTextSize, Config.windowTextSize + 12);
 
 
-	/** Die Models zu dieser View */
+	/** Die Models zu dieser View Verbindung zur DB */
 	// private BuchungData mBuchungData = null;
 	private KontoData mKontoData = null;
 	/** Das Model zur Konto-Tabelle */
 	private KontoModel mKontoModel;
 	/** Tabelle für die Anzeige der Konti */
 	private JTable mKontoTable;
-	/** Tabelle für die Anzeige der Buchungen eines Konto */
-	private JTable mBuchungTable;
-	/** Das Model zu allen Buchungen eines Kontos */
-	private BuchungOfKontoModel mBuchungModel = null;
-	/** der Container aller Buchungen */
-	private JScrollPane mScrollPaneBuchung = null;
+	/** Tabelle für die Anzeige der Buchungen, enthält alle Buchungen */
+	private BuchungenKontoFrame	mBuchungenFrame;
 
 	// ---- die TextFelder für die Eingabe des Datums
 	private JTextField mTfDatumAb; // ab Datum
-
+	
 	// ----- die Buttons
 	private JButton mButtonShow;
 	private JButton mButtonSort;
+	private JButton mButtonBuchung;
 	private JButton mButtonPrint;
 	private JButton mButtonExcel;
 	private JButton mButtonClose;
@@ -142,7 +140,7 @@ public class KontoView extends JFrame
 		mButtonShow.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				actionShowPerformed();
+				mBuchungenFrame.actionShowBuchnungen(getSelectedKontoNr(), getSelectedDate() );
 			}
 		});
 		// --- Sort-Button
@@ -152,9 +150,21 @@ public class KontoView extends JFrame
 		mButtonSort.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				actionSortPerformed();
+				mBuchungenFrame.actionBuchungenSortieren(mKontoNrShow, getSelectedDate());
 			}
 		});
+		
+		// --- Buchung ändern
+		mButtonBuchung = new JButton("Buchung ändern");
+		mButtonBuchung.setFont(Config.fontTextBold);
+		lPanel.add(mButtonBuchung);
+		mButtonBuchung.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mBuchungenFrame.actionBuchungAendern();
+			}
+		});
+		
 		// --- ExcelExport-button
 		mButtonExcel = new JButton("Excel export");
 		mButtonExcel.setFont(Config.fontTextBold);
@@ -162,9 +172,10 @@ public class KontoView extends JFrame
 		mButtonExcel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				actionExcelPerformed();
+				actionExcelExport();
 			}
 		});
+		
 		// --- Print-button
 		mButtonPrint = new JButton("Drucken");
 		mButtonPrint.setFont(Config.fontTextBold);
@@ -172,7 +183,7 @@ public class KontoView extends JFrame
 		mButtonPrint.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				actionPrintPerformed();
+				actionPrint();
 			}
 		});
 		// --- Close-button
@@ -182,7 +193,7 @@ public class KontoView extends JFrame
 		mButtonClose.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				actionClosePerformed();
+				actionClose();
 			}
 		});
 		return lPanel;
@@ -190,8 +201,9 @@ public class KontoView extends JFrame
 
 	/** Initialisiert die Areas mit den Konto- und BuchungListe */
 	private Container initListArea() {
+		mBuchungenFrame = new BuchungenKontoFrame(this);
 		JSplitPane lSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
-				initTableKonto(), initTableBuchung());
+				initTableKonto(), mBuchungenFrame.initTableBuchung());
 		lSplitPane.setOneTouchExpandable(true);
 		lSplitPane.setDividerLocation( ((KTONR_WIDTH + KTOTEXT_WIDTH) * Config.windowTextSize) );
 //				+ lSplitPane.getInsets().left);
@@ -232,64 +244,21 @@ public class KontoView extends JFrame
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				if (e.getClickCount() == 2) {
-					actionShowPerformed();
+					mBuchungenFrame.actionShowBuchnungen(getSelectedKontoNr(), getSelectedDate() );
 				}
 			}
 		});
 		return lScrollPane;
 	}
 
-	/**
-	 * Initialisierung der Tabelle für Buchungen mit dem Model
-	 */
-	private Component initTableBuchung() {
-		Trace.println(3, "KontoView.initTableBuchung()");
-		// ----- die Tabelle mit dem Model
-		mBuchungTable = new JTable();
-		mBuchungTable.setFont(Config.fontText);
-		mBuchungTable.getTableHeader().setFont(Config.fontText);
-		mBuchungTable.setRowHeight(Config.windowTextSize + 4);
-		// Den default-Renderer für Spalten mit Double-Werten
-		mBuchungTable.setDefaultRenderer(Double.class, new DoubleRenderer());
-		mScrollPaneBuchung = new JScrollPane(mBuchungTable);
-		mScrollPaneBuchung.setPreferredSize(new Dimension(50 * Config.windowTextSize, 100));
-		mScrollPaneBuchung.setMinimumSize(new Dimension(30 * Config.windowTextSize, 100));
-		mBuchungTable.getModel().addTableModelListener(this);
-		return mScrollPaneBuchung;
-	}
 
-	/**
-	 * Die Breite der Cols setzen
-	 */
-	private void setColWidth() {
-		TableColumn column = null;
-		for (int i = 0; i < mBuchungTable.getColumnCount(); i++) {
-			column = mBuchungTable.getColumnModel().getColumn(i);
-			switch (i) {
-			case 0:
-				column.setPreferredWidth(100);
-				break;
-			case 1:
-				column.setPreferredWidth(60);
-				break;
-			case 2:
-				column.setPreferredWidth(300);
-				break;
-			case 3:
-				column.setPreferredWidth(50);
-				break;
-			default:
-				column.setPreferredWidth(90);
-			}
-		}
-	}
 
 	// ----- Implementierung des TablePrinterModels -------------------
 
 	/** Die Tabelle, die gedruckt werden soll */
 	@Override
 	public JTable getTableToPrint() {
-		return mBuchungTable;
+		return mBuchungenFrame.getBuchungTable();
 	}
 
 	/** Die Anzahl Kopfzeilen */
@@ -384,60 +353,11 @@ public class KontoView extends JFrame
 
 	// ----- Behandlung der Events ------------------------------------
 
-	/**
-	 * Show-Button wurde gedrückt. Ab-Datum einlesen, diese dem Model
-	 * bekanntgeben, Anzeige starten
-	 */
-	private void actionShowPerformed() {
-		Trace.println(3, "ShowButton->actionPerformed()");
-		// die Kontonummer bestimmen
-		getSelectedKontoNr();
-		Date datum = null;
-		datum = getSelectedDate();
-		if (datum != null) {
-			// --- die Daten setzen
-			if (mBuchungModel != null) {
-				mBuchungModel = null;
-			}
-			mBuchungModel = new BuchungOfKontoModelNormal();
-			mBuchungModel.setup(mKontoNrShow, datum);
-			mBuchungTable.setModel(mBuchungModel);
-			mBuchungModel.addTableModelListener(mBuchungTable);
-			setColWidth();
-		}
-		mBuchungModel.fireTableDataChanged();
-	}
-
-	/**
-	 * Sort-Button wurde gedrückt. Soriteren der Arrays im Model.
-	 */
-	private void actionSortPerformed() {
-		Trace.println(3, "SortButton->actionPerformed()");
-		// die Kontonummer bestimmen
-		getSelectedKontoNr();
-		Date datum = null;
-		datum = getSelectedDate();
-		if (datum != null) {
-			// --- die Daten setzen
-			if (mBuchungModel != null) {
-				mBuchungModel = null;
-			}
-			mBuchungModel = new BuchungOfKontoModelSorted();
-			mBuchungModel.setup(mKontoNrShow, datum);
-			mBuchungTable.setModel(mBuchungModel);
-			mBuchungModel.addTableModelListener(mBuchungTable);
-			setColWidth();
-		}
-		// testen, ob bereits Model vorhanden
-		//mBuchungModel.sortValues();
-		mBuchungModel.fireTableDataChanged();
-	}
-
 
 	/**
 	 * Excel-Button wurde gedrückt.
 	 */
-	private void actionExcelPerformed() {
+	private void actionExcelExport() {
 		Trace.println(3, "KontoView.actionExcelPerformed()");
 		// Printer aufrufen, Daten siehe Interface: TablePrinterModel
 		ExcelExportKonto lExcel = new ExcelExportKonto(this.getTableToPrint().getModel());
@@ -455,7 +375,7 @@ public class KontoView extends JFrame
 	/**
 	 * Print-Button wurde gedrückt.
 	 */
-	private void actionPrintPerformed() {
+	private void actionPrint() {
 		Trace.println(3, "KontoView.actionPrintPerformed()");
 		// Printer aufrufen, Daten siehe Interface: TablePrinterModel
 		TablePrinter lPrinter = new TablePrinter(this);
@@ -474,7 +394,7 @@ public class KontoView extends JFrame
 	/**
 	 * Close-Button wurde gedrückt.
 	 */
-	private void actionClosePerformed() {
+	private void actionClose() {
 		this.setVisible(false);
 	}
 
@@ -492,7 +412,7 @@ public class KontoView extends JFrame
 	}
 
 	/**
-	 * Das selektierte Datun ab dem Buchungen angezeigt werden.
+	 * Das selektierte Datum ab dem Buchungen angezeigt werden.
 	 */
 	private Date getSelectedDate() {
 		Date datum = null;
@@ -511,17 +431,6 @@ public class KontoView extends JFrame
 	}
 
 
-	/** An das Ende der Liste scrollen */
-	public void scrollToLastEntry() {
-		validate();
-		JScrollBar bar = mScrollPaneBuchung.getVerticalScrollBar();
-		bar.setValue( bar.getMaximum() );
-	}
-
-	@Override
-	public void tableChanged(TableModelEvent e) {
-		scrollToLastEntry();
-	}
 
 // ----- Model der Konto-Tabelle ----------------------------
 
@@ -582,7 +491,26 @@ public class KontoView extends JFrame
 			return "";
 		}
 	}
+	
 
+	@Override
+	public void tableChanged(TableModelEvent e) {
+		// TODO Auto-generated method stub
+	}
+	
+	public void repaintBuchungen() {
+		mBuchungenFrame.repaintBuchungen();
+	}
+
+	/**
+	 * Die Anzeige der Buchungen
+	 * @return
+	 */
+	public BuchungenBaseFrame getBuchungenFrame() {
+		return mBuchungenFrame;
+	}
+	
+	
 	/****************************************
 	 * für den Test der view
 	 */

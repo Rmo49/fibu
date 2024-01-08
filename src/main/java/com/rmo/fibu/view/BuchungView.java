@@ -36,7 +36,7 @@ import com.rmo.fibu.util.Trace;
  * Fokus im Soll- oder HabenKonto ist.
  * Im Eingabe-Panel werden die Eingabe-Felder mit den Steuerbuttons angezeigt.
  * Diese Klasse verwendet:<br>
- * - BuchungListFrame: Anzeige aller Buchungen<br>
+ * - BuchungenFrame: Anzeige aller Buchungen<br>
  * - KontoListFrame: Alle Konto für die Eingabe der Kontonummer<br>
  * - BuchungSuchenDialog: Eingabe der Suchargumente<br>
  * <br>Status:<br>
@@ -46,10 +46,10 @@ import com.rmo.fibu.util.Trace;
  *
  * @author: R. Moser
  */
-public class BuchungView extends JFrame implements BuchungInterface {
+public class BuchungView extends JFrame implements BuchungEingabeInterface {
 	private static final long serialVersionUID = -4904918454266009794L;
 	/** Tabelle für die Anzeige der Buchungen, enthält alle Buchungen */
-	private BuchungListFrame	mBuchungListe;
+	private BuchungenFrame	mBuchungenFrame;
 	/** Die view um Buchungen einzulesen */
 	private CsvReaderKeywordFrame		mCsvFrame;
 	/** Csv Setup, Einstellungen der Banks */
@@ -108,7 +108,7 @@ public class BuchungView extends JFrame implements BuchungInterface {
 //		mButtonOk.setEnabled(true);
 //		mButtonCancel.requestFocus(); // damit nicht Datum den Fokus erhält
 		// die letzte Buchung in den Temporären Speicher
-//		mTempBuchung = mBuchungListe.getLastBuchung();
+//		mTempBuchung = mBuchungenFrame.getLastBuchung();
 		// die ID bis zu dieser Buchungen gesichert wurden
 		mBuchungData.setIdSaved();
 	}
@@ -131,16 +131,16 @@ public class BuchungView extends JFrame implements BuchungInterface {
 		Trace.println(3,"BuchungView.initAnzeige()");
 		JDesktopPane lPane = new JDesktopPane();
 		// BuchungListe
-		mBuchungListe = new BuchungListFrame(this);
-		lPane.add(mBuchungListe);
-		mBuchungListe.setVisible(true);
+		mBuchungenFrame = new BuchungenFrame(this);
+		lPane.add(mBuchungenFrame);
+		mBuchungenFrame.setVisible(true);
 		try {
-			mBuchungListe.setMaximum(true);
+			mBuchungenFrame.setMaximum(true);
 		}
 		catch (PropertyVetoException e) {
 			// do nothing
 		}
-		mBuchungListe.scrollToLastEntry();
+		mBuchungenFrame.scrollToLastEntry();
 
 		return lPane;
 	}
@@ -156,16 +156,6 @@ public class BuchungView extends JFrame implements BuchungInterface {
 		mEingabe = new BuchungEingabe(this);
 		lPanel.add(mEingabe.initView());
 
-//		lPanel.add(initButtons());
-//		lPanel.add(initMessage());
-
-//		initListenersDatum();
-//		initListenersBeleg();
-//		initListenersText();
-//		initListenersSoll();
-//		initListenersHaben();
-//		initListenersBetrag();
-
 		return lPanel;
 	}
 
@@ -175,16 +165,15 @@ public class BuchungView extends JFrame implements BuchungInterface {
 	 */
 	@Override
 	public Buchung getLastBuchung() {
-		return mBuchungListe.getLastBuchung();
+		return mBuchungenFrame.getLastBuchung();
 	}
 	
 	/**
 	 * Die Liste der angezeigten Buchungen
 	 * @return
 	 */
-	@Override
-	public BuchungListFrame getBuchungListe() {
-		return mBuchungListe;
+	public BuchungenFrame getBuchungListe() {
+		return mBuchungenFrame;
 	}
 	
 	
@@ -199,7 +188,7 @@ public class BuchungView extends JFrame implements BuchungInterface {
 	 * Ans Ende der Liste scrollen
 	 */
 	public void scrollToEnd() {
-		mBuchungListe.scrollToLastEntry();
+		mBuchungenFrame.scrollToLastEntry();
 	}
 
 	/**
@@ -289,7 +278,7 @@ public class BuchungView extends JFrame implements BuchungInterface {
 		Trace.println(3, "RefreshButton->actionPerformed()");
 		try {
 			mBuchungData.saveNew();
-			mBuchungListe.repaint();
+			mBuchungenFrame.repaint();
 			mBuchungData.deleteNewBookings();
 //			enableButtons();
 		}
@@ -309,7 +298,7 @@ public class BuchungView extends JFrame implements BuchungInterface {
 				"ändern", JOptionPane.ERROR_MESSAGE);
 				return;
 		}
-		int [] lRowNrs = mBuchungListe.getSelectedRows();
+		int [] lRowNrs = mBuchungenFrame.getSelectedRows();
 		// vorerst nur erste selektierte Zeile bearbeiten
 		if (lRowNrs.length > 0) {
 			try {
@@ -328,13 +317,13 @@ public class BuchungView extends JFrame implements BuchungInterface {
 	*/
 	public void deleteActionPerformed () {
 		Trace.println(3, "deleteButton->actionPerformed()");
-		int [] lRowNrs = mBuchungListe.getSelectedRows();
+		int [] lRowNrs = mBuchungenFrame.getSelectedRows();
 		if (lRowNrs.length > 0) {
 			// Message zusammenstellen
 			StringBuffer lMsgBuffer = new StringBuffer();
 			for (int lRowNr : lRowNrs) {
-				lMsgBuffer.append(mBuchungListe.getValueAt(lRowNr,1) + ": ");
-				lMsgBuffer.append(mBuchungListe.getValueAt(lRowNr,2) + ", ");
+				lMsgBuffer.append(mBuchungenFrame.getValueAt(lRowNr,1) + ": ");
+				lMsgBuffer.append(mBuchungenFrame.getValueAt(lRowNr,2) + ", ");
 			}
 			// Bestägigung einholen
 			int answer = JOptionPane.showConfirmDialog(
@@ -364,7 +353,7 @@ public class BuchungView extends JFrame implements BuchungInterface {
 	public void addBuchungData(Buchung buchung) {
 		mBuchungData.add(buchung);
 		int lastRowNr = mBuchungData.getRowCount()-1;
-		mBuchungListe.fireRowsInserted(lastRowNr-1,lastRowNr);
+		mBuchungenFrame.fireRowsInserted(lastRowNr-1,lastRowNr);
 	}
 
 
@@ -397,9 +386,19 @@ public class BuchungView extends JFrame implements BuchungInterface {
 
 	/** Gibt die Id der Row zurück */
 	private long getId(int lRowNr) {
-		return ((Long)mBuchungListe.getValueAt(lRowNr,6)).longValue();
+		return ((Long)mBuchungenFrame.getValueAt(lRowNr,6)).longValue();
+	}
+	
+	
+	
+	@Override
+	public BuchungenBaseFrame getBuchungenFrame() {
+		// TODO Auto-generated method stub
+		return mBuchungenFrame;
 	}
 
+	
+	
 	/****************************************
 	* für den Test der View von Buchungen.
 	 */

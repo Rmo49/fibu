@@ -405,7 +405,9 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 	 */
 	public void reloadData() {
 		try {
-			mDataSet.close();
+			if (mDataSet != null) {
+				mDataSet.close();
+			}
 			mDataSet = null;
 			setupDataSet();
 		}
@@ -489,6 +491,7 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 		}
 	}
 
+	
 	/** Gibt die aktuelle BuchungId zurück
 	 * Berechnet diese falls am Anfang.
 	 */

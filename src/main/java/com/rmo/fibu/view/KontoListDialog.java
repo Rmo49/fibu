@@ -24,7 +24,7 @@ import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Trace;
 
 /** KontoListDialog: Zeigt die Liste der vorhandenen Konti,
- * wird bei Buchungen verwendet.
+ * wird bei BuchungEingabe verwendet.
  * Die Konti werden in einer JTable angezeigt.
  * Das aktuelle Konto wird in der mitte angezeigt.
  * Grösse und Position wird vom parent-Fenster gesteuert.
