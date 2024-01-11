@@ -37,14 +37,14 @@ import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.TablePrinter;
 import com.rmo.fibu.util.TablePrinterModel;
 import com.rmo.fibu.util.Trace;
-import com.rmo.fibu.view.util.DoubleRenderer;
+import com.rmo.fibu.view.util.BetragRenderer;
 import com.rmo.fibu.view.util.IntegerRenderer;
 
 /**
  * Auswertung: Eröffnungsbilanz, Bilanz, ER. Ein Frame mit CardLayout für jeden
  * Typ. Wurde mit JBuilder-Designer erstellt!
  */
-public class AuswertungView extends JFrame implements Printable {
+public class BilanzenView extends JFrame implements Printable {
 	private static final long serialVersionUID = 387966003598525362L;
 	public final static int ONE_SECOND = 1000;
 	/** Die DB zu dieser View */
@@ -72,8 +72,8 @@ public class AuswertungView extends JFrame implements Printable {
 	JTable tableER = new JTable();
 
 	/** Default Konstruktor */
-	public AuswertungView() {
-		super("Auswertungen");
+	public BilanzenView() {
+		super("Bilanzen");
 		try {
 			initView();
 			initData();
@@ -103,7 +103,7 @@ public class AuswertungView extends JFrame implements Printable {
 		btnPrint.addActionListener(new java.awt.event.ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				btnPrint_actionPerformed(e);
+				btnPrint_action(e);
 			}
 		});
 		btnClose.setText("Schliessen");
@@ -111,7 +111,7 @@ public class AuswertungView extends JFrame implements Printable {
 		btnClose.addActionListener(new java.awt.event.ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				btnClose_actionPerformed(e);
+				btnClose_action(e);
 			}
 		});
 		btnUpdate.setActionCommand("Berechnen");
@@ -120,7 +120,7 @@ public class AuswertungView extends JFrame implements Printable {
 		btnUpdate.addActionListener(new java.awt.event.ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				btnUpdate_actionPerformed(e);
+				btnUpdate_action(e);
 			}
 		});
 		jToolBar1.add(btnUpdate, null);
@@ -167,7 +167,7 @@ public class AuswertungView extends JFrame implements Printable {
 		modelBilanz.addTableModelListener(tableBilanz);
 		setUpColumnSize(tableBilanz);
 		// Den default-Renderer für Spalten mit Double-Werten
-		tableBilanz.setDefaultRenderer(Double.class, new DoubleRenderer());
+		tableBilanz.setDefaultRenderer(Double.class, new BetragRenderer());
 		tableBilanz.setDefaultRenderer(Integer.class, new IntegerRenderer());
 		// ----- ER Erfolgsrechung
 		modelER = new AuswertungModel(Config.sERStart, Config.sEREnd, false);
@@ -179,7 +179,7 @@ public class AuswertungView extends JFrame implements Printable {
 		modelER.addTableModelListener(tableER);
 		setUpColumnSize(tableER);
 		// Den default-Renderer für Spalten mit Double-Werten
-		tableER.setDefaultRenderer(Double.class, new DoubleRenderer());
+		tableER.setDefaultRenderer(Double.class, new BetragRenderer());
 		tableER.setDefaultRenderer(Integer.class, new IntegerRenderer());
 		// ----- StartBilanz
 		modelStartBilanz = new AuswertungModel(Config.sBilanzStart, Config.sBilanzEnd, true);
@@ -191,7 +191,7 @@ public class AuswertungView extends JFrame implements Printable {
 		modelStartBilanz.addTableModelListener(tableStartBilanz);
 		setUpColumnSize(tableStartBilanz);
 		// Den default-Renderer für Spalten mit Double-Werten
-		tableStartBilanz.setDefaultRenderer(Double.class, new DoubleRenderer());
+		tableStartBilanz.setDefaultRenderer(Double.class, new BetragRenderer());
 		tableStartBilanz.setDefaultRenderer(Integer.class, new IntegerRenderer());
 	}
 
@@ -222,7 +222,7 @@ public class AuswertungView extends JFrame implements Printable {
 	 */
 	@Override
 	public int print(Graphics g, PageFormat pf, int pageIndex) throws PrinterException {
-		Trace.println(3, "AuswertungView.print()");
+		Trace.println(3, "BilanzenView.print()");
 		if (pageIndex >= 1) return Printable.NO_SUCH_PAGE;
 		Graphics2D g2 = (Graphics2D) g;
 		g2.translate(pf.getImageableX(), pf.getImageableY());
@@ -324,7 +324,7 @@ public class AuswertungView extends JFrame implements Printable {
 		 */
 		@Override
 		public Object getValueAt(int row, int col) {
-			Trace.println(7, "AuswertungView.BuchungModel.getValueAt(" + row + ',' + col + ')');
+			Trace.println(7, "BilanzenView.BuchungModel.getValueAt(" + row + ',' + col + ')');
 			if (row < mKonti.size()) {
 				KontoRow lRow = mKonti.elementAt(row);
 				switch (col) {
@@ -446,7 +446,7 @@ public class AuswertungView extends JFrame implements Printable {
 		 * ein. Die Grenzen der Konti wird über den Konstruktor gesetzt.
 		 */
 		public void setUpData() {
-			Trace.println(3, "AuswertungView.AuswertungModel.setUpData()");
+			Trace.println(3, "BilanzenView.AuswertungModel.setUpData()");
 			if (!mKonti.isEmpty()) {
 				this.fireTableDataChanged();
 				mKonti.clear();
@@ -487,7 +487,7 @@ public class AuswertungView extends JFrame implements Printable {
 	// -----------------------------------------------
 
 	/** Alle Saldi neu berechnen */
-	private void btnUpdate_actionPerformed(ActionEvent e) {
+	private void btnUpdate_action(ActionEvent e) {
 		int lCursorType = 0;
 		try {
 			lCursorType = this.getCursor().getType();
@@ -527,34 +527,34 @@ public class AuswertungView extends JFrame implements Printable {
 	}
 
 	/** Fenster schliessen */
-	private void btnClose_actionPerformed(ActionEvent e) {
+	private void btnClose_action(ActionEvent e) {
 		dispose();
 	}
 
 	/**
 	 * Drucken einer Seite. Wenn ausgeführt, wird die Methode print aufgerufen
 	 */
-	private void btnPrint_actionPerformed(ActionEvent e) {
+	private void btnPrint_action(ActionEvent e) {
 		TablePrinterModel tablePrinterModel = null;
 		String aktuellesDatum = null;
+		aktuellesDatum = readAktuellesDatum();
+
 		switch (tabPane.getSelectedIndex()) {
 		case 0:
-			tablePrinterModel = new AuswertungPrinterModel(tableStartBilanz, "Start-Bilanz per"
+			tablePrinterModel = new BilanzenPrinterModel(tableStartBilanz, "Start-Bilanz per "
 					+ Config.sDatumVon.toString());
 			break;
 		case 1:
-			aktuellesDatum = readAktuellesDatum();
 			if (aktuellesDatum == null) {
 				return;
 			}
-			tablePrinterModel = new AuswertungPrinterModel(tableBilanz, "Bilanz per " + aktuellesDatum);
+			tablePrinterModel = new BilanzenPrinterModel(tableBilanz, "Bilanz per " + aktuellesDatum);
 			break;
 		case 2:
-			aktuellesDatum = readAktuellesDatum();
 			if (aktuellesDatum == null) {
 				return;
 			}
-			tablePrinterModel = new AuswertungPrinterModel(tableER, "Erfolgsrechnung per " + aktuellesDatum);
+			tablePrinterModel = new BilanzenPrinterModel(tableER, "Erfolgsrechnung per " + aktuellesDatum);
 			break;
 		}
 		TablePrinter lPrinter = new TablePrinter(tablePrinterModel);
@@ -599,12 +599,12 @@ public class AuswertungView extends JFrame implements Printable {
 	/**
 	 * Stellt die Verbindung zu den Daten her und steuert die Darstellung.
 	 */
-	private class AuswertungPrinterModel implements TablePrinterModel {
+	private class BilanzenPrinterModel implements TablePrinterModel {
 		/** Das Model zur Tabelle */
 		private JTable mTableToPrint;
 		private String mKopfzeile;
 
-		public AuswertungPrinterModel(JTable auswertungTable, String kopfzeile) {
+		public BilanzenPrinterModel(JTable auswertungTable, String kopfzeile) {
 			mTableToPrint = auswertungTable;
 			mKopfzeile = kopfzeile;
 		}
@@ -628,9 +628,9 @@ public class AuswertungView extends JFrame implements Printable {
 		@Override
 		public String getHeader(int nr) {
 			if (nr == 0) {
-				return mKopfzeile;
-			} else {
 				return Config.sFibuTitel;
+			} else {
+				return mKopfzeile;
 			}
 		}
 
@@ -647,7 +647,7 @@ public class AuswertungView extends JFrame implements Printable {
 		public int getColSize(int columnIndex) {
 			switch (columnIndex) {
 			case 0:
-				return 10;
+				return 7;
 			case 1:
 				return 50;
 			default:
@@ -669,7 +669,7 @@ public class AuswertungView extends JFrame implements Printable {
 		 */
 		@Override
 		public boolean getColRight(int columnIndex) {
-			if (columnIndex == 1) return false;
+			if (columnIndex <= 1) return false;
 			else return true;
 		}
 
@@ -687,7 +687,7 @@ public class AuswertungView extends JFrame implements Printable {
 	public static void main(String[] args) {
 		try {
 			DbConnection.open("FibuLeer");
-			AuswertungView auswertung = new AuswertungView();
+			BilanzenView auswertung = new BilanzenView();
 			auswertung.setVisible(true);
 		} catch (FibuRuntimeException ex) {
 		}

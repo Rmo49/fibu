@@ -2,18 +2,18 @@ package com.rmo.fibu.view;
 
 import java.awt.BorderLayout;
 
+import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.model.Buchung;
 import com.rmo.fibu.model.BuchungData;
-import com.rmo.fibu.model.BuchungOfKontoModel;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.util.Config;
 
 /**
- * Ein Frame das Buchungen ändern aufnimmt, damit die zu ändernde Buchung 
- * separat angezeigt werden kann. 
+ * Ein Frame das Buchungen ändern aufnimmt, damit die zu ändernde Buchung
+ * separat angezeigt werden kann.
  */
 public class BuchungEingabeFrame extends JFrame implements BuchungEingabeInterface {
 	private static final long serialVersionUID = -1293860257068482857L;
@@ -22,23 +22,19 @@ public class BuchungEingabeFrame extends JFrame implements BuchungEingabeInterfa
 	private KontoView		mKontoView;
 	// die Buchung, die geändert werden soll
 	private Buchung 		mBuchung;
-	// die Anzeige der Buchnug mit allen Feldern 
+	// die Anzeige der Buchnug mit allen Feldern
 	private BuchungEingabe	mEingabe;
 	/** das Model für alle Buchungen */
 	protected BuchungData mBuchungData = null;
-	/** Das Model zu allen Buchungen eines Kontos */
-	private BuchungOfKontoModel mKontoBuchungen = null;
 
 
-	
-	public BuchungEingabeFrame(KontoView kontoView, BuchungOfKontoModel kontoBuchungen) {
+	public BuchungEingabeFrame(KontoView kontoView) {
 		super("Buchnung ändern");
 		mKontoView = kontoView;
-		mKontoBuchungen = kontoBuchungen;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param buchungId
 	 */
 	public void init(long buchungId) {
@@ -55,28 +51,31 @@ public class BuchungEingabeFrame extends JFrame implements BuchungEingabeInterfa
 			mBuchung = new Buchung();
 			mBuchung.setBuchungText("keine Buchung selektiert");
 		}
-		
+
 		if (mEingabe == null) {
-			mEingabe = new BuchungEingabe(this, mKontoBuchungen);
+			mEingabe = new BuchungEingabe(this);
 			getContentPane().add(mEingabe.initView(), BorderLayout.CENTER);
 		}
 		// eine Buchung übertragen
 		if (mBuchung != null) {
 			mEingabe.copyToFields(mBuchung);
 		}
-		setSize(Config.winCsvSetupDim);
-		setLocation(Config.winCsvSetupLoc);
-
+		setSize(Config.winKontoBuchungDim);
+		setLocation(Config.winKontoBuchungLoc);
 	}
-	
+
 	/** Die überschriebene Methode hide
-	 * 
+	 *
 	 */
 	@Override
 	public void setVisible(boolean isVisible) {
+		if (!isVisible) {
+			Config.winKontoBuchungDim = getSize();
+			Config.winKontoBuchungLoc = getLocation();
+		}
 		super.setVisible(isVisible);
 	}
-	
+
 
 	@Override
 	public Buchung getLastBuchung() {
@@ -86,7 +85,6 @@ public class BuchungEingabeFrame extends JFrame implements BuchungEingabeInterfa
 
 	@Override
 	public BuchungData getBuchungData() {
-		// TODO evt. mit Konstruktor initialisieren
 		if (mBuchungData == null) {
 			mBuchungData = (BuchungData) DataBeanContext.getContext().getDataBean(BuchungData.class);
 		}
@@ -95,20 +93,40 @@ public class BuchungEingabeFrame extends JFrame implements BuchungEingabeInterfa
 
 	@Override
 	public void setBuchungMenu(boolean enteringBooking, boolean mChangeing) {
-		// TODO Auto-generated method stub
-		
+		// wird hier nicht verwendet
+
 	}
 
 	@Override
 	public void scrollToEnd() {
-		// TODO Auto-generated method stub
-		
+		mKontoView.getBuchungenFrame().scrollToLastEntry();
 	}
-	
-		
+
+
 	@Override
 	public BuchungenBaseFrame getBuchungenFrame() {
 		return mKontoView.getBuchungenFrame();
+	}
+
+
+	@Override
+	public JDesktopPane getPaneCenter() {
+		// nichts tun, ist nur für Buchung
+		return null;
+	}
+
+
+	@Override
+	public boolean isBuchungView() {
+		return false;
+	}
+
+	/**
+	 * Das Frame auf invisible setzen
+	 */
+	@Override
+	public void hideEingabe() {
+		this.setVisible(false);
 	}
 
 	/**

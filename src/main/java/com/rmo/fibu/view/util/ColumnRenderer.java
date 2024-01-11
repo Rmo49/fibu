@@ -86,7 +86,7 @@ public class ColumnRenderer extends DefaultTableCellRenderer  {
 				setText( ((Integer)value).toString() );
 			}
 		}
-		// siehe auch DoubleRenderer
+		// siehe auch BetragRenderer
 		if (value instanceof Double) {
 			double wert = ((Double)value).doubleValue();
 			if (wert == -1) {

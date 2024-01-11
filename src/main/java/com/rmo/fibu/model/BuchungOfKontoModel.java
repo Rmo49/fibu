@@ -7,7 +7,6 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import com.rmo.fibu.exception.BuchungNotFoundException;
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Trace;
@@ -216,8 +215,6 @@ public abstract class BuchungOfKontoModel extends AbstractTableModel {
 	 */
 	@Override
 	public void setValueAt(Object aValue, int row, int col) {
-		// TODO Probleme mit Datum, vielleicht nicht ändern, wenn geändert muss gespeichert werden
-		// TODO dazu einen neuen Button, und es muss gemerkt werden, welche Buchungen geändert wurden.
 		Trace.println(7, "KontoView.BuchungModel.setValueAt(" + row + ',' + col + ')');
 		BuchungRow lRow = getBuchungen().get(row);
 		switch (col) {

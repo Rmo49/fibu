@@ -8,20 +8,24 @@ import javax.swing.JInternalFrame;
 public abstract class BuchungenBaseFrame extends JInternalFrame {
 
 	private static final long serialVersionUID = -1772491187783153597L;
-	
+
 	public BuchungenBaseFrame (String title, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable) {
 		super (title, resizable, closable, maximizable, iconifiable);
 	}
 
 	/**
-	 * Damit die Aenderungen angezeigt werden 
+	 * Damit die Aenderungen angezeigt werden
 	 */
 	public abstract void repaintBuchungen();
-	
+
 	/**
 	 * Meldung, dass Zeilen eingefüft wurden
 	 */
 	public abstract void rowsInserted(int firstRow, int lastRow);
 
-	
+	/**
+	 * An das Ende der BuchungListe scrollen
+	 */
+	public abstract void scrollToLastEntry();
+
 }

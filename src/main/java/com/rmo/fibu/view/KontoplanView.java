@@ -36,7 +36,7 @@ import com.rmo.fibu.util.ExcelExportKontoPlan;
 import com.rmo.fibu.util.ExcelImport;
 import com.rmo.fibu.util.TextExportKontoPlan;
 import com.rmo.fibu.util.Trace;
-import com.rmo.fibu.view.util.DoubleRenderer;
+import com.rmo.fibu.view.util.BetragRenderer;
 import com.rmo.fibu.view.util.IntegerRenderer;
 
 /**
@@ -259,7 +259,8 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 			}
 		}
 		// Den default-Renderer für Spalten mit Double-Werten
-		jKontoTable.setDefaultRenderer(Double.class, new DoubleRenderer());
+		jKontoTable.setDefaultRenderer(Double.class, new BetragRenderer());
+		// Den default-Renderer für Spalten mit Integer-Werten (Beleg, KontoNr.
 		jKontoTable.setDefaultRenderer(Integer.class, new IntegerRenderer());
 	}
 

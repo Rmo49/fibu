@@ -2,6 +2,8 @@ package com.rmo.fibu.view;
 
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.Date;
 
 import javax.swing.JScrollBar;
@@ -17,14 +19,15 @@ import com.rmo.fibu.model.BuchungOfKontoModelNormal;
 import com.rmo.fibu.model.BuchungOfKontoModelSorted;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Trace;
-import com.rmo.fibu.view.util.DoubleRenderer;
+import com.rmo.fibu.view.util.BetragRenderer;
+import com.rmo.fibu.view.util.IntegerRenderer;
 
 /**
  * Die Anzeige aller Buchungen eines Kontos.
  * Wird in der KontoView verwendet
  */
 public class BuchungenKontoFrame extends BuchungenBaseFrame
-implements TableModelListener {
+implements TableModelListener, ComponentListener {
 
 	private static final long serialVersionUID = -7132755797618179989L;
 
@@ -32,19 +35,18 @@ implements TableModelListener {
 	private KontoView		mKontoView;
 
 	/** die Kontonummer deren Buchungen angezeigt werden sollen */
-	private int mKontoNr;
+	private int 			mKontoNr;
 	/** ab diesem Datum */
-	private Date mDatum;
+	private Date 			mDatum;
 	/** Tabelle für die Anzeige der Buchungen eines Konto */
-	private JTable mBuchungTable;
+	private JTable 			mBuchungTable;
 	/** Das Model zu allen Buchungen eines Kontos */
 	private BuchungOfKontoModel mBuchungModel = null;
 	/** der Container aller Buchungen */
-	private JScrollPane mScrollPaneBuchung = null;
+	private JScrollPane 	mScrollPaneBuchung = null;
 
 	// Für die Änderung einer Buchung
 	private BuchungEingabeFrame mBuchungEingabeFrame = null;
-//	private BuchungEingabeDialog mBuchungEingabeDialog = null;
 
 
 	/**
@@ -56,7 +58,7 @@ implements TableModelListener {
 		super("Buchung Liste", true, false, true, false);
 		mKontoView = parent;
 	}
-	
+
 	/**
 	 * Initialisierung der Tabelle für Buchungen mit dem Model
 	 */
@@ -68,7 +70,8 @@ implements TableModelListener {
 		mBuchungTable.getTableHeader().setFont(Config.fontText);
 		mBuchungTable.setRowHeight(Config.windowTextSize + 4);
 		// Den default-Renderer für Spalten mit Double-Werten
-		mBuchungTable.setDefaultRenderer(Double.class, new DoubleRenderer());
+		mBuchungTable.setDefaultRenderer(Double.class, new BetragRenderer());
+		mBuchungTable.setDefaultRenderer(Integer.class, new IntegerRenderer());
 		mScrollPaneBuchung = new JScrollPane(mBuchungTable);
 		mScrollPaneBuchung.setPreferredSize(new Dimension(50 * Config.windowTextSize, 100));
 		mScrollPaneBuchung.setMinimumSize(new Dimension(30 * Config.windowTextSize, 100));
@@ -104,7 +107,30 @@ implements TableModelListener {
 	}
 
 
+	@Override
+	public void componentResized(ComponentEvent e) {
+		// nix machen
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e) {
+		// nix machen
+
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e) {
+		scrollToLastEntry();
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent e) {
+		// nix machen
+
+	}
+
 	/** An das Ende der Liste scrollen */
+	@Override
 	public void scrollToLastEntry() {
 		validate();
 		JScrollBar bar = mScrollPaneBuchung.getVerticalScrollBar();
@@ -136,6 +162,7 @@ implements TableModelListener {
 			setColWidth();
 		}
 		mBuchungModel.fireTableDataChanged();
+		scrollToLastEntry();
 	}
 
 	/**
@@ -166,7 +193,7 @@ implements TableModelListener {
 	public void actionBuchungAendern() {
 		Trace.println(3, "BuchungAendern->action");
 		if (mBuchungEingabeFrame == null) {
-			mBuchungEingabeFrame = new BuchungEingabeFrame(mKontoView, mBuchungModel);
+			mBuchungEingabeFrame = new BuchungEingabeFrame(mKontoView);
 		}
 
 		int lRow = mBuchungTable.getSelectedRow();
@@ -198,7 +225,7 @@ implements TableModelListener {
 		mBuchungTable.setModel(mBuchungModel);
 		mBuchungModel.addTableModelListener(mBuchungTable);
 	}
-	
+
 	@Override
 	public void repaintBuchungen() {
 		loadData();
@@ -207,7 +234,7 @@ implements TableModelListener {
 //		mBuchungEingabeFrame.setVisible(false);
 	}
 
-	
+
 	@Override
 	public void rowsInserted(int firstRow, int lastRow) {
 		// nichts machen, da hier nicht erlaubt

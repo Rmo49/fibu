@@ -49,9 +49,20 @@ private void init() {
     }
 }
 
-/** Initialisierung des Frames */
+/** Initialisierung der Elemente */
 private void jbInit() throws Exception {
     this.getContentPane().setLayout(null);
+
+    btnPrint.setFont(Config.fontTextBold);
+    btnPrint.setText("drucken");
+    btnPrint.setBounds(new Rectangle(10, 43, 98, 34));
+    btnPrint.addActionListener(new java.awt.event.ActionListener() {
+        @Override
+		public void actionPerformed(ActionEvent e) {
+            btnPrint_actionPerformed(e);
+        }
+    });
+
     btnCancel.setFont(Config.fontTextBold);
         btnCancel.setText("Abbrechen");
     btnCancel.setBounds(new Rectangle(113, 43, 98, 34));
@@ -61,15 +72,7 @@ private void jbInit() throws Exception {
                 btnCancel_actionPerformed(e);
             }
         });
-    btnPrint.setFont(Config.fontTextBold);
-        btnPrint.setText("drucken");
-    btnPrint.setBounds(new Rectangle(10, 43, 98, 34));
-        btnPrint.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-			public void actionPerformed(ActionEvent e) {
-                btnPrint_actionPerformed(e);
-            }
-        });
+
     jProgressBar.setBounds(new Rectangle(15, 10, 199, 19));
     this.getContentPane().add(btnPrint, null);
     this.getContentPane().add(btnCancel, null);
@@ -139,7 +142,7 @@ private class KontoPrinterModel implements KontoListPrinterModel
 	 *  @param number die Zeilennummer
 	 * */
 	@Override
-	public String getHeader(int kontoNr, int number) {
+	public String getKontoName(int kontoNr, int number) {
 		Konto lKonto = null;
 		try {
 			lKonto = mKontoData.read(kontoNr);
@@ -170,7 +173,7 @@ private class KontoPrinterModel implements KontoListPrinterModel
 
 	/** Die Spalten-Nummern, die eine Summen enthalten sollen. */
 	@Override
-	public boolean getColSumme(int columnIndex) {
+	public boolean isColToAdd(int columnIndex) {
 		if (columnIndex == 4 || columnIndex == 5) return true;
 		else return false;
 	}

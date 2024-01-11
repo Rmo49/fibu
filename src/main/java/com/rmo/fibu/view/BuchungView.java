@@ -2,24 +2,15 @@ package com.rmo.fibu.view;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
 import java.text.ParseException;
 
-import javax.swing.JButton;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import com.rmo.fibu.exception.BuchungValueException;
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.FibuRuntimeException;
 import com.rmo.fibu.model.Buchung;
@@ -49,11 +40,13 @@ import com.rmo.fibu.util.Trace;
 public class BuchungView extends JFrame implements BuchungEingabeInterface {
 	private static final long serialVersionUID = -4904918454266009794L;
 	/** Tabelle für die Anzeige der Buchungen, enthält alle Buchungen */
-	private BuchungenFrame	mBuchungenFrame;
+	private BuchungenFrame				mBuchungenFrame;
 	/** Die view um Buchungen einzulesen */
 	private CsvReaderKeywordFrame		mCsvFrame;
 	/** Csv Setup, Einstellungen der Banks */
 	private CsvBankFrame				mCsvSetup;
+	/** das Pane der Buchungen im Center */
+	private JDesktopPane 				mPaneCenter = null;
 	/** Das Model zu dieser View */
 	private BuchungData     			mBuchungData = null;
 	/** Die Eingabefelder für eine Buchung */
@@ -129,10 +122,10 @@ public class BuchungView extends JFrame implements BuchungEingabeInterface {
 	 */
 	private Container initAnzeige() {
 		Trace.println(3,"BuchungView.initAnzeige()");
-		JDesktopPane lPane = new JDesktopPane();
+		mPaneCenter = new JDesktopPane();
 		// BuchungListe
 		mBuchungenFrame = new BuchungenFrame(this);
-		lPane.add(mBuchungenFrame);
+		mPaneCenter.add(mBuchungenFrame);
 		mBuchungenFrame.setVisible(true);
 		try {
 			mBuchungenFrame.setMaximum(true);
@@ -142,7 +135,16 @@ public class BuchungView extends JFrame implements BuchungEingabeInterface {
 		}
 		mBuchungenFrame.scrollToLastEntry();
 
-		return lPane;
+		return mPaneCenter;
+	}
+
+	/**
+	 * Das Panel mit der Anzeige der Buchungen.
+	 * @return
+	 */
+	@Override
+	public JDesktopPane getPaneCenter() {
+		return mPaneCenter;
 	}
 
 	/** Initialisierung des Eingabe-Bereiches.
@@ -167,7 +169,7 @@ public class BuchungView extends JFrame implements BuchungEingabeInterface {
 	public Buchung getLastBuchung() {
 		return mBuchungenFrame.getLastBuchung();
 	}
-	
+
 	/**
 	 * Die Liste der angezeigten Buchungen
 	 * @return
@@ -175,41 +177,41 @@ public class BuchungView extends JFrame implements BuchungEingabeInterface {
 	public BuchungenFrame getBuchungListe() {
 		return mBuchungenFrame;
 	}
-	
-	
+
+
 	/**
 	 * Verbindung zu der Datenbank
 	 */
+	@Override
 	public BuchungData getBuchungData() {
 		return mBuchungData;
 	}
-	
+
 	/**
 	 * Ans Ende der Liste scrollen
 	 */
+	@Override
 	public void scrollToEnd() {
 		mBuchungenFrame.scrollToLastEntry();
 	}
 
 	/**
-	 * Die Menus setzen, je nach Zusstand der Eingabe einer Buchung
+	 * Die Menus setzen, je nach Zustand der Eingabe einer Buchung
 	 * Wird von BuchungEingabe getriggert
 	 */
 	@Override
 	public void setBuchungMenu(boolean enteringBooking, boolean mChangeing) {
 		//Buchung copy, delete: wenn !enteringBooking und !mChangeing
 		if (!mEingabe.enteringBooking() && !mChangeing) {
-			// TODO muss noch nachgeführt werden
 			mBuchungMenu.setEnableCopy(true);
 			mBuchungMenu.setEnableDelete(true);
 		}
 		else {
-			// TODO muss noch nachgeführt werden
 			mBuchungMenu.setEnableCopy(false);
 			mBuchungMenu.setEnableDelete(false);
 		}
 		// Sort immer true falls es etwas zum sortieren gibt
-		mBuchungMenu.setEnableSort(mBuchungData.getRowCountNew() > 0 );		
+		mBuchungMenu.setEnableSort(mBuchungData.getRowCountNew() > 0 );
 	}
 
 
@@ -219,7 +221,7 @@ public class BuchungView extends JFrame implements BuchungEingabeInterface {
 		}
 	}
 
-	
+
 	/** Die überschriebene Methode hide, prüft zuerst ob noch gespeichert
 	 *  werden muss */
 	@Override
@@ -345,7 +347,7 @@ public class BuchungView extends JFrame implements BuchungEingabeInterface {
 			}
 		}
 	}
-	
+
 	/**
 	 * Gemäss Interface muss diese Methode impl. werden.
 	 * Wird in okAction aufgerufen
@@ -388,17 +390,26 @@ public class BuchungView extends JFrame implements BuchungEingabeInterface {
 	private long getId(int lRowNr) {
 		return ((Long)mBuchungenFrame.getValueAt(lRowNr,6)).longValue();
 	}
-	
-	
-	
+
+
+
 	@Override
 	public BuchungenBaseFrame getBuchungenFrame() {
-		// TODO Auto-generated method stub
 		return mBuchungenFrame;
 	}
 
-	
-	
+
+	@Override
+	public boolean isBuchungView() {
+		return true;
+	}
+
+	@Override
+	public void hideEingabe() {
+		// nichts machen in dieser Klasse
+
+	}
+
 	/****************************************
 	* für den Test der View von Buchungen.
 	 */

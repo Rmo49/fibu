@@ -1,48 +1,42 @@
 
 Kontoblatt
-- refresh funktioniert noch nicht nach Aenderung
+- Button Buchung ändern nur wenn selektiert
 - wenn ein Kontoblatt geöffnet, sollte an das Ende springen, wie bei Buchungen
+	Problem: Welchen Listener muss aufgerufen werden, wenn die BuchungListe angezeigt wird?
 
 Buchung
-- wenn Buchung bearbeiten, null-Pointer
+- Kleine Fehler wenn Kontonummer edititert wird: Wenn Backspace springt auf erstes Konto
+- Wenn in Soll und Haben, dann mit yPos operieren => PdfSetup anpassen ???
+- Wenn Buchung eingegeben, dann noch blau in der Liste, kann diese nicht ändern
 
-- Tab funktioniert nicht mehr
-- wenn Tab im Soll-Feld, springt nicht zu Haben <= fokus auf Liste, evt. spezielle Action falls tab gewählt
-- Wenn in Soll und Haben, dann mit yPos operieren => PdfSetup anpassen
-- Kann Kontonummer nicht manuell eingeben.
-
-- Evt. Buchung Eingabe ein eigenes Frame?
-- BuchungView: BuchungListFrame nicht als Frame sondern auch Panel wie Eingaben
-- wenn eine Buchung bereits blau, und Teil eingegeben, dann kann nicht gespeichert werden
-
+Fibus
 - Alle DB's anzeigen, auch wenn nicht in der Liste (gilt für Situationen, wenn nicht richtig angelegt).
- 
-- Bilanz auch als PDF sichern
+
+Util
 - Trace auf java.util.logging umstellen, siehe auch Link in Chrome unter Java
 => erster Versuch in der Klasse FibuView.
 
-- Anzeige bei Kontoblatt, wenn Gegenkonto 0 dann nichts anzeigen
-
 - Kontoplan kein refresh nach Datenspeicherung (2x Speichern drücken)
 
-Erweiterung:
+--- Erweiterungen ---------------------------------
+
+Fibu Ausgabe
+- Alle Bilanzen als PDF ausdrucken
+- Bilanz Wählen: jede auf einer Seite oder zusammen
+- Journal Wählen: Datum von bis
+- Kontoblatt Wählen: KontoNr von bis, Datum von bis
+
+
 - Wenn alte DB geöffnet dann Tabellen auf neue Version migrieren (siehe checkTableVersion())
 - Wenn Fibu kopieren fertig [Schliessen] Button einbauen und aktivieren.
 - Alle DB's von der Datenbank lesen und anzeigen, auch wenn unvollständig (evt. über Config)
 - siehe Trace Meldung bei Buchungen.
 
-- Wenn Buchung eingegeben, dann noch blau in der Liste, kann diese nicht ändern
-- Buchung bei Kontoblatt-Ansicht auch ändern, jetzt muss in die Buchungssicht gewechselt werden.
-	=> ändern bei Buchung als Pop-up, könnte bei Kontoblatt auch verwendet werden.
 - Umbuchen von einem Konto in ein anderes:
 	Konto auswählen => alle Buchungen anzeigen mit Selektionskästli
 	Andere Konto wählen
 	Die ausgewählten Buchungen wechseln
 - Summen Fettschrift möglich?
-
------neu Januar 2024 -----------
-Buttons von BuchungView nach BuchungEingabe, inkl. Message
-
 
 
 --------------------------------

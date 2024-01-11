@@ -8,7 +8,6 @@ import java.awt.event.MouseListener;
 import java.text.ParseException;
 import java.util.Iterator;
 
-import javax.swing.JInternalFrame;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -21,8 +20,8 @@ import com.rmo.fibu.model.BuchungData;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Trace;
+import com.rmo.fibu.view.util.BetragRenderer;
 import com.rmo.fibu.view.util.ColumnRenderer;
-import com.rmo.fibu.view.util.DoubleRenderer;
 
 
 /** Die Anzeige der Buchungen. Bestent aus einer Tabelle in einem Scrollpane.
@@ -110,7 +109,7 @@ public class BuchungenFrame extends BuchungenBaseFrame
 			columModel.getColumn(i).setCellRenderer(colRender);
 		}
 		// für den Betrag den Double Renderer
-		mBuchungTable.setDefaultRenderer(Double.class, new DoubleRenderer());
+		mBuchungTable.setDefaultRenderer(Double.class, new BetragRenderer());
 		// Die ganze Tabelle in einem ScrollPane
 		mBuchungScroller = new JScrollPane(mBuchungTable);
 		return mBuchungScroller;
@@ -120,7 +119,6 @@ public class BuchungenFrame extends BuchungenBaseFrame
 	//--- Listeners ------------------------------
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO zuerst testen, ob was selektiert, wenn nicht Fehlermeldung
 		mBuchungView.showPopup(e);
 	}
 
@@ -169,6 +167,7 @@ public class BuchungenFrame extends BuchungenBaseFrame
 	}
 
 	/** An das Ende der Liste scrollen */
+	@Override
 	public void scrollToLastEntry() {
 		validate();
 		JScrollBar bar = mBuchungScroller.getVerticalScrollBar();
@@ -263,18 +262,20 @@ public class BuchungenFrame extends BuchungenBaseFrame
 		return mBuchungScroller;
 	}
 
+
 	@Override
 	public void repaintBuchungen() {
 		mBuchungTable.repaint();
-		
+
 	}
-	
+
 	/**
 	 * Meldung, dass Zeilen eingefüft wurden
 	 */
+	@Override
 	public void rowsInserted(int firstRow, int lastRow) {
 		this.fireRowsInserted(firstRow, lastRow);
 	}
-	
+
 }
 

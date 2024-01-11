@@ -5,7 +5,6 @@ import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
@@ -17,11 +16,9 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -32,6 +29,7 @@ import com.rmo.fibu.exception.BuchungValueException;
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.KontoNotFoundException;
 import com.rmo.fibu.model.Buchung;
+import com.rmo.fibu.model.BuchungOfKontoModel;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Datum;
 import com.rmo.fibu.util.Trace;
@@ -40,17 +38,18 @@ import com.rmo.fibu.view.util.JTextFiledExt;
 
 /**
  * Eingabe aller Werte einer Buchung.
- * KontoList als Dialog, zeile 118 noch unkomment
  */
-public class BuchungEingabe extends JInternalFrame {
+public class BuchungEingabe extends JPanel {
 
 	private static final long serialVersionUID = 2924698558789708812L;
 	/** Das Objekt wo die Eingabe eingebettet ist */
 	private BuchungEingabeInterface mParent;
-	/** Selektion der Konti, für Soll und Haben, ein internalFrame */
-	private KtoSelectFrame mKtoSelectFrame;
-	/** Selektion der Konti, für Soll und Haben */
-	private KtoSelectDialog mKtoSelectDialog;
+
+	private KontoListDialog mKontoListDialog;
+	private BuchungOfKontoModel mKontoBuchungen = null;
+	
+	/** KontoListe für die Anzeige aller Konti */
+//	private KontoListScrollPane		mKontoListe;
 
 	// ---- die TextFelder für die Eingabe
 	private JTextField mTfDatum;
@@ -61,14 +60,12 @@ public class BuchungEingabe extends JInternalFrame {
 	private JFormattedTextField mTfBetrag;
 	// Die ID der Buchung, die bearbeitet wird, ist -1 wenn neu.
 	private long mId = -1;
-	/** true wenn Soll oder Haben editiert werden */
-	private boolean 	mEditingKto = false;
-
+	
 	//----- die Buttons
 	private JButton     mButtonOk;
 	private JButton     mButtonSave;
 	private JButton     mButtonCancel;
-
+	
 	/** Message-Feld für die Fehlerausgabe */
 	private JLabel		mMessage;
 
@@ -79,7 +76,7 @@ public class BuchungEingabe extends JInternalFrame {
 	// wird verwendet für die Vorgabe der nächsten Eingabe
 	private boolean mDatumSame = false;
 	private boolean mBelegSame = false;
-
+	
 	/** Wenn eine Buchung zur Bearbeitung ausgewählt wurde,
 	 * bis Speichern gedrückt */
 	private boolean mChangeing = false;
@@ -93,11 +90,20 @@ public class BuchungEingabe extends JInternalFrame {
 	private JTextComponent mFieldToFill = null;
 
 	/**
-	 * Create the panel
+	 * Create the panel.
 	 */
 	public BuchungEingabe(BuchungEingabeInterface parent) {
 		Trace.println(3, "BuchungEingabe.Konstruktor");
 		mParent = parent;
+	}
+	
+	/**
+	 * Create the panel, ein zweiter Konstruktor mit anderen Daten
+	 */
+	public BuchungEingabe(BuchungEingabeInterface parent, BuchungOfKontoModel kontoBuchungen) {
+		Trace.println(3, "BuchungEingabe.Konstruktor");
+		mParent = parent;
+		mKontoBuchungen = kontoBuchungen;
 	}
 
 
@@ -111,21 +117,14 @@ public class BuchungEingabe extends JInternalFrame {
 		// die letzte Buchung in den Temporären Speicher
 		mTempBuchung = mParent.getLastBuchung();
 
-//		JPanel lPanel = new JPanel(new GridLayout(0, 1));
-		JPanel lPanel = new JPanel();
-		lPanel.setLayout(new BoxLayout(lPanel, BoxLayout.PAGE_AXIS));
+		JPanel lPanel = new JPanel(new GridLayout(0, 1));
 		lPanel.add(initEnterFields());
 		lPanel.add(initButtons());
 		lPanel.add(initMessage());
+		lPanel.setBorder(BorderFactory.createLineBorder(Color.red));
 
-		if (mParent.isBuchungView()) {
-			mKtoSelectFrame = new KtoSelectFrame(this);
-			mParent.getPaneCenter().add(mKtoSelectFrame.initKtoSelectFrame());
-		}
-		else {
-			mKtoSelectDialog = new KtoSelectDialog(this);
-			mKtoSelectDialog.initKtoSelectDialog();
-		}
+		mKontoListDialog = new KontoListDialog(this);
+		mKontoListDialog.init();
 
 		initListenersDatum();
 		initListenersBeleg();
@@ -133,7 +132,7 @@ public class BuchungEingabe extends JInternalFrame {
 		initListenersSoll();
 		initListenersHaben();
 		initListenersBetrag();
-
+		
 		enableButtons();
 
 		return lPanel;
@@ -224,7 +223,7 @@ public class BuchungEingabe extends JInternalFrame {
 
 		return lPanel;
 	}
-
+	
 
 	/** Initialisierung der Buttons für die Eingabe, inkl. Listener.
 	 */
@@ -241,7 +240,7 @@ public class BuchungEingabe extends JInternalFrame {
 				okActionPerformed();
 			}
 		});
-
+		
 		// der Button muss requestFocus haben (siehe FoucusListener)
 		mButtonOk.addKeyListener(new KeyAdapter() {
 			@Override
@@ -252,7 +251,7 @@ public class BuchungEingabe extends JInternalFrame {
 				}
 			}
 		});
-
+		
 		// ist nötig, damit der Ok-Button den Focus erhält, um Enter abzufangen ???
 		mButtonOk.addFocusListener(new FocusListener() {
 			@Override
@@ -290,21 +289,18 @@ public class BuchungEingabe extends JInternalFrame {
 
 		return lPanel;
 	}
-
+	
 	/** Initialisierung des Message-Feldes
 	 */
 	private Container initMessage() {
 		Trace.println(3,"BuchungView.initMessage()");
-		mMessage = new JLabel("Info:");
-		mMessage.setSize(100, 10);
-		mMessage.setFont(Config.fontText);
-		mMessage.setBorder(BorderFactory.createLineBorder(Color.red));
+		mMessage = new JLabel("Status:");
 		return mMessage;
 	}
 
 
-
-
+	
+	
 	/** Enables / disables Buttons oder Menus: Ok, Save, Change, Delete.<br>
 	 */
 	public void enableButtons() {
@@ -328,8 +324,10 @@ public class BuchungEingabe extends JInternalFrame {
 		// Cancel: immer aktiv
 		mButtonCancel.setEnabled(true);
 		mParent.setBuchungMenu(enteringBooking(), mChangeing);
+		// TODO stimmt das: den Focus immer auf Save setzen, da sonst Eingabe-Felder den Focus erhalten
+		//mButtonSave.requestFocus();
 	}
-
+	
 	/** prüft, ob eine Buchung eingegeben wird.
 	 * @return true, wenn mehr als 2 Felder ausgefüllt sind
 	 */
@@ -352,6 +350,9 @@ public class BuchungEingabe extends JInternalFrame {
 				if (mTfDatum.getText().length() > 2) {
 					mTfDatum.setCaretPosition(2);
 				}
+				// TODO evt. implementieren
+				// gehe zum letzten Eintrag in der Buchungsliste
+				mParent.scrollToEnd();
 			}
 
 			@Override
@@ -424,17 +425,14 @@ public class BuchungEingabe extends JInternalFrame {
 			@Override
 			public void focusGained(FocusEvent event) {
 				Trace.println(6, "BuchungEingabe SollKonto gain Focus");
-				if (!mEditingKto) {
-					// wenn eitiert wird, nichts machen
-					if (!event.isTemporary()) {
-						focusGainedEnterField(mTfSoll, mTempBuchung.getSollAsString());
-						showKontoListe();
-						//mHasKontoLostFocus = false;
-						mFieldToFill = mTfSoll;					
-						try {
-							selectRowKontoList(mTfSoll.getText());
-						} catch (KontoNotFoundException ex) {
-						}
+				if (!event.isTemporary()) {
+					focusGainedEnterField(mTfSoll, mTempBuchung.getSollAsString());
+					showKontoListe();
+					//mHasKontoLostFocus = false;
+					mFieldToFill = mTfSoll;
+					try {
+						mKontoListDialog.selectRow(mTfSoll.getText());
+					} catch (KontoNotFoundException ex) {
 					}
 				}
 			}
@@ -448,7 +446,6 @@ public class BuchungEingabe extends JInternalFrame {
 				}
 			}
 		});
-		
 		// überwachung der Tastatur-Eingabe
 		mTfSoll.addKeyListener(new KeyListener() {
 			@Override
@@ -483,15 +480,13 @@ public class BuchungEingabe extends JInternalFrame {
 			@Override
 			public void focusGained(FocusEvent event) {
 				Trace.println(6, "BuchungEingabe HabenKonto gain Focus");
-				if (!mEditingKto) {
-					if (!event.isTemporary()) {
-						showKontoListe();
-						mFieldToFill = mTfHaben;
-						focusGainedEnterField(mTfHaben, mTempBuchung.getHabenAsString());
-						try {
-							selectRowKontoList(mTfHaben.getText());
-						} catch (KontoNotFoundException ex) {
-						}
+				if (!event.isTemporary()) {
+					showKontoListe();
+					mFieldToFill = mTfHaben;
+					focusGainedEnterField(mTfHaben, mTempBuchung.getHabenAsString());
+					try {
+						mKontoListDialog.selectRow(mTfHaben.getText());
+					} catch (KontoNotFoundException ex) {
 					}
 				}
 			}
@@ -557,6 +552,8 @@ public class BuchungEingabe extends JInternalFrame {
 		mTfBetrag.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// TODO mButtonOk evt. impl.
+//				mButtonOk.requestFocus();
 			}
 		});
 	}
@@ -579,7 +576,6 @@ public class BuchungEingabe extends JInternalFrame {
 	/** FocusLost Behandlung für alle Standard-Enter Fields */
 	private void focusLostEnterField(JTextComponent field) {
 		Trace.println(6, "BuchungView.focusLostEnterField()");
-		mEditingKto = false;
 		isTfEmpty(field, true);
 		enableButtons();
 //		mFieldToFill = field;
@@ -675,8 +671,6 @@ public class BuchungEingabe extends JInternalFrame {
 			event.consume();
 			return;
 		}
-		// das Feld wird editiert
-		mEditingKto = true;
 		// Der Enter-Event
 		if (lEnter) {
 			nextField.requestFocus();
@@ -684,19 +678,19 @@ public class BuchungEingabe extends JInternalFrame {
 		// zukünftigen String zusammenstellen
 		String lEingabe = kontoField.getText();
 		if (lBackSpace) {
-			if (lEingabe.length() < 1) {
+			if (lEingabe.length() <= 1) {
 				lEingabe = "";
-//			} else {
-//				lEingabe = lEingabe.substring(0, lEingabe.length() - 1);
+			} else {
+				lEingabe = lEingabe.substring(0, lEingabe.length() - 1);
 			}
 		} else {
 			lEingabe += event.getKeyChar();
 		}
 		try {
-			String lKontoNr = getKontoNrFromEingabe(lEingabe);
+
+			String lKontoNr = mKontoListDialog.selectRow(lEingabe);
 			// wenn KontoNummer vervollständigt, dann diese setzen
-//			if (!lBackSpace && (lKontoNr.length() > lEingabe.length())) {
-			if (!lBackSpace ) {
+			if (!lBackSpace && (lKontoNr.length() > lEingabe.length())) {
 				event.consume();
 				kontoField.setText(lKontoNr);
 			}
@@ -706,7 +700,7 @@ public class BuchungEingabe extends JInternalFrame {
 	}
 
 	/**
-	 * Wenn eine Kontonummer selektiert wurde, vom KtoSelectDialog.
+	 * Wenn eine Kontonummer selektiert wurde, vom KontoListDialog.
 	 *
 	 * @param kontoNr
 	 */
@@ -725,24 +719,26 @@ public class BuchungEingabe extends JInternalFrame {
 			mTfBetrag.requestFocus();
 		}
 	}
-
-
-
+	
+	
+	
 	/** Ok-Button wurde gedrückt: Werte prüfen, in Buchung kopieren.
 	 *  Wenn keine Fehler aufgetreten sind, wird true zurückgegeben, sonst
 	 *  false */
 	private boolean okActionPerformed () {
 		Trace.println(3, "BuchungView.okActionPerformed()");
-		hideKontoListe();
+		// RTODO
+//		hideKontoListe();
 		try {
 			// Die Buchung im Model speichern
 			mParent.getBuchungData().add(copyToBuchung());
 			int lastRowNr = mParent.getBuchungData().getRowCount()-1;
+			// TODO prüfen, ob noch notwendig
 			mParent.getBuchungenFrame().rowsInserted(lastRowNr-1, lastRowNr);
 			if (getMid() < 0) {
 				mNewBookingsSaved = false;
 			}
-
+			
 			copyToTemp();
 			//mBuchungListe.repaint();
 			clearEingabe();
@@ -759,7 +755,7 @@ public class BuchungEingabe extends JInternalFrame {
 		    Trace.println(3, "BuchungView.okActionPerformed() ===> end");
 		}
 	}
-
+	
 	/** Save-Button wurde gedrückt.
 	 *  Wenn die bearbeitete Buchung ID > 0, dann nur diese Buchung sichern
 	 *  sonst alle neuen Buchungen sichern. */
@@ -783,10 +779,12 @@ public class BuchungEingabe extends JInternalFrame {
 			}
 			enableButtons();
 			deleteMessage();
-
+			// TODO braucht es das noch?
+			if (mKontoBuchungen != null) {
+				mKontoBuchungen.fireTableDataChanged();
+			}
 			mParent.getBuchungenFrame().repaintBuchungen();
-			mParent.hideEingabe();
-			// @TODO damit nicht der Betrag den Focus erhält
+			// @todo damit nicht der Betrag den Focus erhält
 			return true;
 		}
 		catch (FibuException pEx) {
@@ -799,10 +797,13 @@ public class BuchungEingabe extends JInternalFrame {
 	/** Cancel-Button wurde gedrückt.
 	 *  Die Eingabe leeren, Buttons zurücksetzen */
 	private void cancelActionPerformed (ActionEvent e) {
-		hideKontoListe();
+		// TODO hideKontoListe
+//		hideKontoListe();
 		clearEingabe();
 		mChangeing = false;
 		enableButtons();
+		// TODO testen, ob nötig
+//		mBuchungListe.repaint();
 	}
 
 	/**
@@ -812,7 +813,7 @@ public class BuchungEingabe extends JInternalFrame {
 	public boolean newBookingSaved() {
 		return mNewBookingsSaved;
 	}
-
+	
 	/**
 	 * prüft alle Eingabefelder.
 	 *
@@ -952,58 +953,24 @@ public class BuchungEingabe extends JInternalFrame {
 		mId = pBuchung.getID();
 	}
 
-	
-	private void selectRowKontoList(String konto)  throws KontoNotFoundException  {
-		if (mParent.isBuchungView()) {
-			mKtoSelectFrame.selectRow(konto);				
-		}
-		else {
-			mKtoSelectDialog.selectRow(konto);	
-		}
-	}
-
-	
-	private String getKontoNrFromEingabe(String eingabe) throws KontoNotFoundException {
-		if (mParent.isBuchungView()) {
-			return mKtoSelectFrame.selectRow(eingabe);
-		}
-		else {
-			return mKtoSelectDialog.selectRow(eingabe);
-		}
-	}
-
-
 	/**
 	 * Die Kontoliste in den Vordergrund
 	 */
 	private void showKontoListe() {
-		// je nachdem woher ein anderer Dialog aufrufne
-		if (mParent.isBuchungView()) {
-			Point pt = mTfText.getLocation();
-			pt.y += 100;
-			mKtoSelectFrame.getFrame().setLocation(pt);
-			mKtoSelectFrame.getFrame().setVisible(true);
-		}
-		else {
-			mKtoSelectDialog.getDialog().setLocationRelativeTo(mTfDatum);
-			mKtoSelectDialog.getDialog().setVisible(true);
-			mKtoSelectDialog.getDialog().setAlwaysOnTop(true);
-		}
+		mKontoListDialog.getDialog().setLocationRelativeTo(mTfDatum);
+		mKontoListDialog.getDialog().setVisible(true);
+		mKontoListDialog.getDialog().setAlwaysOnTop(true);
 	}
 
 	/**
 	 * KontoListe in den Hintergrund
 	 */
 	private void hideKontoListe() {
-		mEditingKto = false;
-		if (mParent.isBuchungView()) {
-			mKtoSelectFrame.getFrame().setVisible(false);
-		}
-		else {
-			mKtoSelectDialog.getDialog().setVisible(false);
-		}
+		mKontoListDialog.getDialog().setVisible(false);
+		// TODO mHasKontoLostFocus wird das noch gebraucht?
+//		mHasKontoLostFocus = false;
 	}
-
+	
 	/** Setzt den Standard-String in die Message */
 	private void deleteMessage() {
 		mMessage.setText("Status:");

@@ -13,10 +13,10 @@ import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.view.BuchungModel;
 
-/** Renderer für alle double-werte (Betröge) in einer Tabelle.
+/** Renderer für alle double-werte (Beträge) in einer Tabelle.
  *  für die Formatierung wird DecimalFormat verwendet
  */
-public class DoubleRenderer extends DefaultTableCellRenderer {
+public class BetragRenderer extends DefaultTableCellRenderer {
 
 	private static final long serialVersionUID = -8134423132902425546L;
 	private DecimalFormat 	mFormat = new DecimalFormat("###,###,##0.00");
@@ -25,14 +25,14 @@ public class DoubleRenderer extends DefaultTableCellRenderer {
 	private BuchungData     mBuchungData = null;
 
 	/** Konstruktor */
-	public DoubleRenderer() {
+	public BetragRenderer() {
 		super();
 		setFont(Config.fontText);
 		init();
 	}
 
 	/** Konstruktor, mit Model */
-	public DoubleRenderer(BuchungModel tableModel) {
+	public BetragRenderer(BuchungModel tableModel) {
 		super();
 		setFont(Config.fontText);
 		mBuchungModel = tableModel;

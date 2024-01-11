@@ -78,7 +78,7 @@ public class FibuView extends JFrame
 	private FibuCopyFrom mOtherFibu = null;
 	private KontoView mKontoView = null;
 	private KontoplanView mKontoplan = null;
-	private AuswertungView mAuswertung = null;
+	private BilanzenView mAuswertung = null;
 
 	// --- Buttons die allg. gesteuert werden
 	JButton btnOpen = new JButton();
@@ -368,6 +368,14 @@ public class FibuView extends JFrame
 		mnuAbschluss.setEnabled(false);
 		mnuAbschluss.setFont(Config.fontTextBold);
 		mnuAbschluss.setText("Abschluss");
+		mnuAbschluss.addActionListener(new java.awt.event.ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mnuAbschlussAction(e);
+			}
+		});
+
+
 
 		mnuNeu.setFont(Config.fontTextBold);
 		mnuNeu.setText("Neue Fibu anlegen");
@@ -468,7 +476,7 @@ public class FibuView extends JFrame
 
 	void openBilanzAction(ActionEvent e) {
 		if (mAuswertung == null) {
-			mAuswertung = new AuswertungView();
+			mAuswertung = new BilanzenView();
 		}
 		mAuswertung.setVisible(true);
 	}
@@ -717,6 +725,14 @@ public class FibuView extends JFrame
 		} catch (FibuException ex) {
 			showMessage(ex);
 		}
+	}
+
+	/**
+	 * Abschluss einer Fibu, Name erfragen. Fibu anlegen, wenn noch
+	 * nicht existiert
+	 */
+	private void mnuAbschlussAction(ActionEvent e) {
+		JOptionPane.showMessageDialog(this, "Noch nicht implementiert");
 	}
 
 

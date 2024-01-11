@@ -130,9 +130,11 @@ private void printPage(Graphics2D g, boolean printing) {
  *  yPos verändert (für die Berechnung). */
 private void printHeader(Graphics2D g, boolean printing) {
 	yPos = Config.printerTitelFont.getSize2D();
+	// druckt alles was im Header steht
 	for (int i = 0; i < printerModel.getHeaderCount(); i++) {
 		if (i > 0) {
-			yPos += Config.printerTitelFont.getSize2D();
+			// eine Zeile weiter
+			yPos += spaceForOneRow()*2;
 		}
 		if (printing) {
 			// Kopfzeile Text
@@ -148,9 +150,9 @@ private void printHeader(Graphics2D g, boolean printing) {
 		}
 	}
 	// doppelter Zeilenabstand
-	yPos += spaceForOneRow() + Config.printerRowAbstand;
+	yPos += spaceForOneRow()*2;
 	if (printing) {
-		// die Ueberschriften
+		// die Header der Columns
 		g.setFont( Config.printerNormalFont );
 		for (int i = 0; i <  printerModel.getColCount(); i++) {
 			printCelleText(g, i, printerModel.getColName(i), printerModel.getColRight(i) );
@@ -190,7 +192,8 @@ private void printRow(Graphics2D g) {
 private void printCelle(Graphics2D g, int colNr) {
 	Object value = getTableModel().getValueAt(printedRows, colNr);
     String text = null;
-	boolean printRight = false;
+	boolean printRight = printerModel.getColRight(colNr);
+
     //--- Werte formatieren
 	if (value instanceof Double) {
 		// wenn -1 dann nix anzeigen
@@ -200,7 +203,7 @@ private void printCelle(Graphics2D g, int colNr) {
 		else {
             text = mDecimalFormat.format(value);
 		}
-		printRight = true;
+//		printRight = true;
 	}
 	else if (value instanceof Integer) {
 		// wenn 0 dann nix anzeigen
@@ -210,13 +213,13 @@ private void printCelle(Graphics2D g, int colNr) {
 		else {
 		    text = value.toString();
 		}
-		printRight = true;
+//		printRight = true;
 	}
 	else if (value instanceof Date) {
 		text = DatumFormat.getDatumInstance().format(value);
 	}
     else {
-		printRight = printerModel.getColRight(colNr);
+//		printRight = printerModel.getColRight(colNr);
 		if (value != null)  {
 			text = value.toString();
 		}

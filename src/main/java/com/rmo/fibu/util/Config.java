@@ -97,6 +97,11 @@ public class Config {
 	public static Point winKontoblattLoc;
 	public static Dimension winKontoblattDim;
 
+	private static final String sWinKontoBuchung = "window.kontoBuchung";
+	public static Point winKontoBuchungLoc;
+	public static Dimension winKontoBuchungDim;
+
+
 	private static final String sWinKontoplan = "window.kontoplan";
 	public static Point winKontoplanLoc;
 	public static Dimension winKontoplanDim;
@@ -278,6 +283,7 @@ public class Config {
 		// --- Fenster einlesen
 		readWindowBuchung();
 		readWindowKontoblatt();
+		readWindowKontoBuchung();
 		readWindowKontoplan();
 		readWindowBilanzen();
 
@@ -334,6 +340,7 @@ public class Config {
 		Trace.println(0, "Config.writeProperties()");
 		writeWindowBuchung();
 		writeWindowKontoblatt();
+		writeWindowKontoBuchung();
 		writeWindowKontoplan();
 		writeWindowBilanzen();
 		writeWindowCsvSetup();
@@ -457,6 +464,24 @@ public class Config {
 		writeWindowConfig(sWinKontoblatt, winKontoblattLoc, winKontoblattDim);
 	}
 
+	
+	/**
+	 * Position und Grösse des Windows
+	 */
+	private static void readWindowKontoBuchung() throws FibuException {
+		winKontoBuchungDim = readWindowDimension(sWinKontoBuchung);
+		winKontoBuchungLoc= readWindowPoint(sWinKontoBuchung);
+		writeWindowKontoBuchung();
+	}
+
+	/**
+	 * Position und Grösse des Windows in das Property schreiben
+	 */
+	private static void writeWindowKontoBuchung() throws FibuException {
+		writeWindowConfig(sWinKontoBuchung, winKontoBuchungLoc, winKontoBuchungDim);
+	}
+
+
 	/**
 	 * Position und Grösse des Windows Kotoplan
 	 */
@@ -473,7 +498,7 @@ public class Config {
 		writeWindowConfig(sWinKontoplan, winKontoplanLoc, winKontoplanDim);
 	}
 
-
+	
 	/**
 	 * Position und Grösse des Windows Kotoplan
 	 */

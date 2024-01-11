@@ -16,7 +16,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
@@ -28,10 +27,6 @@ import javax.swing.table.TableColumn;
 
 import com.rmo.fibu.exception.FibuRuntimeException;
 import com.rmo.fibu.exception.KontoNotFoundException;
-import com.rmo.fibu.model.Buchung;
-import com.rmo.fibu.model.BuchungOfKontoModel;
-import com.rmo.fibu.model.BuchungOfKontoModelNormal;
-import com.rmo.fibu.model.BuchungOfKontoModelSorted;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.DbConnection;
 import com.rmo.fibu.model.Konto;
@@ -42,7 +37,6 @@ import com.rmo.fibu.util.ExcelExportKonto;
 import com.rmo.fibu.util.TablePrinter;
 import com.rmo.fibu.util.TablePrinterModel;
 import com.rmo.fibu.util.Trace;
-import com.rmo.fibu.view.util.DoubleRenderer;
 
 /**
  * Die View aller Buchungen eines Kontos. Links ist die Liste mit allen Konti. Oben die
@@ -61,17 +55,17 @@ public class KontoView extends JFrame
 
 	/** Die Models zu dieser View Verbindung zur DB */
 	// private BuchungData mBuchungData = null;
-	private KontoData mKontoData = null;
+	private KontoData 	mKontoData = null;
 	/** Das Model zur Konto-Tabelle */
-	private KontoModel mKontoModel;
+	private KontoModel 	mKontoModel;
 	/** Tabelle für die Anzeige der Konti */
-	private JTable mKontoTable;
+	private JTable 		mKontoTable;
 	/** Tabelle für die Anzeige der Buchungen, enthält alle Buchungen */
 	private BuchungenKontoFrame	mBuchungenFrame;
 
 	// ---- die TextFelder für die Eingabe des Datums
 	private JTextField mTfDatumAb; // ab Datum
-	
+
 	// ----- die Buttons
 	private JButton mButtonShow;
 	private JButton mButtonSort;
@@ -153,7 +147,7 @@ public class KontoView extends JFrame
 				mBuchungenFrame.actionBuchungenSortieren(mKontoNrShow, getSelectedDate());
 			}
 		});
-		
+
 		// --- Buchung ändern
 		mButtonBuchung = new JButton("Buchung ändern");
 		mButtonBuchung.setFont(Config.fontTextBold);
@@ -164,7 +158,7 @@ public class KontoView extends JFrame
 				mBuchungenFrame.actionBuchungAendern();
 			}
 		});
-		
+
 		// --- ExcelExport-button
 		mButtonExcel = new JButton("Excel export");
 		mButtonExcel.setFont(Config.fontTextBold);
@@ -175,7 +169,7 @@ public class KontoView extends JFrame
 				actionExcelExport();
 			}
 		});
-		
+
 		// --- Print-button
 		mButtonPrint = new JButton("Drucken");
 		mButtonPrint.setFont(Config.fontTextBold);
@@ -491,13 +485,12 @@ public class KontoView extends JFrame
 			return "";
 		}
 	}
-	
+
 
 	@Override
 	public void tableChanged(TableModelEvent e) {
-		// TODO Auto-generated method stub
 	}
-	
+
 	public void repaintBuchungen() {
 		mBuchungenFrame.repaintBuchungen();
 	}
@@ -509,8 +502,8 @@ public class KontoView extends JFrame
 	public BuchungenBaseFrame getBuchungenFrame() {
 		return mBuchungenFrame;
 	}
-	
-	
+
+
 	/****************************************
 	 * für den Test der view
 	 */

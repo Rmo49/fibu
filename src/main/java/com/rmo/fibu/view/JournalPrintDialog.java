@@ -19,8 +19,7 @@ import com.rmo.fibu.util.TablePrinterModel;
 
 /** Druckt das Journal, zeigt den Fortschritt an.
  */
-public class JournalPrintDialog
-extends JDialog
+public class JournalPrintDialog extends JDialog
 {
 	private static final long serialVersionUID = 4851610485407935411L;
 	/** Anzeige des Fortschrittes */

@@ -4,7 +4,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 import javax.swing.BoundedRangeModel;
-import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -13,32 +12,30 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
-import com.rmo.fibu.exception.FibuRuntimeException;
 import com.rmo.fibu.exception.KontoNotFoundException;
 import com.rmo.fibu.model.DataBeanContext;
-import com.rmo.fibu.model.DbConnection;
 import com.rmo.fibu.model.Konto;
 import com.rmo.fibu.model.KontoData;
 import com.rmo.fibu.model.KontoNrVector;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Trace;
 
-/** KontoListDialog: Zeigt die Liste der vorhandenen Konti,
+/** KtoSelectDialog: Zeigt die Liste der vorhandenen Konti,
  * wird bei BuchungEingabe verwendet.
  * Die Konti werden in einer JTable angezeigt.
  * Das aktuelle Konto wird in der mitte angezeigt.
  * Grösse und Position wird vom parent-Fenster gesteuert.
  */
 
- public class KontoListDialog {
+ public class KtoSelectBase {
 //	private static final long serialVersionUID = -1430502678322062915L;
 	/** Die Verbindung zur aufrufenden Klasse */
 	private BuchungEingabe	mEingabe = null;
-	/** KontoDialog damit die KontoListe free floating ist */
-	private JDialog 		mKontoDialog;
+	/** Die Verbindung zur DB */
+	private KontoData   	mKontoData = null;
+
 	/** KontoListe für die Anzeige aller Konti */
 	private JScrollPane		mKontoScrollPane;
-	private KontoData   	mKontoData = null;      // die Verbindung zur DB
 	/** Das Model zur Tabelle */
 	private KontoModel		mKontoTableModel;
 	/** Die Liste aller KontoNummern, für Prüfungen */
@@ -47,51 +44,32 @@ import com.rmo.fibu.util.Trace;
     private JTable 			mKontoTable = new JTable();
 
 	/**
-	 * KontoListScrollPane constructor.
+	 * KtoSelectBase constructor.
 	 * startet initialiserung des Frames.
 	 * eingabe zeigt auf den Panel woher aufgerufen
 	 */
-	public KontoListDialog(BuchungEingabe eingabe) {
-		super();
+	protected KtoSelectBase(BuchungEingabe eingabe) {
 		mEingabe = eingabe;
 		// title resizable closable maximizable iconifiable
 		mKontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
-		// beim Data als Observer anmelden
-		//mKtoData.addKtoObserver(this);
-//		init();
+		init();
 	}
 
 	/**
 	 * Initialisieren aller Ressourcen.
 	 */
-	public void init() {
+	private void init() {
 		initTableKonto();
-		initKontoList();
+		initScrollPane();
 		initListener();
-
-//		this.setSize(250, 400);
-//		this.setLocation(100, 20);
-	}
-
-	/** Initialisierung des Anzeige-Bereiches: Kontoliste in ScrollPane
-	 * in einem DesktopPane.
-	 */
-	private void initKontoList() {
-		Trace.println(4,"KontoListDialog.initKontoList()");
-
-		mKontoDialog = new JDialog();
-		mKontoScrollPane = new JScrollPane(mKontoTable);
-		mKontoDialog.add(mKontoScrollPane);
-
-		mKontoDialog.setTitle("Konto Liste (Dialog)");
-		setKontoDialogSize();
 	}
 
 
 	/** Initialisierung der Tabelle für Konto mit dem Model
+	 * inkl. ScrollPane
 	 */
 	private void initTableKonto() {
-		Trace.println(3,"KontoListDialog.initTable()");
+		Trace.println(3,"KtoSelectDialog.initTable()");
 		// ----- die Tabelle mit dem Model
 		mKontoTableModel = new KontoModel();
 		mKontoTable.setModel(mKontoTableModel);
@@ -112,7 +90,19 @@ import com.rmo.fibu.util.Trace;
 		}
 		mKontoTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		mKontoNr = new KontoNrVector();
+	}
 
+	/**
+	 * Die ScrollPane enthält die Tabelle
+	 */
+	private void initScrollPane() {
+		mKontoScrollPane = new JScrollPane(mKontoTable);
+	}
+
+	/**
+	 * Listener, wenn Zahl eingegeben wrid, sprint zur entsprechenden Kontonummer
+	 */
+	private void initListener() {
 		// wenn eine Zeile selektiert wurde
 		mKontoTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 
@@ -121,32 +111,14 @@ import com.rmo.fibu.util.Trace;
 				int index = mKontoTable.getSelectedRow();
 				Object kontoNr = mKontoTableModel.getValueAt(index, 0);
 				mEingabe.kontoSelected((Integer)kontoNr);
-				Trace.println(6, "KontoListScrollPane.ListSelectionListener, Index: " + index);
+				Trace.println(6, "KtoSelectDialog.ListSelectionListener, Index: " + index);
 			}
 		});
-	}
 
-
-	public JDialog getDialog() {
-		return mKontoDialog;
-	}
-
-	/** Grösse und Position der Kontoliste berechnen */
-	private void setKontoDialogSize() {
-		mKontoDialog.setSize(270, 440);
-		mKontoScrollPane.setSize(250, 400);
-		mKontoScrollPane.setLocation(0, 0);
-	}
-
-	/**
-	 * Listener, wenn Zahl eingegeben wrid, sprint zur entsprechenden Kontonummer
-	 */
-	private void initListener() {
 		mKontoTable.addKeyListener(new KeyListener() {
-			
 			@Override
 			public void keyTyped(KeyEvent event) {
-				Trace.println(5,"KontoListDialog.keyTyped");
+				Trace.println(5,"KtoSelectDialog.keyTyped");
 				char xx = event.getKeyChar();
 				Trace.println(5,"Char: " + xx);
 				String kontoNr = String.valueOf(xx);
@@ -156,13 +128,13 @@ import com.rmo.fibu.util.Trace;
 				}
 				catch (KontoNotFoundException ex) {
 					// wenn keine Zahl, nix tun
-				}					
+				}
 			}
-			
+
 			@Override
 			public void keyReleased(KeyEvent e) {
 				// funktioniert nicht, da Fokus auf diesem Dialog
-//				Trace.println(5,"KontoListDialog.keyReleased");
+//				Trace.println(5,"KtoSelectDialog.keyReleased");
 //				int kCode=e.getKeyCode();
 //				Trace.println(5,"KeyCode: " + kCode);
 //				// wenn Tab-Taste gedrückt
@@ -170,15 +142,17 @@ import com.rmo.fibu.util.Trace;
 //					mEingabe.selectNextField();
 //				}
 			}
-			
+
 			@Override
 			public void keyPressed(KeyEvent e) {
-//				Trace.println(5,"KontoListDialog.keyPressed");	
+//				Trace.println(5,"KtoSelectDialog.keyPressed");
 			}
 		});
 	}
-	
-	
+
+	protected JScrollPane getKtoScrollPane() {
+		return mKontoScrollPane;
+	}
 
 	/** Setzt den Cursor auf das entsprechende Konto.
 	 * @param ktoNr kann auch nur ein Teil der Nr enthalten.
@@ -186,7 +160,7 @@ import com.rmo.fibu.util.Trace;
 	 *  wird diese zurückgegeben, sonst der korrekte Teil
 	 */
 	public String selectRow (String ktoNr) throws KontoNotFoundException {
-		Trace.println(4,"KontoListDialog.selectRow(ktoNr:" + ktoNr +")");
+		Trace.println(4,"KtoSelectDialog.selectRow(ktoNr:" + ktoNr +")");
 		// prüfen, ob eine gültige KontoNr
 		int rowNr = checkNr(ktoNr);
 		// Scrollbar berechnen und bewegen
@@ -203,7 +177,7 @@ import com.rmo.fibu.util.Trace;
 		return expandKontoNr (ktoNr, rowNr);
 	}
 
-	
+
 	/** Sucht nach der KontoNummer, oder Teile davon
 	 * @param ktoNr die Nummer 1..4-stellig
 	 * @return die ZeilenNr (Position) des Kontos
@@ -329,13 +303,13 @@ import com.rmo.fibu.util.Trace;
 	/**********************************************
 	* für den einzel-Test der View.
 	*/
-	public static void main(String[] args) {
-		try {
-			DbConnection.open("FibuLeer");
-			KontoplanView lKonto = new KontoplanView();
-			lKonto.setVisible(true);
-		}
-		catch (FibuRuntimeException ex) {}
-	}
+//	public static void main(String[] args) {
+//		try {
+//			DbConnection.open("FibuLeer");
+//			KontoplanView lKonto = new KontoplanView();
+//			lKonto.setVisible(true);
+//		}
+//		catch (FibuRuntimeException ex) {}
+//	}
 
 }

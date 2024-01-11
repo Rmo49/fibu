@@ -49,7 +49,7 @@ public class KontoListPrinter implements Printable {
 	private float			pageHeight;
 	//--- Werte der Tabelle
 	/** Der Array mit den Summen */
-	private double[]        colSumme;
+	private double[]        mColSumme;
 	/** Die genaue Start-Position jeder Spalte (0..n) */
 	private double[]         colStartX;
 	/** Format für Beträge */
@@ -103,8 +103,6 @@ public int print(Graphics g, PageFormat pf, int pageIndex) throws PrinterExcepti
 	Graphics2D g2 = (Graphics2D) g;
 	g2.translate(pf.getImageableX(), pf.getImageableY());
 	this.mPageIndex = pageIndex;
-	// fuer die schleppenden Summen
-	colSumme = new double [printerModel.getColCount()];
 	// absulute Cols berechnen
 	setColStartX(g2, pf);
 
@@ -115,7 +113,7 @@ public int print(Graphics g, PageFormat pf, int pageIndex) throws PrinterExcepti
 	mAllKontoPrinted = false;
 	mPageFull = false;
 	while (lPageIndex < mPageIndex) {
-		//--- drucken ohen ausgaben (berechnen)
+		//--- drucken ohne ausgaben (berechnen)
 		printPage(null, false);
 		lPageIndex++;
 		mPageFull = false;
@@ -130,13 +128,16 @@ public int print(Graphics g, PageFormat pf, int pageIndex) throws PrinterExcepti
 }
 
 /** Eine Seite drucken, jede Zeile setzt seine eigene Position in yPos */
-private void printPage(Graphics2D g, boolean printing) {
+private void printPage(Graphics2D g2, boolean printing) {
 	String bool = "false";
 	if (printing) bool = "true";
 	Trace.println(4, "KontoListPrinter.printPage(printing: " + bool +")");
 
 	// erste Position auf der Seite
-	yPos = Config.printerTitelFont.getSize2D();
+	yPos = Config.printerNormalFont.getSize2D();
+	printHeader(g2, printing);
+	yPos += spaceForOneRow()*3;
+
 	// durchlaufen bis alle Konto einer Seite gedruckt sind
 	while (!mAllKontoPrinted && !mPageFull) {
 		// nächstes Konto lesen falls das letzte gedruckt wurde
@@ -146,25 +147,27 @@ private void printPage(Graphics2D g, boolean printing) {
 				mVectorNr++;
 				mKontoPage = 1;
 				mKontoPrinted = false;
+				// die Summen für die Summe am ende der Page
+				initSummen();
 			}
 			else {
 				mAllKontoPrinted = true;
 			}
 		}
 		//ein Konto durcken, oder fortsetzen falls noch nicht fertig gedruckt
-		printKonto(g, printing);
-		printFooter(g, printing);
+		printKonto(g2, printing);
+//		printFooter(g2, printing);
 	}
 }
 
 /** Ein Konto drucken. Wenn nicht auf einer Seite möglich,
  * dann wird mKontoPrinted auf false gesetzt.
  */
-private void printKonto (Graphics2D g, boolean printing) {
+private void printKonto (Graphics2D g2, boolean printing) {
 	//--- Kopfzeile drucken
-	printHeader(g, printing);
+	printKontoName(g2, printing);
 	//--- Konto-Eintraege drucken
-	printTable(g, printing);
+	printTable(g2, printing);
 	if (mKontoPrinted) {
 		mPrintedRows = 0; // für nachstes Konto
 		// noch genuegend Platz für ein weiteres Konto?
@@ -175,7 +178,7 @@ private void printKonto (Graphics2D g, boolean printing) {
 	}
 	else {
 		//--- Zwischensumme am Ende der Seite drucken
-		printSumme(g, printing);
+		printSumme(g2, printing);
 		mKontoPage++;
 		mPageFull = true;
 	}
@@ -184,7 +187,7 @@ private void printKonto (Graphics2D g, boolean printing) {
 /** Kopfzeile drucken, bei der ersten Kopfzeile rechts die Seitenzahl
  * Wenn not printing, wird nur die Position von
  *  yPos verändert (für die Berechnung). */
-private void printHeader(Graphics2D g, boolean printing) {
+private void printKontoName (Graphics2D g, boolean printing) {
 	for (int i = 0; i < printerModel.getHeaderCount(); i++) {
 		if (i > 0) {
 			yPos += Config.printerTitelFont.getSize2D();
@@ -192,7 +195,7 @@ private void printHeader(Graphics2D g, boolean printing) {
 		if (printing) {
 			// Kopfzeile Text
 			g.setFont( Config.printerTitelFont );
-			g.drawString(printerModel.getHeader(mKontoNr, i), 0, yPos);
+			g.drawString(printerModel.getKontoName(mKontoNr, i), 0, yPos);
 			// PageNummer auf der ersten Zeile
 			if (i == 0) {
 				String pageNumber = "Kontoblatt: " + (mKontoPage);
@@ -349,9 +352,9 @@ private void printSumme(Graphics2D g, boolean printing) {
 		//--- Linie zeichnen -2 punkte über Text
 		printSummeLine(g, (int)yPos - (int)Config.printerNormalFont.getSize2D() - 2);
 		for( int colNr = 0; colNr < printerModel.getColCount(); colNr++ ) {
-			if ( printerModel.getColSumme(colNr) ) {
+			if ( printerModel.isColToAdd(colNr) ) {
 				// Summe ausgeben
-				String text = mDecimalFormat.format(colSumme[colNr]);
+				String text = mDecimalFormat.format(mColSumme[colNr]);
 				printCelleText(g, colNr, text, true);
 			}
 		}
@@ -362,14 +365,30 @@ private void printSumme(Graphics2D g, boolean printing) {
  * @param yLine die y-Position der Linie */
 private void printSummeLine(Graphics2D g, int yLine) {
 	for( int colNr = 0; colNr < printerModel.getColCount(); colNr++ ) {
-		if ( printerModel.getColSumme(colNr) ) {
+		if ( printerModel.isColToAdd(colNr) ) {
 			// Linie zeichnen -2 punkte über Text
 			g.drawLine((int)(colStartX[colNr] + Config.printerColAbstand), yLine,
 				(int)(colStartX[colNr+1] - Config.printerColAbstand), yLine);
 		}
 	}
 }
+
 /** Die Seitennummer am Ende der Seite */
+private void printHeader(Graphics2D g, boolean printing) {
+	if (!printing) return;
+	// Name der Fibu ausgeben
+	g.setFont( Config.printerNormalFont );
+	g.drawString(Config.sFibuTitel, 0, yPos);
+	// Die Seitennummer
+	String seiteNumber = "Seite: " + (mPageIndex+1);
+		int width = g.getFontMetrics().stringWidth(seiteNumber);
+	g.drawString(seiteNumber, pageWidth-width, yPos);
+	//--- Linie
+	g.drawLine(0, (int)yPos+4, (int)pageWidth, (int)yPos+4);
+}
+
+
+/** Die Seitennummer am Ende der Seite 
 private void printFooter(Graphics2D g, boolean printing) {
 	if (!printing) return;
 	String seiteNumber = "Seite: " + (mPageIndex+1);
@@ -377,16 +396,17 @@ private void printFooter(Graphics2D g, boolean printing) {
 	int width = g.getFontMetrics().stringWidth(seiteNumber);
 	g.drawString(seiteNumber, pageWidth-width, pageHeight-2);
 }
+*/
 
 /** Die Summe am Ende der Seite */
 private void addSumme() {
 	for (int i = 0; i < printerModel.getColCount(); i++) {
-		if (printerModel.getColSumme(i)) {
+		if (printerModel.isColToAdd(i)) {
 			try {
 				double lBetrag = ((Double)printerModel.getValueAt(mKontoNr, mPrintedRows, i)).doubleValue();
 				if (lBetrag > 0) {
 					// negativer Betrag nicht erlaubt, nicht gesetzter Betrag wird mit -1 initialisiert
-					colSumme[i] += lBetrag;
+					mColSumme[i] += lBetrag;
 				}
 			}
 			catch (ClassCastException e) {
@@ -397,6 +417,17 @@ private void addSumme() {
 		}
 	}
 }
+
+/**
+ * Für die schleppende Summe
+ */
+private void initSummen() {
+	if (mColSumme != null) {
+		mColSumme = null;
+	}
+	mColSumme = new double [printerModel.getColCount()];
+}
+
 
 /** berechnet die Startposition einer Spalte
  *  For Convenience: es wird eine Spalte mehr als vorhanden berechnet */
