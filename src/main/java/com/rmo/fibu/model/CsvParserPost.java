@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class CsvParserPost extends CsvParserBase {
 
@@ -18,8 +19,8 @@ public class CsvParserPost extends CsvParserBase {
 
 
 
-	public CsvParserPost(File file) {
-		super(file);
+	public CsvParserPost(File file, Date von, Date bis) {
+		super(file, von, bis);
 	}
 
 	@Override

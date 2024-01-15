@@ -18,6 +18,9 @@ Util
 
 - Kontoplan kein refresh nach Datenspeicherung (2x Speichern drücken)
 
+- Nach JCombobox<String> suchen, für Konto Kontokombox
+
+
 --- Erweiterungen ---------------------------------
 
 Fibu Ausgabe

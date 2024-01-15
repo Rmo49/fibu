@@ -32,7 +32,12 @@ public abstract class CsvParserBase {
 	static private String	buchungFalsch = ">>> Fehlerhafte Buchung in CSV file <<<";
 
 	protected CsvBank		mCompany = null;
+	// Datum von bis 
+	private Date mDateVon = null;
+	private Date mDateBis = null;
+
 	// file von dem gelesen werden soll
+	
 	protected CSVReader			reader = null;
 //	protected BufferedReader	br = null;
 	protected String 			line = "";
@@ -80,7 +85,9 @@ public abstract class CsvParserBase {
 	 * Konstruktor, initialisiert gemeinsame Daten.
 	 * @param file
 	 */
-	public CsvParserBase (File file) {
+	public CsvParserBase (File file, Date von, Date bis) {
+		mDateVon = von;
+		mDateBis = bis;
 		try {
 			final CSVParser parser = new CSVParserBuilder()
 					.withSeparator(getSplitChar())
@@ -186,6 +193,7 @@ public abstract class CsvParserBase {
 
 	/**
 	 * Vom text lesen, bis ein datum gefunden.
+	 * Hier könnte der gesuchte Range geprüft werden 
 	 */
 	private boolean readDatum(BuchungCsv buchung) {
 		Date datum;
@@ -193,6 +201,10 @@ public abstract class CsvParserBase {
 			datum = getDatum(lineValues[getDateCol()]);
 		} catch (ParseException pe) {
 			// weitermachen, bis Datum gefunden
+			return false;
+		}
+		// Range prüfen, wenn ausserhalb false zurückgeben
+		if (datum.before(mDateVon) || datum.after(mDateBis)) {
 			return false;
 		}
 		buchung.setDatum(datum);
@@ -211,6 +223,7 @@ public abstract class CsvParserBase {
 	    //dateFormat.setLenient(false);
 	    return getDateFormat().parse(datum.trim());
 	}
+	
 
 	/** Aendert den String in Gross und Kleinbuchstaben
 	 * @param text

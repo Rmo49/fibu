@@ -8,6 +8,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -24,6 +25,10 @@ import com.rmo.fibu.model.CsvBank;
 public class PdfParser {
 
 	private CsvBank bank;
+	// Datum von bis 
+	private Date mDateVon = null;
+	private Date mDateBis = null;
+
 	// enthält das gesamte Dokument
 	private PdfDokument pdfDoku;
 
@@ -38,10 +43,12 @@ public class PdfParser {
 	 * Initialisierung des Parsers, liest das PDF-Dokument.
 	 * @param file
 	 */
-	public PdfParser(File file) {
-			PdfWordStripper stripper = pdfStripWords(file);
-			// enthält das pdf-Dokument
-			pdfDoku = new PdfDokument(stripper.pdfWords);
+	public PdfParser(File file,  Date von, Date bis) {
+		mDateVon = von;
+		mDateBis = bis;
+		PdfWordStripper stripper = pdfStripWords(file);
+		// enthält das pdf-Dokument
+		pdfDoku = new PdfDokument(stripper.pdfWords);
 	}
 
 	/**
@@ -128,18 +135,24 @@ public class PdfParser {
 
 	/**
 	 * Ist der String ein datum?
+	 * Hier könnte geprüft werden, ob Datum im gesuchten Range liegt
+	 * wenn ausserhalb, dann wir false zurück gegeben.
 	 * @param datum
-	 * @return true wenn das ein Datum ist.
+	 * @return true wenn das ein Datum ist, oder wenn im Range von ... bis liegt
 	 */
 	private boolean isDatum(String datum) {
 		if (datum.length() < 8) {
 			return false;
 		}
 	    mDateFormat.setLenient(false);
+	    Date lDate;
 	    try {
-	      mDateFormat.parse(datum.trim());
+	      lDate = mDateFormat.parse(datum.trim());
 	    } catch (ParseException pe) {
 	      return false;
+	    }
+	    if (lDate.before(mDateVon) || lDate.after(mDateBis)) {
+	    	return false;
 	    }
 	    return true;
 	}

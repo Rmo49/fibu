@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class CsvParserRaiff extends CsvParserBase {
 
@@ -18,8 +19,8 @@ public class CsvParserRaiff extends CsvParserBase {
 	// der Trennchar zwischen Buchung-Einträgen
 	private final char mTrennChar = ';';
 
-	public CsvParserRaiff(File file) {
-		super(file);
+	public CsvParserRaiff(File file, Date von, Date bis) {
+		super(file, von, bis);
 	}
 
 	@Override

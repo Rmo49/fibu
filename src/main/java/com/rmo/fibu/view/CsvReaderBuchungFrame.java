@@ -65,6 +65,11 @@ public class CsvReaderBuchungFrame extends JFrame {
 	private CsvBank mBank = null;
 	// file von dem gelesen werden soll
 	private File mFile = null;
+	// Datum von bis 
+	private Date mDateVon = null;
+	private Date mDateBis = null;
+	
+	
 	// view elemente
 	private JTable mTableView = new JTable();
 	private DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer();
@@ -83,7 +88,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	private char tagWort = 'w';
 
 	/**
-	 * Konstruktor für einlesen von jsonFile
+	 * Konstruktor für einlesen von jsonFile, diese wurde noch nicht gespeichert
 	 *
 	 * @param bankName
 	 */
@@ -96,12 +101,14 @@ public class CsvReaderBuchungFrame extends JFrame {
 	/**
 	 * Construtor needs filename with CSV-data
 	 */
-	public CsvReaderBuchungFrame(File file, CsvBank bank) {
+	public CsvReaderBuchungFrame(File file, CsvBank bank, Date von, Date bis) {
 		super("CSV Buchungen anpassen");
 		Trace.println(3, "CsvReaderBuchungFrame(file: " + file.getAbsolutePath() + ")");
 		this.mFile = file;
 		this.mBank = bank;
 		this.mBankName = bank.getBankName();
+		this.mDateVon = von;
+		this.mDateBis = bis;
 		init();
 	}
 
@@ -645,7 +652,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	}
 
 	/**
-	 * Einlesen alle Daten vom CSV file, Zeile um Zeile.
+	 * Einlesen alle Daten vom CSV file oder PDF file, Zeile um Zeile.
 	 */
 	private void csvEinlesen() {
 		Trace.println(5, "CsvReaderBuchungFrame.csvEinlesen()");
@@ -653,11 +660,11 @@ public class CsvReaderBuchungFrame extends JFrame {
 			// wenn von CSV einlesen
 			CsvParserBase parser = null;
 			if (mBankName.equalsIgnoreCase(CsvParserBase.companyNamePost)) {
-				parser = new CsvParserPost(mFile);
+				parser = new CsvParserPost(mFile, mDateVon, mDateBis);
 			} else if (mBankName.equalsIgnoreCase(CsvParserBase.companyNameCS)) {
-				parser = new CsvParserCs(mFile);
+				parser = new CsvParserCs(mFile, mDateVon, mDateBis);
 			} else if (mBankName.equalsIgnoreCase(CsvParserBase.companyNameRaiff)) {
-				parser = new CsvParserRaiff(mFile);
+				parser = new CsvParserRaiff(mFile, mDateVon, mDateBis);
 			} else {
 				StringBuffer sb = new StringBuffer(100);
 				sb.append("Kein Setup für: ");
@@ -678,7 +685,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 		}
 		else {
 			// wenn von PDF einlesen
-			PdfParser pdfParser = new PdfParser(mFile);
+			PdfParser pdfParser = new PdfParser(mFile, mDateVon, mDateBis);
 			mBuchungList = pdfParser.startParsing(mBank);
 			if (mBuchungList.size() <= 0) {
 				StringBuffer sb = new StringBuffer(100);

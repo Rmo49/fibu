@@ -3,6 +3,7 @@ package com.rmo.fibu.model;
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class CsvParserCs extends CsvParserBase {
 
@@ -17,8 +18,8 @@ public class CsvParserCs extends CsvParserBase {
 	// die Spalte des Betrages
 	private final int mBetragCol = 2;
 
-	public CsvParserCs(File file) {
-		super(file);
+	public CsvParserCs(File file, Date von, Date bis) {
+		super(file, von, bis);
 	}
 
 	@Override
