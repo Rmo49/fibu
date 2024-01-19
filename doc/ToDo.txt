@@ -1,9 +1,3 @@
-
-Kontoblatt
-- Button Buchung ändern nur wenn selektiert
-- wenn ein Kontoblatt geöffnet, sollte an das Ende springen, wie bei Buchungen
-	Problem: Welchen Listener muss aufgerufen werden, wenn die BuchungListe angezeigt wird?
-
 Buchung
 - Kleine Fehler wenn Kontonummer edititert wird: Wenn Backspace springt auf erstes Konto
 - Wenn in Soll und Haben, dann mit yPos operieren => PdfSetup anpassen ???
@@ -17,8 +11,6 @@ Util
 => erster Versuch in der Klasse FibuView.
 
 - Kontoplan kein refresh nach Datenspeicherung (2x Speichern drücken)
-
-- Nach JCombobox<String> suchen, für Konto Kontokombox
 
 
 --- Erweiterungen ---------------------------------

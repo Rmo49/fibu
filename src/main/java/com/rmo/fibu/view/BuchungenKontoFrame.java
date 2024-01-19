@@ -9,6 +9,9 @@ import java.util.Date;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableColumn;
@@ -35,11 +38,14 @@ implements TableModelListener, ComponentListener {
 	private KontoView		mKontoView;
 
 	/** die Kontonummer deren Buchungen angezeigt werden sollen */
-	private int 			mKontoNr;
+	private int 			mKontoNr = -1;
 	/** ab diesem Datum */
 	private Date 			mDatum;
 	/** Tabelle für die Anzeige der Buchungen eines Konto */
 	private JTable 			mBuchungTable;
+	private ListSelectionModel mBuchungCellSelection;
+	private boolean 		mBuchungSelected = false;
+	
 	/** Das Model zu allen Buchungen eines Kontos */
 	private BuchungOfKontoModel mBuchungModel = null;
 	/** der Container aller Buchungen */
@@ -76,6 +82,20 @@ implements TableModelListener, ComponentListener {
 		mScrollPaneBuchung.setPreferredSize(new Dimension(50 * Config.windowTextSize, 100));
 		mScrollPaneBuchung.setMinimumSize(new Dimension(30 * Config.windowTextSize, 100));
 		mBuchungTable.getModel().addTableModelListener(this);
+		
+		mBuchungCellSelection =	mBuchungTable.getSelectionModel();
+		mBuchungCellSelection.addListSelectionListener(new ListSelectionListener() {
+		      public void valueChanged(ListSelectionEvent e) {
+		    	  int[] selectedRow = mBuchungTable.getSelectedRows();
+		    	  if (selectedRow.length > 0) {
+		    		  mBuchungSelected = true;
+		    	  }
+		    	  else {
+		    		  mBuchungSelected = false;
+		    	  }
+		    	  mKontoView.enableButtons();
+		      }	    	  
+		});		
 		return mScrollPaneBuchung;
 	}
 
@@ -142,7 +162,7 @@ implements TableModelListener, ComponentListener {
 		scrollToLastEntry();
 	}
 
-
+	
 	/**
 	 * Show-Button wurde gedrückt. Ab-Datum einlesen, diese dem Model
 	 * bekanntgeben, Anzeige starten
@@ -216,7 +236,15 @@ implements TableModelListener, ComponentListener {
 	public JTable getBuchungTable() {
 		return mBuchungTable;
 	}
-
+	
+	/**
+	 * Gibt an, ob eine Buchung selektiert wurde
+	 * @return true wenn selektiert
+	 */
+	public boolean isBuchungSelected() {
+		return mBuchungSelected;
+	}
+	
 	/**
 	 * Die Daten von der DB lesen und in die Tabelle kopieren
 	 */

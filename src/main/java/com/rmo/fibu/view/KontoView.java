@@ -20,15 +20,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
-import com.rmo.fibu.exception.FibuRuntimeException;
 import com.rmo.fibu.exception.KontoNotFoundException;
 import com.rmo.fibu.model.DataBeanContext;
-import com.rmo.fibu.model.DbConnection;
 import com.rmo.fibu.model.Konto;
 import com.rmo.fibu.model.KontoData;
 import com.rmo.fibu.util.Config;
@@ -55,9 +56,12 @@ public class KontoView extends JFrame
 
 	/** Die Models zu dieser View Verbindung zur DB */
 	// private BuchungData mBuchungData = null;
-	private KontoData 	mKontoData = null;
+	private KontoData 		mKontoData = null;
 	/** Das Model zur Konto-Tabelle */
-	private KontoModel 	mKontoModel;
+	private KontoModel 		mKontoModel;
+	private ListSelectionModel mKontoCellSelection;
+	private boolean 		mKontoSelected = false;
+
 	/** Tabelle für die Anzeige der Konti */
 	private JTable 		mKontoTable;
 	/** Tabelle für die Anzeige der Buchungen, enthält alle Buchungen */
@@ -75,7 +79,7 @@ public class KontoView extends JFrame
 	private JButton mButtonClose;
 
 	/** Die Kontonummer, deren Buchungen angezeigt werden */
-	private int mKontoNrShow;
+	private int mKontoNrShow = -1;
 
 	/**
 	 * KontoView constructor.
@@ -99,6 +103,7 @@ public class KontoView extends JFrame
 		mKontoData = (KontoData) DataBeanContext.getContext().getDataBean(
 				KontoData.class);
 		initView();
+		enableButtons();
 	}
 
 	/**
@@ -202,6 +207,7 @@ public class KontoView extends JFrame
 		lSplitPane.setDividerLocation( ((KTONR_WIDTH + KTOTEXT_WIDTH) * Config.windowTextSize) );
 //				+ lSplitPane.getInsets().left);
 
+		mBuchungenFrame.scrollToLastEntry();
 		return lSplitPane;
 	}
 
@@ -234,6 +240,38 @@ public class KontoView extends JFrame
 		JScrollPane lScrollPane = new JScrollPane(mKontoTable);
 		lScrollPane.setPreferredSize(new Dimension(KTOTEXT_WIDTH * Config.windowTextSize, 100));
 		lScrollPane.setMinimumSize(new Dimension(KTONR_WIDTH * Config.windowTextSize, 100));
+		
+		addListeners();
+		return lScrollPane;
+	}
+
+	
+	/**
+	 * Die Anzeige der Buttons, 
+	 */
+	public void enableButtons() {
+		if (! mKontoSelected) {
+			mButtonShow.setEnabled(false);
+			mButtonSort.setEnabled(false);
+			mButtonExcel.setEnabled(false);
+			mButtonPrint.setEnabled(false);
+		}
+		else {
+			mButtonShow.setEnabled(true);
+			mButtonSort.setEnabled(true);
+			mButtonExcel.setEnabled(true);
+			mButtonPrint.setEnabled(true);
+			
+		}
+		if (mBuchungenFrame.isBuchungSelected()) {
+			mButtonBuchung.setEnabled(true);
+		}
+		else {
+			mButtonBuchung.setEnabled(false);
+		}		
+	}
+
+	private void addListeners() {
 		mKontoTable.addMouseListener(new java.awt.event.MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -242,9 +280,22 @@ public class KontoView extends JFrame
 				}
 			}
 		});
-		return lScrollPane;
-	}
+		
+		mKontoCellSelection = mKontoTable.getSelectionModel();
+		mKontoCellSelection.addListSelectionListener(new ListSelectionListener() {
+		      public void valueChanged(ListSelectionEvent e) {
+		    	  int[] selectedRow = mKontoTable.getSelectedRows();
+		    	  if (selectedRow.length > 0) {
+		    		  mKontoSelected = true;
+		    	  }
+		    	  else {
+		    		  mKontoSelected = false;
+		    	  }
+		    	  enableButtons();
+		      }	    	  
+		});		
 
+	}
 
 
 	// ----- Implementierung des TablePrinterModels -------------------
@@ -385,6 +436,7 @@ public class KontoView extends JFrame
 		}
 	}
 
+	
 	/**
 	 * Close-Button wurde gedrückt.
 	 */
@@ -392,6 +444,7 @@ public class KontoView extends JFrame
 		this.setVisible(false);
 	}
 
+	
 	/**
 	 * Die selektierte Kontonummer setzen
 	 * @return
@@ -507,13 +560,13 @@ public class KontoView extends JFrame
 	/****************************************
 	 * für den Test der view
 	 */
-	public static void main(String[] args) {
-		try {
-			DbConnection.open("FibuLeer");
-			KontoView lKonto = new KontoView();
-			lKonto.setVisible(true);
-		} catch (FibuRuntimeException ex) {
-		}
-	}
+//	public static void main(String[] args) {
+//		try {
+//			DbConnection.open("FibuLeer");
+//			KontoView lKonto = new KontoView();
+//			lKonto.setVisible(true);
+//		} catch (FibuRuntimeException ex) {
+//		}
+//	}
 
 }// endOfClass
