@@ -36,7 +36,6 @@ Fibu Ausgabe
 
 --------------------------------
 Fehler Maria DB
-- Wenn bei CSV Buchungen anpassen, "Speichern in Fibu" gedrückt dann stopped der Service "Maria DB" <= verifiziert!
 - Wenn erste Buchung gespeichert wird, dann stopped Service "Maria DB"
 - siehe: BuchungData.save => addRow (wenn noch nicht vorhanden)
 - BuchungData.addRow =>
