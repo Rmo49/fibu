@@ -40,7 +40,7 @@ import com.rmo.fibu.view.util.JTextFiledExt;
 
 /**
  * Eingabe aller Werte einer Buchung.
- * KontoList als Dialog, zeile 118 noch unkomment
+ * KontoList als Frame oder Dialog, abhängig von Parent.
  */
 public class BuchungEingabe extends JInternalFrame {
 
@@ -111,7 +111,6 @@ public class BuchungEingabe extends JInternalFrame {
 		// die letzte Buchung in den Temporären Speicher
 		mTempBuchung = mParent.getLastBuchung();
 
-//		JPanel lPanel = new JPanel(new GridLayout(0, 1));
 		JPanel lPanel = new JPanel();
 		lPanel.setLayout(new BoxLayout(lPanel, BoxLayout.PAGE_AXIS));
 		lPanel.add(initEnterFields());
