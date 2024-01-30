@@ -294,7 +294,7 @@ public class BuchungEingabe extends JInternalFrame {
 	/** Initialisierung des Message-Feldes
 	 */
 	private Container initMessage() {
-		Trace.println(3,"BuchungView.initMessage()");
+		Trace.println(3,"BuchungEingabe.initMessage()");
 		mMessage = new JLabel("Info:");
 		mMessage.setSize(100, 10);
 		mMessage.setFont(Config.fontText);
@@ -578,7 +578,7 @@ public class BuchungEingabe extends JInternalFrame {
 
 	/** FocusLost Behandlung für alle Standard-Enter Fields */
 	private void focusLostEnterField(JTextComponent field) {
-		Trace.println(6, "BuchungView.focusLostEnterField()");
+		Trace.println(6, "BuchungEingabe.focusLostEnterField()");
 		mEditingKto = false;
 		isTfEmpty(field, true);
 		enableButtons();
@@ -587,7 +587,7 @@ public class BuchungEingabe extends JInternalFrame {
 
 	/** Parsed das Datum */
 	private void datumFocusLost() {
-		Trace.println(5, "BuchungView.datumFocusLost()");
+		Trace.println(5, "BuchungEingabe.datumFocusLost()");
 		try {
 			Datum datum = new Datum(mTfDatum.getText());
 			mTfDatum.setText(datum.toString());
@@ -609,7 +609,7 @@ public class BuchungEingabe extends JInternalFrame {
 
 	/** Werte der letzten Buchung, bzw. selektierten Buchung eintragen */
 	private void belegFocusGained() {
-		Trace.println(5, "BuchungView.belegFocusGained()");
+		Trace.println(5, "BuchungEingabe.belegFocusGained()");
 		hideKontoListe();
 		// nichts tun, wenn bereits etwas eingegeben
 		if (mTfBeleg.getText() == null || mTfBeleg.getText().length() > 0)
@@ -624,7 +624,7 @@ public class BuchungEingabe extends JInternalFrame {
 
 	/** Beleg Eingaben prüfen, ob etwas eingegeben, Feld markieren */
 	private void belegFocusLost() {
-		Trace.println(5, "BuchungView.belegFocusLost()");
+		Trace.println(5, "BuchungEingabe.belegFocusLost()");
 		if (mTfBeleg.getText() == null || mTfBeleg.getText().length() > 0)
 			return;
 		isTfEmpty(mTfBeleg, true);
@@ -649,10 +649,10 @@ public class BuchungEingabe extends JInternalFrame {
 	}
 
 	/**
-	 * In KonotFelder (TfSoll oder TfHaben) wurde eine Taste gedrückt nur Backspace
+	 * In KontoFelder (TfSoll oder TfHaben) wurde eine Taste gedrückt nur Backspace
 	 */
 	private void kontoKeyPressed(KeyEvent e) {
-		Trace.println(5, "BuchungView.kontoKeyPressed (KeyCode:" + e.getKeyCode() + ")");
+		Trace.println(5, "BuchungEingabe.kontoKeyPressed (KeyCode:" + e.getKeyCode() + ")");
 		if (e.getKeyCode() != KeyEvent.VK_BACK_SPACE) {
 			// nur BackSpace erlaubt (nicht Pfeil links / rechts, Delete etc)
 			e.consume();
@@ -665,7 +665,7 @@ public class BuchungEingabe extends JInternalFrame {
 	 * Kontonummer zurückkommt, diese setzen
 	 */
 	private void kontoKeyTyped(KeyEvent event, JTextField kontoField, JComponent nextField) {
-		Trace.println(5, "BuchungView.kontoKeyTyped(" + event.getKeyChar() + " " + event.getKeyCode() + ")");
+		Trace.println(5, "BuchungEingabe.kontoKeyTyped(" + event.getKeyChar() + " " + event.getKeyCode() + ")");
 		// BackSpace gedrückt?
 		boolean lBackSpace = (event.getKeyChar() == KeyEvent.VK_BACK_SPACE); // '\b');
 		boolean lEnter = (event.getKeyChar() == KeyEvent.VK_ENTER); // '\n');
@@ -732,7 +732,7 @@ public class BuchungEingabe extends JInternalFrame {
 	 *  Wenn keine Fehler aufgetreten sind, wird true zurückgegeben, sonst
 	 *  false */
 	private boolean okActionPerformed () {
-		Trace.println(3, "BuchungView.okActionPerformed()");
+		Trace.println(3, "BuchungEingabe.okActionPerformed()");
 		hideKontoListe();
 		try {
 			// Die Buchung im Model speichern
@@ -756,7 +756,7 @@ public class BuchungEingabe extends JInternalFrame {
 			return false;
 		}
 		finally {
-		    Trace.println(3, "BuchungView.okActionPerformed() ===> end");
+		    Trace.println(3, "BuchungEingabe.okActionPerformed() ===> end");
 		}
 	}
 
@@ -896,7 +896,7 @@ public class BuchungEingabe extends JInternalFrame {
 	 * @return Buchung falls alle Felder richtige Werte enthalten, sonst null
 	 */
 	public Buchung copyToBuchung() throws BuchungValueException {
-		Trace.println(4, "BuchungView.copyToBuchung()");
+		Trace.println(4, "BuchungEingabe.copyToBuchung()");
 		// zuerst prüfen, ob ein Feld leer ist.
 		if (hasEnterFieldsEmpty(true) > 0) {
 			throw new BuchungValueException("Eingabe fehlt");
@@ -937,7 +937,7 @@ public class BuchungEingabe extends JInternalFrame {
 	 * Setzt die Buttons entsprechend
 	 */
 	public void copyToFields(Buchung pBuchung) {
-		Trace.println(4, "BuchungView.copyToGui()");
+		Trace.println(4, "BuchungEingabe.copyToGui()");
 		mButtonOk.setEnabled(false);
 		clearEingabe();
 		mChangeing = true;
