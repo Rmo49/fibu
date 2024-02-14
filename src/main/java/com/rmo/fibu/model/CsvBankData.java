@@ -270,6 +270,21 @@ public class CsvBankData extends DataBase {
 		}
 	}
 
+	/**
+	 * Alle Einräge löschen
+	 * @param pCompany
+	 * @throws SQLException
+	 */
+	public void deleteAll() throws SQLException {
+		setupReadSetAll();
+		mReadSetAll.beforeFirst();
+		while (mReadSetAll.next()) {
+			mReadSetAll.deleteRow();
+		}
+	}
+
+
+
 	//----- private Methoden ------------------------------------------
 
 	/**

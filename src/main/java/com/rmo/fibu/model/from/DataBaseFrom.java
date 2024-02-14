@@ -3,24 +3,27 @@ package com.rmo.fibu.model.from;
 import java.sql.Connection;
 
 import com.rmo.fibu.exception.FibuRuntimeException;
-import com.rmo.fibu.model.DataBase;
 
 /**
 Erweiterung des Data-Models auf die Connection2
  */
-public abstract class DataModelFrom extends DataBase {
+public abstract class DataBaseFrom { //extends DataBase {
 
 	/**
 	 * Model constructor comment.
 	 */
-	public DataModelFrom() throws Exception {
+	public DataBaseFrom() throws Exception {
 		super();
 	}
 
 	/** Die Connection zu der DB */
-	@Override
 	protected Connection getConnection() throws FibuRuntimeException {
 		return DbConnectionFrom.getConnection();
 	}
+
+	/**
+	 * Jede Klasse muss den check implementieren
+	 */
+	public abstract void checkTableVersion();
 
 }

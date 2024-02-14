@@ -18,7 +18,7 @@ import com.rmo.fibu.model.Konto;
  * Konti werden mit der Klasse Konto sichtbar gemacht.
  * Wird verwendet um Daten zu kopieren.
  */
-public class KontoDataFrom extends DataModelFrom implements BeanContextServicesListener, Serializable {
+public class KontoDataFrom extends DataBaseFrom implements BeanContextServicesListener, Serializable {
 	private static final long serialVersionUID = 6158252894613753607L;
 
 

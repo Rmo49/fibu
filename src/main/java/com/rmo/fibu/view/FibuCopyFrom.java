@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.sql.SQLException;
 import java.util.Iterator;
 
 import javax.swing.BorderFactory;
@@ -35,6 +36,8 @@ import com.rmo.fibu.model.Konto;
 import com.rmo.fibu.model.KontoData;
 import com.rmo.fibu.model.from.CsvBankDataFrom;
 import com.rmo.fibu.model.from.CsvKeywordDataFrom;
+import com.rmo.fibu.model.from.DataBeanContextFrom;
+import com.rmo.fibu.model.from.DbConnectionFrom;
 import com.rmo.fibu.model.from.FibuDataBaseFrom;
 import com.rmo.fibu.model.from.FibuDataFrom;
 import com.rmo.fibu.model.from.KontoDataFrom;
@@ -207,18 +210,26 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 
 		btnKopieren.setEnabled(false);
 		message.setText("Alles kopiert");
+		// DB schliesse
+		try {
+			DbConnectionFrom.close();
+		} catch (FibuException ex) {
+			// nix tun
+		}
+
 	}
 
 	/**
 	 * Kopiert den Titel der Fibu
 	 */
 	private void copyFibuTitel() {
-		FibuDataFrom fibuDataOld = (FibuDataFrom) DataBeanContext.getContext().getDataBean(FibuDataFrom.class);
+		FibuDataFrom fibuDataFrom = (FibuDataFrom) DataBeanContextFrom.getContext().getDataBean(FibuDataFrom.class);
 		FibuData fibuData = (FibuData) DataBeanContext.getContext().getDataBean(FibuData.class);
 		try {
-			String fibuTitel = fibuDataOld.readFibuTitel();
+			String fibuTitel = fibuDataFrom.readFibuTitel();
 			fibuData.writeFibuName(fibuTitel);
 			Config.sFibuTitel = fibuTitel;
+			// TODO DAtum von und bis + 1 Jahr?, DatumFormat
 		} catch (FibuException ex) {
 			message.setText("Fehler bei copyFibuTitel: " + ex.getMessage());
 		}
@@ -229,7 +240,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 	 * Kopiert alle Konto daten, wenn nicht gefunden wird neues Konto angelegt.
 	 */
 	private void copyKonto() {
-		// zuerst Startsalo aller Konti auf 0 setzen
+		// zuerst Startsalo aller bestehenden Konti auf 0 setzen
 		KontoData kontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
 		Iterator<Konto> iter = kontoData.getIterator();
 		while (iter.hasNext()) {
@@ -243,11 +254,11 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 			}
 		}
 
-		KontoDataFrom kontoDataOld = (KontoDataFrom) DataBeanContext.getContext().getDataBean(KontoDataFrom.class);
-		Iterator<Konto> iterOld = kontoDataOld.getIterator();
+		KontoDataFrom kontoDataFrom = (KontoDataFrom) DataBeanContextFrom.getContext().getDataBean(KontoDataFrom.class);
+		Iterator<Konto> iterFrom = kontoDataFrom.getIterator();
 		Konto lKonto = new Konto();
-		while (iterOld.hasNext()) {
-			Konto lKontoOld = iterOld.next();
+		while (iterFrom.hasNext()) {
+			Konto lKontoOld = iterFrom.next();
 			try {
 				lKonto = kontoData.read(lKontoOld.getKontoNr());
 			} catch (KontoNotFoundException ex) {
@@ -275,7 +286,17 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 	 * Kopiert die Bank daten für CSV.
 	 */
 	private void copyCsvBank() {
-		CsvBankDataFrom mPdfBankDataFrom = (CsvBankDataFrom) DataBeanContext.getContext()
+		// zuerst alle Daten löschen
+		CsvBankData mReadSetAll = (CsvBankData) DataBeanContext.getContext()
+				.getDataBean(CsvBankData.class);
+		try {
+			mReadSetAll.deleteAll();
+		}
+		catch (SQLException ex) {
+			// nix machen
+		}
+		
+		CsvBankDataFrom mPdfBankDataFrom = (CsvBankDataFrom) DataBeanContextFrom.getContext()
 				.getDataBean(CsvBankDataFrom.class);
 		Iterator<CsvBank> iterFrom = mPdfBankDataFrom.getIterator();
 		CsvBankData mPdfBankData = (CsvBankData) DataBeanContext.getContext()
@@ -292,6 +313,8 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 				// das ist der default, wenn nichts gesetzt
 				lPdfBank.setDocType(1);
 			}
+			lPdfBank.setWordBefore(lPdfBankFrom.getWordBefore());
+			lPdfBank.setSpaltenArray(lPdfBankFrom.getSpaltenArray());
 			try {
 				mPdfBankData.addData(lPdfBank);
 			} catch (FibuException ex) {
@@ -304,7 +327,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 	 * Kopiert die Keywords für CSV.
 	 */
 	private void copyCvsKeywords() {
-		CsvKeywordDataFrom mPdfKeywordDataFrom = (CsvKeywordDataFrom) DataBeanContext.getContext()
+		CsvKeywordDataFrom mPdfKeywordDataFrom = (CsvKeywordDataFrom) DataBeanContextFrom.getContext()
 				.getDataBean(CsvKeywordDataFrom.class);
 		Iterator<CsvKeyKonto> iterFrom = mPdfKeywordDataFrom.getIterator();
 		CsvKeyKontoData mCsvKeywordData = (CsvKeyKontoData) DataBeanContext.getContext()

@@ -53,24 +53,6 @@ public class DbConnectionFrom {
 	}
 
 	/**
-	 * Close the Connection.
-	 */
-	public static void close() throws FibuException {
-		try {
-			// Connection schliessen
-			if (sConnection != null) {
-				// sConnection.commit();
-				sConnection.close();
-				sConnection = null;
-				Config.setDbName(null);
-			}
-		} catch (Exception e) {
-			throw new FibuException("Schliessen der DB '" + Config.getDbName()
-					+ "' Fehlermeldung: \n" + e.getMessage());
-		}
-	}
-
-	/**
 	 * Returns the Connection to database. If not open, it will setup
 	 * a connection to mySQL, or a specific schema.
 	 * @return Connection to mySql or a schema
@@ -87,10 +69,21 @@ public class DbConnectionFrom {
 	}
 
 	/**
-	 * @return true Wenn connection zu einer Fibu-DB gesetzt ist
+	 * Close the Connection.
 	 */
-	public static boolean isFibuOpen() {
-		return Config.getDbName() != null;
+	public static void close() throws FibuException {
+		try {
+			// Connection schliessen
+			if (sConnection != null) {
+				// sConnection.commit();
+				sConnection.close();
+				sConnection = null;
+			}
+		} catch (Exception e) {
+			throw new FibuException("Schliessen der DB '" + Config.getDbName()
+					+ "' Fehlermeldung: \n" + e.getMessage());
+		}
 	}
+
 
 }

@@ -3,10 +3,6 @@ package com.rmo.fibu.model;
 import java.beans.beancontext.BeanContextSupport;
 import java.util.Iterator;
 
-import com.rmo.fibu.model.from.CsvBankDataFrom;
-import com.rmo.fibu.model.from.CsvKeywordDataFrom;
-import com.rmo.fibu.model.from.FibuDataFrom;
-import com.rmo.fibu.model.from.KontoDataFrom;
 import com.rmo.fibu.util.Trace;
 
 /** Der Context des Models. Enthält alle Model-Beans (Konto, Buchung etc.).
@@ -78,16 +74,16 @@ private void setup() {
 	try {
 		add(new BuchungData());
 		add(new KontoData());
-		add(new KontoDataFrom());
+//		add(new KontoDataFrom());
 		add(new CsvBankData());
-		add(new CsvBankDataFrom());
+//		add(new CsvBankDataFrom());
 		add(new CsvKeyKontoData());
-		add(new CsvKeywordDataFrom());
+//		add(new CsvKeywordDataFrom());
 
 		//addBeanContextServicesListener(mKontoM);
 		// FibuDaten zuletzt, da Konto und Buchung einen Link darauf haben
 		add(FibuData.getFibuData());
-		add(new FibuDataFrom());
+//		add(new FibuDataFrom());
 	}
 	catch (Exception e) {
 		Trace.println(1, "Error in DataBeanContext.setup(): " + e.getMessage());

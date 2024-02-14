@@ -312,7 +312,7 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 		save(pBuchung);
 	}
 
-	
+
 	/** Check, ob eine Buchung vorhanden ist,
 	 * @return true wenn gefunden und alle Felder gleichen Inhalt haben.
 	*/
@@ -357,7 +357,7 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 			return null;
 		}
 	}
-	
+
 
 	/** Gibt das Model von Konto zurück.
 	 *  wenn nicht gefunden: KontoNotFoundException.
@@ -491,7 +491,7 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 		}
 	}
 
-	
+
 	/** Gibt die aktuelle BuchungId zurück
 	 * Berechnet diese falls am Anfang.
 	 */

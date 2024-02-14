@@ -69,7 +69,7 @@ import com.rmo.fibu.util.Trace;
 	 * inkl. ScrollPane
 	 */
 	private void initTableKonto() {
-		Trace.println(3,"KtoSelectDialog.initTable()");
+		Trace.println(3,"KontoSelectBase.initTable()");
 		// ----- die Tabelle mit dem Model
 		mKontoTableModel = new KontoModel();
 		mKontoTable.setModel(mKontoTableModel);
@@ -111,16 +111,15 @@ import com.rmo.fibu.util.Trace;
 				int index = mKontoTable.getSelectedRow();
 				Object kontoNr = mKontoTableModel.getValueAt(index, 0);
 				mEingabe.kontoSelected((Integer)kontoNr);
-				Trace.println(6, "KtoSelectDialog.ListSelectionListener, Index: " + index);
+				Trace.println(6, "KontoSelectBase.ListSelectionListener, Index: " + index);
 			}
 		});
 
 		mKontoTable.addKeyListener(new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent event) {
-				Trace.println(5,"KtoSelectDialog.keyTyped");
+				Trace.print(5,"KontoSelectBase.keyTyped, KeyCode: " + event.getKeyCode());
 				char xx = event.getKeyChar();
-				Trace.println(5,"Char: " + xx);
 				String kontoNr = String.valueOf(xx);
 				try {
 					int zeile = checkNr(kontoNr);
@@ -134,18 +133,11 @@ import com.rmo.fibu.util.Trace;
 			@Override
 			public void keyReleased(KeyEvent e) {
 				// funktioniert nicht, da Fokus auf diesem Dialog
-//				Trace.println(5,"KtoSelectDialog.keyReleased");
-//				int kCode=e.getKeyCode();
-//				Trace.println(5,"KeyCode: " + kCode);
-//				// wenn Tab-Taste gedrückt
-//				if (kCode == 9) {
-//					mEingabe.selectNextField();
-//				}
 			}
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-//				Trace.println(5,"KtoSelectDialog.keyPressed");
+//				Trace.println(5,"KontoSelectBase.keyPressed");
 			}
 		});
 	}
@@ -160,7 +152,7 @@ import com.rmo.fibu.util.Trace;
 	 *  wird diese zurückgegeben, sonst der korrekte Teil
 	 */
 	public String selectRow (String ktoNr) throws KontoNotFoundException {
-		Trace.println(4,"KtoSelectDialog.selectRow(ktoNr:" + ktoNr +")");
+		Trace.println(4,"KontoSelectBase.selectRow(ktoNr:" + ktoNr +")");
 		// prüfen, ob eine gültige KontoNr
 		int rowNr = checkNr(ktoNr);
 		// Scrollbar berechnen und bewegen

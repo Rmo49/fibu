@@ -2,6 +2,7 @@ Buchung
 - Kleine Fehler wenn Kontonummer edititert wird: Wenn Backspace springt auf erstes Konto
 - Wenn in Soll und Haben, dann mit yPos operieren => PdfSetup anpassen ???
 - Wenn Buchung eingegeben, dann noch blau in der Liste, kann diese nicht ändern
+- Setup: wenn eine Zeile gelöscht, dann sollten auch die Schlüsselworte gelöscht werden.
 
 Fibus
 - Alle DB's anzeigen, auch wenn nicht in der Liste (gilt für Situationen, wenn nicht richtig angelegt).
@@ -36,6 +37,10 @@ Fibu Ausgabe
 
 --------------------------------
 Fehler Maria DB
+
+- 27.1.24, my.ini:
+	- Dienst von verzögert auf automatisch umgestellt
+
 - Wenn erste Buchung gespeichert wird, dann stopped Service "Maria DB"
 - siehe: BuchungData.save => addRow (wenn noch nicht vorhanden)
 - BuchungData.addRow =>

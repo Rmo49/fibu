@@ -11,7 +11,7 @@ import com.rmo.fibu.util.Trace;
 /**
  * Verwaltet die Steuerdaten der Fibu.
  */
-public class FibuDataFrom extends DataModelFrom implements Serializable {
+public class FibuDataFrom extends DataBaseFrom implements Serializable {
 	private static final long serialVersionUID = -8821885201937153074L;
 
 	/**

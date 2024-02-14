@@ -1,8 +1,10 @@
 package com.rmo.fibu.model.from;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import com.rmo.fibu.exception.FibuException;
-import com.rmo.fibu.model.DataBeanContext;
-import com.rmo.fibu.model.FibuData;
 import com.rmo.fibu.util.Trace;
 
 /**
@@ -12,37 +14,37 @@ import com.rmo.fibu.util.Trace;
  * @author Ruedi
  */
 public class FibuDataBaseFrom {
-	// Create Statements
-
-	/** Verbindung zu Data bean */
-	private static FibuData mFibuData;
-	// --- Control-Vars
-
 
 	/** Eine Fibu öffnen, die connection setzen */
 	public static void openFibu(String dbName) throws FibuException {
 		Trace.println(1, "FibuDataBaseFrom.openFibu(name: " + dbName + ")");
 		// Connection öffnen
 		DbConnectionFrom.open(dbName);
-		//Config.setDbName(dbName);
 		// Stammdaten einlesen
-		readFibuData();
-		// alle Konti neu berechnen
-		Trace.println(1, "FibuView.openFibu, Konto calculate");
+		// ruft alle checks in den Data Klassen
+		DataBeanContextFrom.getContext().checkAllTableVersions();
 	}
 
-	/** Daten von der DB einlesen. */
-	private static void readFibuData() throws FibuException {
-		Trace.println(2, "FibuDataBaseFrom.readFibuData()");
-		mFibuData = (FibuData) DataBeanContext.getContext().getDataBean(
-				FibuData.class);
-		mFibuData.readFibuData();
+	/**
+	 * Prüft, ob tabelle vorhanden
+	 * @param tableName
+	 * @return
+	 * @throws SQLException
+	 */
+	public static boolean tableExist(String tableName) throws SQLException {
+	    boolean tExists = false;
+	    Connection conn = DbConnectionFrom.getConnection();
+	    try (ResultSet rs = conn.getMetaData().getTables(null, null, tableName, null)) {
+	        while (rs.next()) {
+	            String tName = rs.getString("TABLE_NAME");
+	            if (tName != null && tName.equals(tableName)) {
+	                tExists = true;
+	                break;
+	            }
+	        }
+	    }
+	    return tExists;
 	}
 
-	/** Daten in die DB schreiben */
-	public static void writeFibuData() throws FibuException {
-		Trace.println(2, "FibuDataBaseFrom.writeFibuData()");
-		mFibuData.writeFibuData();
-	}
 
 }

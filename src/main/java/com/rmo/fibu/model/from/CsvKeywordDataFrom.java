@@ -15,7 +15,7 @@ import com.rmo.fibu.model.CsvKeyKonto;
  * @author Ruedi
  *
  */
-public class CsvKeywordDataFrom extends DataModelFrom {
+public class CsvKeywordDataFrom extends DataBaseFrom {
 
 	/**
 	 * Model constructor comment.

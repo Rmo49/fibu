@@ -177,12 +177,12 @@ public abstract class BuchungOfKontoModel extends AbstractTableModel {
 			lBuchung  = mBuchungData.read(lRow.ID);
 		}
 		catch (FibuException ex) {
-			
+
 		}
 		return lBuchung;
 	}
-	
-	
+
+
 	/**
 	 * Gibt den Wert an der Koordinate row / col zurück.
 	 */

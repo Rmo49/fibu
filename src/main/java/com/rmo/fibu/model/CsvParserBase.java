@@ -32,12 +32,12 @@ public abstract class CsvParserBase {
 	static private String	buchungFalsch = ">>> Fehlerhafte Buchung in CSV file <<<";
 
 	protected CsvBank		mCompany = null;
-	// Datum von bis 
+	// Datum von bis
 	private Date mDateVon = null;
 	private Date mDateBis = null;
 
 	// file von dem gelesen werden soll
-	
+
 	protected CSVReader			reader = null;
 //	protected BufferedReader	br = null;
 	protected String 			line = "";
@@ -193,7 +193,7 @@ public abstract class CsvParserBase {
 
 	/**
 	 * Vom text lesen, bis ein datum gefunden.
-	 * Hier könnte der gesuchte Range geprüft werden 
+	 * Hier könnte der gesuchte Range geprüft werden
 	 */
 	private boolean readDatum(BuchungCsv buchung) {
 		Date datum;
@@ -223,7 +223,7 @@ public abstract class CsvParserBase {
 	    //dateFormat.setLenient(false);
 	    return getDateFormat().parse(datum.trim());
 	}
-	
+
 
 	/** Aendert den String in Gross und Kleinbuchstaben
 	 * @param text
