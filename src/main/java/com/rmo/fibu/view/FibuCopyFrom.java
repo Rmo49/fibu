@@ -14,6 +14,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -63,6 +64,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 	private String fibuName;
 	private JButton btnSelektieren;
 	private JButton btnKopieren;
+	private JCheckBox delKonto;
 
 	public FibuCopyFrom() {
 		this.setTitle("Konto Saldo kopieren");
@@ -149,6 +151,11 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 			}
 		});
 		lPanel.add(btnSelektieren);
+		lPanel.add(Box.createRigidArea(new Dimension(5, 10)));
+
+		delKonto = new JCheckBox("Konto zuerst löschen");
+		delKonto.setSelected(true);
+		lPanel.add(delKonto);		
 		lPanel.add(Box.createRigidArea(new Dimension(5, 5)));
 
 		btnKopieren = new JButton("kopieren");
@@ -163,6 +170,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 			}
 		});
 		lPanel.add(btnKopieren);
+		
 		return lPanel;
 	}
 
@@ -240,8 +248,40 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 	 * Kopiert alle Konto daten, wenn nicht gefunden wird neues Konto angelegt.
 	 */
 	private void copyKonto() {
-		// zuerst Startsalo aller bestehenden Konti auf 0 setzen
 		KontoData kontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
+
+		if (delKonto.isSelected()) {
+			// alle Konti löschen, falls noch keine Buchung darauf
+			delKonti(kontoData);
+		}
+		// zuerst Startsalo aller bestehenden Konti auf 0 setzen
+		setSaldoToZero(kontoData);		
+		copyKonti(kontoData);
+	}
+
+	
+	/**
+	 * Setzt alle Start-Saldo auf 0
+	 * @param kontoData
+	 */
+	private void delKonti(KontoData kontoData) {
+		Iterator<Konto> iter = kontoData.getIterator();
+		while (iter.hasNext()) {
+			Konto lKonto = iter.next();
+			try {
+				kontoData.delete(lKonto.getKontoNr());
+			}
+			catch (KontoNotFoundException ex) {
+				// nix tun
+			}
+		}
+	}
+
+	/**
+	 * Setzt alle Start-Saldo auf 0
+	 * @param kontoData
+	 */
+	private void setSaldoToZero(KontoData kontoData) {
 		Iterator<Konto> iter = kontoData.getIterator();
 		while (iter.hasNext()) {
 			Konto lKonto = iter.next();
@@ -253,27 +293,34 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 				// nix tun
 			}
 		}
-
+	}
+	
+	/**
+	 * Alle Saldos kopieren
+	 * @param kontoData
+	 */
+	private void copyKonti(KontoData kontoData) {
 		KontoDataFrom kontoDataFrom = (KontoDataFrom) DataBeanContextFrom.getContext().getDataBean(KontoDataFrom.class);
 		Iterator<Konto> iterFrom = kontoDataFrom.getIterator();
 		Konto lKonto = new Konto();
 		while (iterFrom.hasNext()) {
-			Konto lKontoOld = iterFrom.next();
+			Konto lKontoFrom = iterFrom.next();
 			try {
-				lKonto = kontoData.read(lKontoOld.getKontoNr());
+				lKonto = kontoData.read(lKontoFrom.getKontoNr());
 			} catch (KontoNotFoundException ex) {
 				// wenn nicht gefunden, neue Anlegen
-				lKonto.setKontoNr(lKontoOld.getKontoNr());
-				lKonto.setText(lKontoOld.getText());
-				lKonto.setIstSollKonto(lKontoOld.isSollKonto());
+				lKonto.setKontoNr(lKontoFrom.getKontoNr());
+				lKonto.setIstSollKonto(lKontoFrom.isSollKonto());
 			}
-			if (lKontoOld.getKontoNr() < Config.sERStart) {
-				lKonto.setStartSaldo(lKontoOld.getSaldo());
-				lKonto.setSaldo(lKontoOld.getSaldo());
+			if (lKontoFrom.getKontoNr() < Config.sERStart) {
+				lKonto.setStartSaldo(lKontoFrom.getSaldo());
+				lKonto.setSaldo(lKontoFrom.getSaldo());
 			} else {
 				lKonto.setStartSaldo(0);
 				lKonto.setSaldo(0);
 			}
+			// bei allen Konti Text nach alt setzen
+			lKonto.setText(lKontoFrom.getText());
 			try {
 				kontoData.add(lKonto);
 			} catch (KontoNotFoundException ex) {
@@ -281,7 +328,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 			}
 		}
 	}
-
+	
 	/**
 	 * Kopiert die Bank daten für CSV.
 	 */

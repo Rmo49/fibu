@@ -4,7 +4,7 @@
 
 	<groupId>com.rmo</groupId>
 	<artifactId>fibu</artifactId>
-	<version>6-15</version>
+	<version>6-16</version>
 	<packaging>jar</packaging>
 	
 	<name>fibu</name>
