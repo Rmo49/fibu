@@ -237,7 +237,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 			String fibuTitel = fibuDataFrom.readFibuTitel();
 			fibuData.writeFibuName(fibuTitel);
 			Config.sFibuTitel = fibuTitel;
-			// TODO DAtum von und bis + 1 Jahr?, DatumFormat
+			// TODO Datum von und bis + 1 Jahr?, DatumFormat
 		} catch (FibuException ex) {
 			message.setText("Fehler bei copyFibuTitel: " + ex.getMessage());
 		}

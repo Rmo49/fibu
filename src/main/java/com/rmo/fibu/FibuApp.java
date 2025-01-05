@@ -5,6 +5,7 @@ import java.util.Date;
 
 import javax.swing.UIManager;
 
+import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Trace;
 import com.rmo.fibu.view.FibuView;
@@ -15,7 +16,7 @@ import com.rmo.fibu.view.FibuView;
  */
 public class FibuApp {
 
-	private static final String sVersion = "FibuLocal V6.16 (26.02.24)";
+	private static final String sVersion = "FibuLocal V7.01 (05.01.25)";
 	private static FibuView mFibu;
 
 	/********************************
@@ -27,9 +28,19 @@ public class FibuApp {
 			Trace.println(0, "java.version: " + System.getProperty("java.version"));
 			Trace.println(0, "java.runtime.name: " + System.getProperty("java.runtime.name"));
 			// Die Configuration einlesen
+			Trace.println(0, "Lese Config");
 			Config.checkArgs(args);
-//			setupLogging();
-			Config.readProperties();
+//			setupLogging()
+			try {
+				// Config-File einlesen
+				Config.readPropertyFile();
+			}
+			catch (FibuException ex) {
+				// nix tun, file nicht gefunden
+			}
+			// alle Werte setzen, wenn noch nicht gemacht
+			Config.setAllProperties();
+			
 //			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 //			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
@@ -42,6 +53,7 @@ public class FibuApp {
 			mFibu = new FibuView(sVersion);
 			mFibu.setVisible(true);
 		} catch (Exception ex) {
+			Trace.println(0, "Fehler: " + ex.getMessage());
 			mFibu.showError(ex);
 		}
 	}

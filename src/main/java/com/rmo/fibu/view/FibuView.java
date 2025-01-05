@@ -55,7 +55,7 @@ import com.rmo.fibu.util.Trace;
  * Unterprogramme. Diese View wurde mit dem Painter von JBuilder erstellt.
  *
  * @author R. Moser
- * @version  (Drucker-Font: Arial)
+ * @version (Drucker-Font: Arial)
  */
 
 public class FibuView extends JFrame
@@ -63,11 +63,11 @@ public class FibuView extends JFrame
 {
 	private static final long serialVersionUID = -6489792909275868353L;
 
-	private final int	FENSTER_BREITE = 300;
-	private final int	FENSTER_HOEHE = 420;
+	private final int FENSTER_BREITE = 300;
+	private final int FENSTER_HOEHE = 420;
 
-	private final int	FIBU_LIST_BREITE = 150;
-	private final int	FIBU_LIST_HOEHE = 200;
+	private final int FIBU_LIST_BREITE = 150;
+	private final int FIBU_LIST_HOEHE = 200;
 
 	/** Verbindung zu Data bean */
 	FibuData mFibuData;
@@ -96,7 +96,6 @@ public class FibuView extends JFrame
 	private final String upString = "moveUp";
 	private final String downString = "moveDown";
 
-
 	// --- Textfields
 	JTextField tfFibuTitel = new JTextField();
 	JTextField tfDatumVon = new JTextField();
@@ -106,8 +105,9 @@ public class FibuView extends JFrame
 	JMenuItem mnuBilanz = new JMenuItem();
 	JMenuItem mnuAbschluss = new JMenuItem();
 	JMenuItem mnuNeu = new JMenuItem();
+	JMenuItem mnuBestehend = new JMenuItem();
 	JMenuItem mnuConfig = new JMenuItem();
-	JMenuItem mnuFibu2= new JMenuItem();
+	JMenuItem mnuFibu2 = new JMenuItem();
 	JMenuItem mnuDelete = new JMenuItem();
 	JMenuItem mnuBeenden = new JMenuItem();
 	JMenuItem mnuJournal = new JMenuItem();
@@ -142,8 +142,8 @@ public class FibuView extends JFrame
 	}
 
 	/**
-	 * Liest die Properties ein. Zeigt an, wenn ein property nicht gelesen
-	 * werden kann
+	 * Liest die Properties ein. Zeigt an, wenn ein property nicht gelesen werden
+	 * kann
 	 */
 	private void initProperties() {
 		Trace.println(3, "FibuView.initProperties()");
@@ -167,7 +167,7 @@ public class FibuView extends JFrame
 	/** Intialisierung der Buttons */
 	private Container initButtons() {
 		JPanel lPanel = new JPanel(new GridLayout(6, 1, 1, 5));
-		lPanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+		lPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 		// JPanel lPanel = new JPanel();
 		btnOpen.setFont(Config.fontTextBold);
 		btnOpen.setText("öffnen");
@@ -263,7 +263,7 @@ public class FibuView extends JFrame
 		btnUp.setText("up");
 		btnUp.setActionCommand(upString);
 		btnUp.addActionListener(new UpDownListener());
-		upPanel. add(btnUp);
+		upPanel.add(btnUp);
 
 		btnDown.setFont(Config.fontTextBold);
 		btnDown.setText("down");
@@ -375,14 +375,21 @@ public class FibuView extends JFrame
 			}
 		});
 
-
-
 		mnuNeu.setFont(Config.fontTextBold);
 		mnuNeu.setText("Neue Fibu anlegen");
 		mnuNeu.addActionListener(new java.awt.event.ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mnuNeuAction(e);
+			}
+		});
+
+		mnuBestehend.setFont(Config.fontTextBold);
+		mnuBestehend.setText("Bestehende Fibu dazufügen");
+		mnuBestehend.addActionListener(new java.awt.event.ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mnuBestehendAction(e);
 			}
 		});
 
@@ -434,6 +441,7 @@ public class FibuView extends JFrame
 		// setup menu hierarchie
 		menuBar.add(mnuDatei);
 		mnuDatei.add(mnuNeu);
+		mnuDatei.add(mnuBestehend);
 		mnuDatei.add(mnuFibu2);
 		mnuDatei.add(mnuDelete);
 		mnuDatei.add(mnuBeenden);
@@ -485,7 +493,7 @@ public class FibuView extends JFrame
 		closeFibu();
 	}
 
-	void testAction (ActionEvent e) {
+	void testAction(ActionEvent e) {
 		CsvBank bank = new CsvBank();
 		bank.setBankName("Cumulus");
 		PdfSetupFrame setup = new PdfSetupFrame(bank);
@@ -500,8 +508,8 @@ public class FibuView extends JFrame
 	}
 
 	/**
-	 * Alle Unterwinodows schliessen (dispose). Noch prüfen, ob etwas
-	 * gespeichert werden soll
+	 * Alle Unterwinodows schliessen (dispose). Noch prüfen, ob etwas gespeichert
+	 * werden soll
 	 */
 	private void disposeSubWindows() {
 		Trace.println(1, "FibuView.disposeSubWindows()");
@@ -532,38 +540,45 @@ public class FibuView extends JFrame
 	/** öffnen einer Fibu mit den öffnen-button */
 	void openFibuButtonAction(ActionEvent e) {
 		Trace.println(0, "FibuView.btnOpen()");
-		// prüfen, ob andere Buchhaltung offen
-		if (DbConnection.isFibuOpen()) {
-			JOptionPane.showMessageDialog(null, "geöffente Fibu zuerst schliessen", "Fibu öffnen",
-					JOptionPane.ERROR_MESSAGE);
-		} else {
-			// den Name der Fibu setzen
-			String dbName = jListFibu.getSelectedValue();
-			if (dbName == null || dbName.length() < 1) {
-				JOptionPane.showMessageDialog(null, "Fibu wählen", "Fibu öffnen", JOptionPane.ERROR_MESSAGE);
+		if (jListFibu.getModel().getSize() > 0) {
+			// prüfen, ob andere Buchhaltung offen
+			if (DbConnection.isFibuOpen()) {
+				JOptionPane.showMessageDialog(null, "geöffente Fibu zuerst schliessen", "Fibu öffnen",
+						JOptionPane.ERROR_MESSAGE);
 			} else {
+				// den Name der Fibu setzen
+				String dbName = jListFibu.getSelectedValue();
+				if (dbName == null || dbName.length() < 1) {
+					JOptionPane.showMessageDialog(null, "Fibu wählen", "Fibu öffnen", JOptionPane.ERROR_MESSAGE);
+				} else {
+					openFibu(dbName);
+				}
+			}
+		}
+		else {
+			// wenn nichts in der Liste
+			btnOpen.setEnabled(false);
+		}
+	}
+
+	/**
+	 * Wenn in der Liste der Buchhaltungen ein Doppleklick festgestellt wird, diese
+	 * Buchhaltung öffen
+	 */
+	private void openFibuMouseAction(MouseEvent e) {
+		if (e.getClickCount() == 2) {
+			if (jListFibu.getModel().getSize() > 0) {
+				int index = jListFibu.locationToIndex(e.getPoint());
+				String dbName = jListFibu.getModel().getElementAt(index);
 				openFibu(dbName);
 			}
 		}
 	}
 
 	/**
-	 * Wenn in der Liste der Buchhaltungen ein Doppleklick festgestellt wird,
-	 * diese Buchhaltung öffen
-	 */
-	private void openFibuMouseAction(MouseEvent e) {
-		if (e.getClickCount() == 2) {
-			int index = jListFibu.locationToIndex(e.getPoint());
-			String dbName = jListFibu.getModel().getElementAt(index);
-			openFibu(dbName);
-		}
-	}
-
-	/**
 	 * öffnet die Fibu.
 	 *
-	 * @param dbName
-	 *            der Name der Fibu.
+	 * @param dbName der Name der Fibu.
 	 */
 	private void openFibu(String dbName) {
 		try {
@@ -597,8 +612,7 @@ public class FibuView extends JFrame
 			Trace.println(3, "File gefunden");
 			mCsvBuchung = new CsvReaderBuchungFrame("");
 			mCsvBuchung.setVisible(true);
-		}
-		else {
+		} else {
 			Trace.println(3, "kein File gefunden");
 		}
 	}
@@ -615,8 +629,7 @@ public class FibuView extends JFrame
 				writeFibuData();
 				// Datenzugriff entfernen
 				DbConnection.close();
-			}
-			else {
+			} else {
 				JOptionPane.showMessageDialog(null, "Kann nicht speichern, da kein Zugriff auf die Datenbank (mehr).",
 						"Fibu schliessen", JOptionPane.ERROR_MESSAGE);
 			}
@@ -669,7 +682,7 @@ public class FibuView extends JFrame
 			Config.winKontoplanDim = mKontoplan.getSize();
 			Config.winKontoplanLoc = mKontoplan.getLocation();
 		}
-		Config.writeProperties();
+		Config.saveProperties();
 	}
 
 	/** Das DatumVon im Config ändern */
@@ -728,16 +741,30 @@ public class FibuView extends JFrame
 	}
 
 	/**
-	 * Abschluss einer Fibu, Name erfragen. Fibu anlegen, wenn noch
+	 * Neue Fibu anlegen Fenster öffnen, Name erfragen. Fibu anlegen, wenn noch
 	 * nicht existiert
+	 */
+	private void mnuBestehendAction(ActionEvent e) {
+//		String fibuName = JOptionPane.showInputDialog("Name der neuen Fibu in DB: ");
+		JOptionPane.showMessageDialog(null, "Noch nicht impl. => Eintrag in Config anpassen",
+				"Bestehende Fibu dazufügen", JOptionPane.INFORMATION_MESSAGE);
+//		try {
+//			FibuDataBase.openFibu(fibuName);
+//		} catch (Exception ex) {
+//			showMessage(ex);
+//		}
+	}
+
+	/**
+	 * Abschluss einer Fibu, Name erfragen. Fibu anlegen, wenn noch nicht existiert
 	 */
 	private void mnuAbschlussAction(ActionEvent e) {
 		JOptionPane.showMessageDialog(this, "Noch nicht implementiert");
 	}
 
-
 	/**
-	 * Daten von anderer Fibu kopieren, startet Frame mit Listen der Fibus und Buttons
+	 * Daten von anderer Fibu kopieren, startet Frame mit Listen der Fibus und
+	 * Buttons
 	 */
 	private void mnuOtherFibuAction(ActionEvent e) {
 		if (mOtherFibu == null) {
@@ -797,6 +824,7 @@ public class FibuView extends JFrame
 
 	/**
 	 * Eine Exception anzeigen
+	 * 
 	 * @param ex
 	 */
 	private void showMessage(Exception ex) {
@@ -805,6 +833,7 @@ public class FibuView extends JFrame
 
 	/**
 	 * Eine Exception mit tiel anzeigen anzeigen
+	 * 
 	 * @param ex
 	 */
 	private void showMessage(String titel, Exception ex) {
@@ -830,7 +859,7 @@ public class FibuView extends JFrame
 			closeFibu();
 		}
 		try {
-			Config.writeProperties();
+			Config.saveProperties();
 			System.exit(0);
 		} catch (FibuException ex) {
 			JOptionPane.showMessageDialog(null, ex.getMessage(), "Fibu schliessen", JOptionPane.ERROR_MESSAGE);
@@ -840,8 +869,7 @@ public class FibuView extends JFrame
 	/**
 	 * Fehler anzeigen
 	 *
-	 * @param ex
-	 *            die Exception
+	 * @param ex die Exception
 	 */
 	public void showError(Exception ex) {
 		StringBuffer sb = new StringBuffer(100);
@@ -860,23 +888,16 @@ public class FibuView extends JFrame
 
 	/**
 	 * Aligns the first <code>rows</code> * <code>cols</code> components of
-	 * <code>parent</code> in a grid. Each component in a column is as wide as
-	 * the maximum preferred width of the components in that column; height is
-	 * similarly determined for each row. The parent is made just big enough to
-	 * fit them all.
+	 * <code>parent</code> in a grid. Each component in a column is as wide as the
+	 * maximum preferred width of the components in that column; height is similarly
+	 * determined for each row. The parent is made just big enough to fit them all.
 	 *
-	 * @param rows
-	 *            number of rows
-	 * @param cols
-	 *            number of columns
-	 * @param initialX
-	 *            x location to start the grid at
-	 * @param initialY
-	 *            y location to start the grid at
-	 * @param xPad
-	 *            x padding between cells
-	 * @param yPad
-	 *            y padding between cells
+	 * @param rows     number of rows
+	 * @param cols     number of columns
+	 * @param initialX x location to start the grid at
+	 * @param initialY y location to start the grid at
+	 * @param xPad     x padding between cells
+	 * @param yPad     y padding between cells
 	 */
 	public static void makeCompactGrid(Container parent, int rows, int cols, int initialX, int initialY, int xPad,
 			int yPad) {
@@ -924,45 +945,44 @@ public class FibuView extends JFrame
 		pCons.setConstraint(SpringLayout.EAST, x);
 	}
 
-
-    //Listen for clicks on the up and down arrow buttons.
-    class UpDownListener implements ActionListener {
-        @Override
+	// Listen for clicks on the up and down arrow buttons.
+	class UpDownListener implements ActionListener {
+		@Override
 		public void actionPerformed(ActionEvent e) {
-            //This method can be called only when
-            //there's a valid selection,
-            //so go ahead and move the list item.
-            int moveMe = jListFibu.getSelectedIndex();
+			// This method can be called only when
+			// there's a valid selection,
+			// so go ahead and move the list item.
+			int moveMe = jListFibu.getSelectedIndex();
 
-            if (e.getActionCommand().equals(upString)) {
-                //UP ARROW BUTTON
-                if (moveMe > 0) {
-                    //not already at top
-                    swap(moveMe, moveMe - 1);
-                    jListFibu.setSelectedIndex(moveMe - 1);
-                    jListFibu.ensureIndexIsVisible(moveMe - 1);
-                }
-            } else {
-                //DOWN ARROW BUTTON
-            	if (moveMe < 0) {
-            		return;
-            	}
-                if (moveMe != Config.getFibuList().getSize() - 1) {
-                    //not already at bottom
-                    swap(moveMe, moveMe + 1);
-                    jListFibu.setSelectedIndex(moveMe + 1);
-                    jListFibu.ensureIndexIsVisible(moveMe + 1);
-                }
-            }
-        }
-    }
+			if (e.getActionCommand().equals(upString)) {
+				// UP ARROW BUTTON
+				if (moveMe > 0) {
+					// not already at top
+					swap(moveMe, moveMe - 1);
+					jListFibu.setSelectedIndex(moveMe - 1);
+					jListFibu.ensureIndexIsVisible(moveMe - 1);
+				}
+			} else {
+				// DOWN ARROW BUTTON
+				if (moveMe < 0) {
+					return;
+				}
+				if (moveMe != Config.getFibuList().getSize() - 1) {
+					// not already at bottom
+					swap(moveMe, moveMe + 1);
+					jListFibu.setSelectedIndex(moveMe + 1);
+					jListFibu.ensureIndexIsVisible(moveMe + 1);
+				}
+			}
+		}
+	}
 
-    //Swap two elements in the list.
-    private void swap(int a, int b) {
-        String aObject = Config.getFibuList().getElementAt(a);
-        String bObject = Config.getFibuList().getElementAt(b);
-        Config.getFibuList().set(a, bObject);
-        Config.getFibuList().set(b, aObject);
-    }
+	// Swap two elements in the list.
+	private void swap(int a, int b) {
+		String aObject = Config.getFibuList().getElementAt(a);
+		String bObject = Config.getFibuList().getElementAt(b);
+		Config.getFibuList().set(a, bObject);
+		Config.getFibuList().set(b, aObject);
+	}
 
 }// endOfClass

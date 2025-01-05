@@ -32,7 +32,7 @@ public class CsvKeywordDataTest {
 	 */
 	@BeforeClass
 	public static void beforeClass() throws Exception {
-		Config.readProperties();
+		Config.readPropertyFile();
 		DbHandling.makeDb(dbName);
 		DbConnection.open(dbName);
 		try {

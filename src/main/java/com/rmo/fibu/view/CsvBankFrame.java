@@ -179,7 +179,7 @@ public class CsvBankFrame extends JFrame {
 		btnSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-//				saveAction();
+				saveAction();
 			}
 		});
 		flow1.add(btnSave);
@@ -216,6 +216,26 @@ public class CsvBankFrame extends JFrame {
 		}
 	}
 
+	
+	/**
+	 * Alle Einträge von der Liste in die DB speichern
+	 */
+	private void saveAction() {
+		// iterate über die Liste
+		int rowsMax = mTableModel.getRowCount();
+		for (int row = 0; row < rowsMax; row++) {
+			CsvBank lBank = mTableModel.getValueOfRow(row);
+			try {
+				mBankData.addData(lBank);
+				mTableModel.fireTableDataChanged();
+			} catch (FibuException ex2) {
+				JOptionPane.showMessageDialog(this, ex2.getMessage(), "\"Fehler in DB", JOptionPane.ERROR_MESSAGE);
+				return;
+			}		
+		}
+	}
+
+	
 	/**
 	 * Die Setup Daten eingeben
 	 */
@@ -316,10 +336,10 @@ public class CsvBankFrame extends JFrame {
 		 */
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-//			if (columnIndex > 0) {
-//				return true;
-//			}
-			return true;
+			if (columnIndex > 0) {
+				return true;
+			}
+			return false;
 		}
 
 		/**
@@ -338,11 +358,11 @@ public class CsvBankFrame extends JFrame {
 				int x = Integer.valueOf(i);
 				lBank.setBankID(x);
 			} else if (columnIndex == 1) {
-				lBank.setBankName((String) aValue);
+				lBank.setBankName( ((String) aValue).trim());
 			} else if (columnIndex == 2) {
 				lBank.setKontoNrDefault((String) aValue);
 			} else if (columnIndex == 3) {
-				lBank.setDirPath((String) aValue);
+				lBank.setDirPath( ((String) aValue).trim());
 			} else if (columnIndex == 4) {
 				lBank.setDocString((String) aValue);
 			}
@@ -397,6 +417,24 @@ public class CsvBankFrame extends JFrame {
 				return " ";
 			}
 			return "";
+		}
+		
+			
+		/**
+		 * Gibt die Daten einer Row zurück.
+		 * @param row
+		 * @return
+		 */
+		public CsvBank getValueOfRow(int row) {
+			Trace.println(7, "CsvKeywordModel.getValueOfRow(" + row + ')');
+			CsvBank lBank = null;
+			try {
+				lBank = mBankData.readAt(row);
+			} catch (FibuException ex) {
+				Trace.println(3, "getValueAt() " + ex.getMessage());
+				return lBank;
+			}
+			return lBank;						
 		}
 	}
 

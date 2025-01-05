@@ -7,7 +7,7 @@ package com.rmo.fibu.util;
  *  Klassen, die den TablePrinter verwenden, müssen dieses Interface
  * implementieren.
  */
-public interface KontoListPrinterModel {
+public interface KontoListPrinterInterface {
 
 	/** Die Anzahl Kopfzeilen */
 	public int getHeaderCount();

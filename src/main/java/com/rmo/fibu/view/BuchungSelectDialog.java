@@ -27,8 +27,7 @@ import com.rmo.fibu.util.Trace;
 
 /** Selektieren von Buchungen nach Soll- Habenkonto
  * @author Ruedi
- * TODO: wird noch nicht verwendet
- * TODO: model noch implementieren
+ * TODO: wird noch nicht verwendet, model noch implementieren
  */
 public class BuchungSelectDialog extends JDialog {
 

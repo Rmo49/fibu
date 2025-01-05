@@ -44,7 +44,7 @@ protected List<BuchungRow> getBuchungen() {
  */
 @Override
 public void setup(int kontoNr, Date from) {
-	Trace.println(3, "KontoView.BuchungModel.setup(" +kontoNr +"  " +from.toString() +")");
+	Trace.println(4, "KontoView.BuchungModel.setup(" +kontoNr +"  " +from.toString() +")");
 	boolean isSoll = true;      // ist die Buchung ein Soll-Konto
 
 	if (! mBuchungen.isEmpty()) {

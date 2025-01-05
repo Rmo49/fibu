@@ -37,6 +37,7 @@ import com.rmo.fibu.model.CsvKeyKonto;
 import com.rmo.fibu.model.CsvKeyKontoData;
 import com.rmo.fibu.model.CsvParserBase;
 import com.rmo.fibu.model.CsvParserCs;
+import com.rmo.fibu.model.CsvParserMB;
 import com.rmo.fibu.model.CsvParserPost;
 import com.rmo.fibu.model.CsvParserRaiff;
 import com.rmo.fibu.model.DataBeanContext;
@@ -345,6 +346,11 @@ public class CsvReaderBuchungFrame extends JFrame {
 		int maxLength = buchungCsv.getText().length();
 		if (pos < 0) {
 			pos = 0;
+		}
+		else {
+			if (pos >= maxLength) {
+				pos = 0;
+			}
 		}
 		if (maxLength > pos + Config.sCsvTextLen) {
 			maxLength = pos + Config.sCsvTextLen;
@@ -665,16 +671,20 @@ public class CsvReaderBuchungFrame extends JFrame {
 				parser = new CsvParserCs(mFile, mDateVon, mDateBis);
 			} else if (mBankName.equalsIgnoreCase(CsvParserBase.companyNameRaiff)) {
 				parser = new CsvParserRaiff(mFile, mDateVon, mDateBis);
+			} else if (mBankName.equalsIgnoreCase(CsvParserBase.companyNameMB)) {
+				parser = new CsvParserMB(mFile, mDateVon, mDateBis);
 			} else {
 				StringBuffer sb = new StringBuffer(100);
-				sb.append("Kein Setup für: ");
+				sb.append("Kein Setup für: '");
 				sb.append(mBankName);
-				sb.append("\n Impmentationen vorhanden von: ");
+				sb.append("' gefunden \n Impmentationen vorhanden von: ");
 				sb.append(CsvParserBase.companyNamePost);
 				sb.append(", ");
 				sb.append(CsvParserBase.companyNameCS);
 				sb.append(", ");
 				sb.append(CsvParserBase.companyNameRaiff);
+				sb.append(", ");
+				sb.append(CsvParserBase.companyNameMB);
 				sb.append(" gefunden");
 				JOptionPane.showMessageDialog(this, sb.toString(), "CSV Datei selektieren", JOptionPane.ERROR_MESSAGE);
 				return;
@@ -689,9 +699,9 @@ public class CsvReaderBuchungFrame extends JFrame {
 			mBuchungList = pdfParser.startParsing(mBank);
 			if (mBuchungList.size() <= 0) {
 				StringBuffer sb = new StringBuffer(100);
-				sb.append("Kein Setup für: ");
+				sb.append("Keine Buchungen für: '");
 				sb.append(mBankName);
-				sb.append(" gefunden. \n");
+				sb.append("' gefunden. \n");
 				sb.append("PDF Steuerdaten anpassen in: Setup > [PDF Steuerdaten eingeben]");
 				JOptionPane.showMessageDialog(this, sb.toString(), "PDF Datei selektieren", JOptionPane.ERROR_MESSAGE);
 				return;

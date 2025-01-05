@@ -52,7 +52,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 
 	private static final long serialVersionUID = 6445113637284754031L;
 
-	// TODO Grösse anpassen
+	// TODO Wert in Config verschieben
 	/** Die Breite der KontoListe */
 	private static final int SUCHWORT_WIDTH = 14;
 	private static final int DEFAULT_WIDTH = 2;

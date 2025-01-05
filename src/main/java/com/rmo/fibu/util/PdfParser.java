@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 
@@ -24,7 +25,7 @@ import com.rmo.fibu.model.CsvBank;
  */
 public class PdfParser {
 
-	private CsvBank bank;
+	private CsvBank mBank;
 	// Datum von bis 
 	private Date mDateVon = null;
 	private Date mDateBis = null;
@@ -56,7 +57,7 @@ public class PdfParser {
 	 * @return
 	 */
 	public List<BuchungCsv> startParsing(CsvBank bank) {
-		this.bank = bank;
+		this.mBank = bank;
 
 		return readAllBuchungen();
 	}
@@ -92,7 +93,10 @@ public class PdfParser {
 	 * @return
 	 */
 	private List<BuchungCsv> readAllBuchungen() {
-		pdfDoku.gotoStart(bank.getWordBefore());
+		if (mBank.getBankName().compareToIgnoreCase("Cumulus") == 0) {
+			return readBuchungenCumulus();
+		}
+		pdfDoku.gotoStart(mBank.getWordBefore());
 		pdfDoku.gotoNextLine();
 		List<BuchungCsv> buchungen = new ArrayList<>();
 		// die eingelesene Zeile
@@ -107,22 +111,76 @@ public class PdfParser {
 		return buchungen;
 	}
 
+	/**
+	 * Die Buchungen von Cumulus lesen
+	 */
+	private List<BuchungCsv> readBuchungenCumulus() {
+		pdfDoku.gotoStart(mBank.getWordBefore());
+		pdfDoku.gotoNextLine();
+		List<BuchungCsv> buchungen = new ArrayList<>();
+		// die eingelesene Zeile
+		List<String> pdfZeile = pdfDoku.nextLine();
+		while (pdfZeile.size() > 0)  {
+			BuchungCsv buchung = makeBuchungCumulus(pdfZeile);
+			if (buchung != null) {
+				buchungen.add(buchung);
+			}
+			pdfZeile = pdfDoku.nextLine();
+		}
+		// pdfDoku.close(); Wie closen? (hatte Fehlermeldung)
+		return buchungen;
+		
+	}
 
 
 	/**
-	 * Von einer Zeile die Buchungen auslesen
-	 * @return
+	 * Von einer Zeile die Buchungen auslesen.
+	 * Spaltennummer beginnt mit 0, im Setup mit 1
+	 * @return BuchungCsv eine Buchung
 	 */
 	private BuchungCsv makeBuchung(List <String> pdfZeile) {
-		if (pdfZeile.size() >= bank.getAnzahlSpalten()) {
+		if (pdfZeile.size() >= mBank.getAnzahlSpalten()) {
 			BuchungCsv buchung = new BuchungCsv();
-			String datum = pdfZeile.get(bank.getSpalteDatum()-1);
+			String datum = pdfZeile.get(mBank.getSpalteDatum()-1);
 			if (isDatum(datum)) {
 				buchung.setDatum(datum);
-				buchung.setText(pdfZeile.get( bank.getSpalteText()-1) );
+				buchung.setText(pdfZeile.get( mBank.getSpalteText()-1) );
 				// TODO wenn soll und haben unterschiedlich
-				buchung.setBetrag(pdfZeile.get( bank.getSpalteSoll()-1) );
-				buchung.setHaben(bank.getKontoNrDefault());
+				buchung.setBetrag(pdfZeile.get( mBank.getSpalteSoll()-1) );
+				buchung.setHaben(mBank.getKontoNrDefault());
+			}
+			else {
+				// wenn kein Datum, dann keine Buchung
+				return null;
+			}
+			return buchung;
+		}
+		return null;
+	}
+
+	
+	/**
+	 * Von einer Zeile die Buchungen auslesen.
+	 * , speziell für Cumulus
+	 * Spaltennummer beginnt mit 0, im Setup mit 1
+	 * @return BuchungCsv eine Buchug
+	 */
+	private BuchungCsv makeBuchungCumulus(List <String> pdfZeile) {
+		// TODO allgemein für pdf definieren, 
+		if (pdfZeile.size() >= mBank.getAnzahlSpalten()) {
+			BuchungCsv buchung = new BuchungCsv();
+			String datum = pdfZeile.get(mBank.getSpalteDatum()-1);
+			if (isDatum(datum)) {
+				buchung.setDatum(datum);
+				buchung.setText(pdfZeile.get( mBank.getSpalteText()-1) );
+				// TODO wenn soll und haben unterschiedlich
+				int spalteSoll = mBank.getSpalteSoll()-1;
+				String betrag = pdfZeile.get(spalteSoll);
+				if (isText(betrag)) {
+					spalteSoll++; spalteSoll++;
+				}
+				buchung.setBetrag(pdfZeile.get(spalteSoll));
+				buchung.setHaben(mBank.getKontoNrDefault());
 			}
 			else {
 				// wenn kein Datum, dann keine Buchung
@@ -142,7 +200,8 @@ public class PdfParser {
 	 */
 	private boolean isDatum(String datum) {
 		if (datum.length() < 8) {
-			return false;
+			datum = datum + "24";
+//			return false;
 		}
 	    mDateFormat.setLenient(false);
 	    Date lDate;
@@ -157,7 +216,16 @@ public class PdfParser {
 	    return true;
 	}
 
-
+	/**
+	 * prüfen, ob der String einen Text enthält
+	 * @param betrag
+	 */
+	private boolean isText(String betrag) {
+		if (Pattern.matches("[a-zA-Z]+", betrag)) {
+			return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Die Spalten-Nummer des Datums

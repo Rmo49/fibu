@@ -62,12 +62,11 @@ public void doPrint() throws PrinterException {
 	PageFormat pf = new PageFormat();
 	// Seiteneinstellungen aus Config setzen
 	Paper paper = new Paper();
+	
 	paper.setSize(595.3, 841.9); // A4
 	paper.setImageableArea(Config.printerRandLinks, Config.printerRandOben,
 		Config.printerPageWidth, Config.printerPageHeight);
 	pf.setPaper(paper);
-	/** TODO Einstellungen page in Config verschieben */
-//	pf = printJob.pageDialog(pf);
 	// die Eingabe validieren mit den Druckereinstellungen
 	pf = printJob.validatePage(pf);
 	printJob.setPrintable(this, pf);

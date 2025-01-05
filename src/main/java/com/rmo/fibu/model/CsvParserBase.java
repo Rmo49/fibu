@@ -29,6 +29,7 @@ public abstract class CsvParserBase {
 	static public String	companyNamePost = "Post";
 	static public String	companyNameCS = "CS";
 	static public String	companyNameRaiff = "Raiffeisen";
+	static public String	companyNameMB = "MB";
 	static private String	buchungFalsch = ">>> Fehlerhafte Buchung in CSV file <<<";
 
 	protected CsvBank		mCompany = null;
@@ -67,6 +68,9 @@ public abstract class CsvParserBase {
 		if (companyName.equalsIgnoreCase(CsvParserBase.companyNameRaiff)) {
 			hatParser = true;
 		}
+		if (companyName.equalsIgnoreCase(CsvParserBase.companyNameMB)) {
+			hatParser = true;
+		}
 		StringBuffer sb = new StringBuffer(100);
 		if (!hatParser) {
 			sb.append("Kein Parser für: ");
@@ -77,6 +81,8 @@ public abstract class CsvParserBase {
 			sb.append(CsvParserBase.companyNameCS);
 			sb.append(", ");
 			sb.append(CsvParserBase.companyNameRaiff);
+			sb.append(", ");
+			sb.append(CsvParserBase.companyNameMB);
 		}
 		return sb.toString();
 	}

@@ -741,9 +741,11 @@ public class BuchungEingabe extends JInternalFrame {
 			if (getMid() < 0) {
 				mNewBookingsSaved = false;
 			}
-
-			copyToTemp();
+			
+			// 23.10.24 hier nicht mehr, da sonst mit neuer Buchung verglichen
+			// copyToTemp(); 
 			//mBuchungListe.repaint();
+			
 			clearEingabe();
 			deleteMessage();
 			enableButtons();
