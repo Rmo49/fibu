@@ -21,7 +21,7 @@ public class DataBeanContextFrom extends BeanContextSupport {
 
 	/**
 	 * Gibt den Context, der alle Beans enthält zurück.
-	 * 
+	 *
 	 * @return com.rmo.fibu.model.DataBeanContext
 	 */
 	public static DataBeanContextFrom getContext() {

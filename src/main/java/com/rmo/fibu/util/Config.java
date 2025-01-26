@@ -1,6 +1,7 @@
 package com.rmo.fibu.util;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Point;
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,7 +40,7 @@ public class Config {
 	private static final String sDefaultDirToken = "fibu.default.dir";
 	public static String sDefaultDir = "form: F:/Doku/Ruedi/Java/Fibu";
 	private static final String sCsvFileNameToken = "fibu.csv.filename";
-	public static String sCsvFileName = "form: F:/doc/Postfinance151001.pdf"; 
+	public static String sCsvFileName = "form: F:/doc/Postfinance151001.pdf";
 
 	// Alle Namen der bisher geöffneten Fibus, wird von Config eingelesen
 	private static final String sFibuNamesToken = "fibu.list";
@@ -58,9 +59,9 @@ public class Config {
 	private static final String printerRandLinksToken = "printer.rand.links";
 	public static float printerRandLinks = 56.7F;
 	private static final String printerPageWidthToken = "printer.page.width";
-	public static float printerPageWidth = 496.0F;
+	public static double printerPageWidth =  (8.27 * 72); //(1 Zoll = 72 Punkte) 210 mm;
 	private static final String printerPageHeightToken = "printer.page.height";
-	public static float printerPageHeight = 742.64F;
+	public static double printerPageHeight = 11.69 * 72; // 297 mm;
 	private static final String printerColAbstandToken = "printer.abstand.col";
 	public static float printerColAbstand = 1F; // Abstand zwischen Spalten
 	private static final String printerRowAbstandToken = "printer.abstand.row";
@@ -69,6 +70,7 @@ public class Config {
 	public static float printerHeaderAbstand = 5F; // Abstand nach Kopfzeile
 	private static final String printerSummeAbstandToken = "printer.abstand.summe";
 	public static float printerSummeAbstand = 3F; // Abstand zu Summe
+	// KontoListe
 	private static final String printerKtoCol1Token = "printer.kto.col1";
 	public static int printerKtoCol1 = 16; // Breite der Spalte
 	private static final String printerKtoCol2Token = "printer.kto.col2";
@@ -83,17 +85,38 @@ public class Config {
 	public static int printerKtoCol6 = 20; // Breite der Spalte
 	private static final String printerKtoCol7Token = "printer.kto.col7";
 	public static int printerKtoCol7 = 20; // Breite der Spalte
+	// bilanz
+	private static final String printerBilanzCol1Token = "printer.bilanz.col1";
+	public static int printerBilanzCol1 = 7; // Breite der Spalte
+	private static final String printerBilanzCol2Token = "printer.bilanz.col2";
+	public static int printerBilanzCol2 = 50; // Breite der Spalte
+	private static final String printerBilanzCol3Token = "printer.bilanz.col3";
+	public static int printerBilanzCol3 = 12; // Breite der Spalte
+	private static final String printerBilanzCol4Token = "printer.bilanz.col4";
+	public static int printerBilanzCol4 = 12; // Breite der Spalte
+	// Journal
+	private static final String printerJournalCol1Token = "printer.journal.col1";
+	public static int printerJournalCol1 = 10; // Breite der Spalte
+	private static final String printerJournalCol2Token = "printer.journal.col2";
+	public static int printerJournalCol2 = 8; // Breite der Spalte
+	private static final String printerJournalCol3Token = "printer.journal.col3";
+	public static int printerJournalCol3 = 50; // Breite der Spalte
+	private static final String printerJournalCol4Token = "printer.journal.col4";
+	public static int printerJournalCol4 = 10; // Breite der Spalte
+	private static final String printerJournalCol5Token = "printer.journal.col5";
+	public static int printerJournalCol5 = 10; // Breite der Spalte
+	private static final String printerJournalCol6Token = "printer.journal.col6";
+	public static int printerJournalCol6 = 20; // Breite der Spalte
 
-	
 	// --- java.awt.Font
 	public static java.awt.Font printerTitelFont = new java.awt.Font("Arial", 0, 14);
 	public static java.awt.Font printerNormalFont = new java.awt.Font("Arial", 0, 10);
+	public static java.awt.Font printerFontBold = new java.awt.Font("Arial", Font.BOLD, 10);
 	public static java.awt.Font fontText;
 	public static java.awt.Font fontTextBold;
-	// Papier-Masse Aç
 	public static final double printerPaperSizeWidth = 595.3;
 	public static final double printerPaperSizeHeigth = 841.9;
-	
+
 	// ----- Variable pro Buchhaltung ------------------------------------------
 	// Der DB-Name der Fibu
 	public static String sFibuDbName;
@@ -200,13 +223,13 @@ public class Config {
 
 	public static void setAllProperties() throws FibuException {
 		// --- alle Property werte setzen
-		traceLevel = readInt(traceLevelToken, traceLevel);
+		traceLevel = readNumber(traceLevelToken, traceLevel);
 
 		traceTimestamp = readBoolean(traceTimestampToken, traceTimestamp);
 		sDefaultDir = mProperties.getProperty(sDefaultDirToken, sDefaultDir);
 		sCsvFileName = mProperties.getProperty(sCsvFileNameToken, sCsvFileName);
-		sCsvTextLen = readInt(sCsvTextLenToken, sCsvTextLen);
-		
+		sCsvTextLen = readNumber(sCsvTextLenToken, sCsvTextLen);
+
 		sFibuNames = readList(mProperties.getProperty(sFibuNamesToken), ",");
 		if (sFibuNames == null) {
 			sFibuNames = new DefaultListModel<>();
@@ -214,24 +237,34 @@ public class Config {
 			mProperties.setProperty(sFibuNamesToken, "FibuLeer,");
 		}
 
-		printerRandLinks = readFloat(printerRandLinksToken, printerRandLinks);		
-		printerRandOben = readFloat(printerRandObenToken, printerRandOben);
-		printerPageWidth= readFloat(printerPageWidthToken, printerPageWidth);	
-		printerPageHeight = readFloat(printerPageHeightToken, printerPageHeight);		
-		printerColAbstand= readFloat(printerColAbstandToken, printerColAbstand);
-		printerRowAbstand = readFloat(printerRowAbstandToken, printerRowAbstand);
-		printerHeaderAbstand = readFloat(printerHeaderAbstandToken, printerHeaderAbstand);
-		printerSummeAbstand = readFloat(printerSummeAbstandToken, printerSummeAbstand);
+		printerRandLinks = readNumber(printerRandLinksToken, printerRandLinks);
+		printerRandOben = readNumber(printerRandObenToken, printerRandOben);
+		printerPageWidth= readNumber(printerPageWidthToken, printerPageWidth);
+		printerPageHeight = readNumber(printerPageHeightToken, printerPageHeight);
+		printerColAbstand= readNumber(printerColAbstandToken, printerColAbstand);
+		printerRowAbstand = readNumber(printerRowAbstandToken, printerRowAbstand);
+		printerHeaderAbstand = readNumber(printerHeaderAbstandToken, printerHeaderAbstand);
+		printerSummeAbstand = readNumber(printerSummeAbstandToken, printerSummeAbstand);
 		// KontoListe ausgeben
-		printerKtoCol1 = readInt(printerKtoCol1Token, printerKtoCol1);
-		printerKtoCol2 = readInt(printerKtoCol2Token, printerKtoCol2);
-		printerKtoCol3 = readInt(printerKtoCol3Token, printerKtoCol3);
-		printerKtoCol4 = readInt(printerKtoCol4Token, printerKtoCol4);
-		printerKtoCol5 = readInt(printerKtoCol5Token, printerKtoCol5);
-		printerKtoCol6 = readInt(printerKtoCol6Token, printerKtoCol6);
-		printerKtoCol7 = readInt(printerKtoCol7Token, printerKtoCol7);
-
-
+		printerKtoCol1 = readNumber(printerKtoCol1Token, printerKtoCol1);
+		printerKtoCol2 = readNumber(printerKtoCol2Token, printerKtoCol2);
+		printerKtoCol3 = readNumber(printerKtoCol3Token, printerKtoCol3);
+		printerKtoCol4 = readNumber(printerKtoCol4Token, printerKtoCol4);
+		printerKtoCol5 = readNumber(printerKtoCol5Token, printerKtoCol5);
+		printerKtoCol6 = readNumber(printerKtoCol6Token, printerKtoCol6);
+		printerKtoCol7 = readNumber(printerKtoCol7Token, printerKtoCol7);
+		// Bilanz
+		printerBilanzCol1 = readNumber(printerBilanzCol1Token, printerBilanzCol1);
+		printerBilanzCol2 = readNumber(printerBilanzCol2Token, printerBilanzCol2);
+		printerBilanzCol3 = readNumber(printerBilanzCol3Token, printerBilanzCol3);
+		printerBilanzCol4 = readNumber(printerBilanzCol4Token, printerBilanzCol4);
+		// journal
+		printerJournalCol1 = readNumber(printerJournalCol1Token, printerJournalCol1);
+		printerJournalCol2 = readNumber(printerJournalCol2Token, printerJournalCol2);
+		printerJournalCol3 = readNumber(printerJournalCol3Token, printerJournalCol3);
+		printerJournalCol4 = readNumber(printerJournalCol4Token, printerJournalCol4);
+		printerJournalCol5 = readNumber(printerJournalCol5Token, printerJournalCol5);
+		printerJournalCol6 = readNumber(printerJournalCol6Token, printerJournalCol6);
 
 		// --- Fenster einlesen
 		readWindowBuchung();
@@ -246,13 +279,13 @@ public class Config {
 		readWindowCsvReaderBuchung();
 
 		// --- Size von Text, Menu, Buttons
-		windowTextSize = readInt(WindowTextSizeToken, windowTextSize);
+		windowTextSize = readNumber(WindowTextSizeToken, windowTextSize);
 		windowTextMultiplikator = (double) windowTextSize / (double) 12;
 
 		// --- language settings
 		languageLanguage = mProperties.getProperty(languageToken, languageLanguage);
 		languageCountry = mProperties.getProperty(countryToken, languageCountry);
-		
+
 		// --- db-connetion
 		userName = mProperties.getProperty(userNameToken, userName);
 		password = mProperties.getProperty(passwordToken, password);
@@ -268,7 +301,7 @@ public class Config {
 	/** Alle Properites in das File schreiben */
 	public static void saveProperties() throws FibuException {
 		Trace.println(0, "Config.writeProperties()");
-		// alles in 
+		// alles in
 		writeWindowBuchung();
 		writeWindowKontoblatt();
 		writeWindowKontoBuchung();
@@ -362,7 +395,7 @@ public class Config {
 
 	/**
 	 * Position und Grösse des Windows Buchung
-	 * 
+	 *
 	 * @todo generischer lösen
 	 */
 	private static void readWindowBuchung() throws FibuException {
@@ -508,12 +541,12 @@ public class Config {
 
 	/**
 	 * Die Config für ein Window lesen
-	 * 
+	 *
 	 * @param winName: die Bezeichnung des Windows
 	 */
 	private static Dimension readWindowDimension(String winName) throws FibuException {
-		int width = readInt(winName + ".width", 600);
-		int height = readInt(winName + ".height", 400);
+		int width = readNumber(winName + ".width", 600);
+		int height = readNumber(winName + ".height", 400);
 		if (width < 0) {
 			width = 600;
 			height = 400;
@@ -523,12 +556,12 @@ public class Config {
 
 	/**
 	 * Die Config für ein Window lesen
-	 * 
+	 *
 	 * @param winName: die Bezeichnung des Windows
 	 */
 	private static Point readWindowPoint(String winName) throws FibuException {
-		int x = readInt(winName + ".x", 10);
-		int y = readInt(winName + ".y", 10);
+		int x = readNumber(winName + ".x", 10);
+		int y = readNumber(winName + ".y", 10);
 		if (x < 0) {
 			x = 10;
 			y = 10;
@@ -538,7 +571,7 @@ public class Config {
 
 	/**
 	 * Die Config für ein Window speichern
-	 * 
+	 *
 	 * @param winName: die Bezeichnung des Windwos
 	 * @param dim
 	 * @param point
@@ -558,15 +591,17 @@ public class Config {
 			mProperties.setProperty(property, "FALSE");
 			return false;
 		}
-		if (value.equalsIgnoreCase("true"))
+		if (value.equalsIgnoreCase("true")) {
 			return true;
-		if (value.equalsIgnoreCase("false"))
+		}
+		if (value.equalsIgnoreCase("false")) {
 			return false;
+		}
 		throw new FibuException("Property: '" + property + "' true oder false erwartet");
 	}
 
 	/** Einen int-Werte von den Properties lesen */
-	private static int readInt(String property, int defaultValue) throws FibuException {
+	private static int readNumber(String property, int defaultValue) throws FibuException {
 		try {
 			String defValue = Integer.toString(defaultValue);
 			String value = mProperties.getProperty(property, defValue);
@@ -580,7 +615,7 @@ public class Config {
 	}
 
 	/** Einen float-Werte von den Properties lesen */
-	private static float readFloat(String property, float defaultValue) throws FibuException {
+	private static float readNumber(String property, float defaultValue) throws FibuException {
 		try {
 			String defValue = Float.toString(defaultValue);
 			String value = mProperties.getProperty(property, defValue);
@@ -588,6 +623,20 @@ public class Config {
 				return -1F;
 			}
 			return Float.parseFloat(value);
+		} catch (NumberFormatException ex) {
+			throw new FibuException("Property: '" + property + "' falsches Format \n" + "Fehler: " + ex.getMessage());
+		}
+	}
+
+	/** Einen double-Werte von den Properties lesen */
+	private static double readNumber(String property, double defaultValue) throws FibuException {
+		try {
+			String defValue = Double.toString(defaultValue);
+			String value = mProperties.getProperty(property, defValue);
+			if (value == null) {
+				return -1.0;
+			}
+			return Double.parseDouble(value);
 		} catch (NumberFormatException ex) {
 			throw new FibuException("Property: '" + property + "' falsches Format \n" + "Fehler: " + ex.getMessage());
 		}
@@ -644,7 +693,7 @@ public class Config {
 
 	/**
 	 * Delete element from the list of Fibus
-	 * 
+	 *
 	 * @param fibuName
 	 */
 	public static void deleteFibuFromList(String fibuName) {
@@ -662,8 +711,9 @@ public class Config {
 	 * implemented)
 	 */
 	public static String addOne(String pBelegNr) {
-		if (pBelegNr == null || pBelegNr.length() <= 0)
+		if (pBelegNr == null || pBelegNr.length() <= 0) {
 			return null;
+		}
 		try {
 			int i = Integer.parseInt(pBelegNr);
 			return Integer.toString(i + 1);

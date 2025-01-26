@@ -209,11 +209,17 @@ public class KontoData extends DataBase implements BeanContextServicesListener, 
 		// verbuche: wenn es ein Soll-Konto ist
 		if (lKonto.isSollKonto()) {
 			// wenn in Buchung in der Soll-Spalte steht: dazuzählen
-			if (pSoll) lSaldo += pBetrag;
-			else lSaldo -= pBetrag;
+			if (pSoll) {
+				lSaldo += pBetrag;
+			} else {
+				lSaldo -= pBetrag;
+			}
 		} else {
-			if (pSoll) lSaldo -= pBetrag;
-			else lSaldo += pBetrag;
+			if (pSoll) {
+				lSaldo -= pBetrag;
+			} else {
+				lSaldo += pBetrag;
+			}
 		}
 		lKonto.setSaldo(lSaldo);
 		add(lKonto);

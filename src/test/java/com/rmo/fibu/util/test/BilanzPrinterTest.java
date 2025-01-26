@@ -6,22 +6,22 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
-import com.rmo.fibu.util.TablePrinter;
-import com.rmo.fibu.util.TablePrinterModel;
+import com.rmo.fibu.util.BasePrinterModel;
+import com.rmo.fibu.util.BilanzPrinter;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Test für TablePrinter.
+ * Test für BasePrinter.
  */
 
-public class TablePrinterTest extends TestCase implements TablePrinterModel {
+public class BilanzPrinterTest extends TestCase implements BasePrinterModel {
 
 	private JTable table;
 
-	public TablePrinterTest(String name) {
+	public BilanzPrinterTest(String name) {
 		super(name);
 		// Initialisierung einer Tabelle
 		TableModel dataModel = new AbstractTableModel() {
@@ -46,6 +46,19 @@ public class TablePrinterTest extends TestCase implements TablePrinterModel {
 		table = new JTable(dataModel);
 	}
 
+
+	@Override
+	public String getTitle() {
+		return null;
+	}
+
+	@Override
+	public boolean isColToAdd(int columnIndex) {
+		return false;
+	}
+
+
+
 	/***************************
 	 * Diese Tests starten
 	*/
@@ -68,14 +81,14 @@ public class TablePrinterTest extends TestCase implements TablePrinterModel {
 	*/
 	public static Test suite() {
 		// Generisch: alle Tests von KontoModel
-		TestSuite suite = new TestSuite(TablePrinterTest.class);
+		TestSuite suite = new TestSuite(BilanzPrinterTest.class);
 		return suite;
 	}
 
-	/** Die Tabelle drucken mit der TablePrinter Klasse.
+	/** Die Tabelle drucken mit der BasePrinter Klasse.
 	 */
 	public void testPrint() throws Exception {
-		TablePrinter lPrinter= new TablePrinter(this);
+		BilanzPrinter lPrinter= new BilanzPrinter(null);
 		lPrinter.doPrint();
 	}
 
@@ -92,8 +105,8 @@ public class TablePrinterTest extends TestCase implements TablePrinterModel {
 		return 1;
 	}
 
+	// TODO wahrscheinlich löschen
 	/** Die Kopfzeile, wir linksböndig angezeigt, Seitenzahl rechts */
-	@Override
 	public String getHeader(int nr) {
 		return "Kopfzeile Test";
 	}
@@ -120,14 +133,18 @@ public class TablePrinterTest extends TestCase implements TablePrinterModel {
 	 *  Zahlen werden automatisch rechtsböndig gedruckt. */
 	@Override
 	public boolean getColRight(int columnIndex) {
-		if (columnIndex == 3) return true;
+		if (columnIndex == 3) {
+			return true;
+		}
 		return false;
 	}
 
 	/** Die Spalten, die eine Summen enthalten sollen */
 	@Override
 	public boolean getColSumme(int columnIndex) {
-		if (columnIndex == 1 || columnIndex == 2) return true;
+		if (columnIndex == 1 || columnIndex == 2) {
+			return true;
+		}
 		return false;
 	}
 

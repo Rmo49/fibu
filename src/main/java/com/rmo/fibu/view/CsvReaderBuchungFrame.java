@@ -66,11 +66,11 @@ public class CsvReaderBuchungFrame extends JFrame {
 	private CsvBank mBank = null;
 	// file von dem gelesen werden soll
 	private File mFile = null;
-	// Datum von bis 
+	// Datum von bis
 	private Date mDateVon = null;
 	private Date mDateBis = null;
-	
-	
+
+
 	// view elemente
 	private JTable mTableView = new JTable();
 	private DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer();

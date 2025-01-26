@@ -95,8 +95,9 @@ public class CsvBank {
 	public void setDocType(String typeOfDoc) {
 		if (typeOfDoc.startsWith("CSV")) {
 			this.docType = 1;
+		} else {
+			this.docType = 2;
 		}
-		else this.docType = 2;
 	}
 
 	/**
@@ -112,8 +113,9 @@ public class CsvBank {
 	public void setDocString(String docString) {
 		if (docString.startsWith("CSV")) {
 			this.docType = 1;
+		} else {
+			this.docType = 2;
 		}
-		else this.docType = 2;
 		this.docString = docString;
 	}
 

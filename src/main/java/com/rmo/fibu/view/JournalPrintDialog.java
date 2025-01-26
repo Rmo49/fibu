@@ -11,8 +11,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
 import com.rmo.fibu.util.Config;
+import com.rmo.fibu.util.JournalPrinter;
 import com.rmo.fibu.util.JournalPrinterModel;
-import com.rmo.fibu.util.TablePrinter;
 
 /**
  * Druckt das Journal, zeigt den Fortschritt an.
@@ -74,8 +74,8 @@ public class JournalPrintDialog extends JDialog {
 
 	/** Handler, direkt drucken */
 	void btnPrint_actionPerformed() {
-		// Printer aufrufen, Daten siehe Interface: TablePrinterModel
-		TablePrinter lPrinter = new TablePrinter(new JournalPrinterModel());
+		// Printer aufrufen, Daten siehe Interface: BasePrinterModel
+		JournalPrinter lPrinter = new JournalPrinter(new JournalPrinterModel());
 		try {
 			lPrinter.doPrint();
 			this.setVisible(false);
@@ -86,8 +86,8 @@ public class JournalPrintDialog extends JDialog {
 
 	/** Handler, wenn drucken gewählt wurde */
 	void btnPrint_actionPerformed(ActionEvent e) {
-		// Printer aufrufen, Daten siehe Interface: TablePrinterModel
-		TablePrinter lPrinter = new TablePrinter(new JournalPrinterModel());
+		// Printer aufrufen, Daten siehe Interface: BasePrinterModel
+		JournalPrinter lPrinter = new JournalPrinter(new JournalPrinterModel());
 		try {
 			/*
 			 * progressMonitor = new ProgressMonitor(this, "Test", "", 0, 100);

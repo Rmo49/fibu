@@ -45,7 +45,7 @@ implements TableModelListener, ComponentListener {
 	private JTable 			mBuchungTable;
 	private ListSelectionModel mBuchungCellSelection;
 	private boolean 		mBuchungSelected = false;
-	
+
 	/** Das Model zu allen Buchungen eines Kontos */
 	private BuchungOfKontoModel mBuchungModel = null;
 	/** der Container aller Buchungen */
@@ -82,10 +82,11 @@ implements TableModelListener, ComponentListener {
 		mScrollPaneBuchung.setPreferredSize(new Dimension(50 * Config.windowTextSize, 100));
 		mScrollPaneBuchung.setMinimumSize(new Dimension(30 * Config.windowTextSize, 100));
 		mBuchungTable.getModel().addTableModelListener(this);
-		
+
 		mBuchungCellSelection =	mBuchungTable.getSelectionModel();
 		mBuchungCellSelection.addListSelectionListener(new ListSelectionListener() {
-		      public void valueChanged(ListSelectionEvent e) {
+		      @Override
+			public void valueChanged(ListSelectionEvent e) {
 		    	  int[] selectedRow = mBuchungTable.getSelectedRows();
 		    	  if (selectedRow.length > 0) {
 		    		  mBuchungSelected = true;
@@ -94,8 +95,8 @@ implements TableModelListener, ComponentListener {
 		    		  mBuchungSelected = false;
 		    	  }
 		    	  mKontoView.enableButtons();
-		      }	    	  
-		});		
+		      }
+		});
 		return mScrollPaneBuchung;
 	}
 
@@ -162,7 +163,7 @@ implements TableModelListener, ComponentListener {
 		scrollToLastEntry();
 	}
 
-	
+
 	/**
 	 * Show-Button wurde gedrückt. Ab-Datum einlesen, diese dem Model
 	 * bekanntgeben, Anzeige starten
@@ -236,7 +237,7 @@ implements TableModelListener, ComponentListener {
 	public JTable getBuchungTable() {
 		return mBuchungTable;
 	}
-	
+
 	/**
 	 * Gibt an, ob eine Buchung selektiert wurde
 	 * @return true wenn selektiert
@@ -244,7 +245,7 @@ implements TableModelListener, ComponentListener {
 	public boolean isBuchungSelected() {
 		return mBuchungSelected;
 	}
-	
+
 	/**
 	 * Die Daten von der DB lesen und in die Tabelle kopieren
 	 */

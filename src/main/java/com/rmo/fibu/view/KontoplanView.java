@@ -338,8 +338,11 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 				case 1:
 					return lKonto.getText();
 				case 2:
-					if (lKonto.isSollKonto()) return "S";
-					else return "H";
+					if (lKonto.isSollKonto()) {
+						return "S";
+					} else {
+						return "H";
+					}
 				case 3:
 					return Double.valueOf(lKonto.getStartSaldo());
 				case 4:
@@ -374,13 +377,17 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 			// Konto lesen
 			Konto lKonto = null;
 			int rowNr = jKontoTable.getSelectedRow();
-			if (rowNr < 0) return;
+			if (rowNr < 0) {
+				return;
+			}
 			lKonto = mKontoData.readAt(rowNr);
 			if (lKonto != null) {
 				// Konto löschen, Bestätigen
 				int lResult = JOptionPane.showConfirmDialog(this, "Konto " + lKonto.getKontoNr() + " löschen",
 						"Kontorahmen", JOptionPane.YES_NO_OPTION);
-				if (lResult == JOptionPane.NO_OPTION) return;
+				if (lResult == JOptionPane.NO_OPTION) {
+					return;
+				}
 				mKontoData.deleteAt(rowNr);
 				mKontoTableModel.fireTableRowsDeleted(rowNr, rowNr);
 				repaint();
@@ -396,7 +403,9 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 	void jButtonChange_actionPerformed(ActionEvent e) {
 		// Konto lesen
 		Konto lKonto = null;
-		if (jKontoTable.getSelectedRow() < 0) return;
+		if (jKontoTable.getSelectedRow() < 0) {
+			return;
+		}
 		try {
 			lKonto = mKontoData.readAt(jKontoTable.getSelectedRow());
 			if (lKonto != null) {
@@ -474,7 +483,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 	 */
 	private void btnExcelExport_actionPerformed(ActionEvent e) {
 		Trace.println(3, "KontoPlanView.actionExcelExoprt()");
-		// Printer aufrufen, Daten siehe Interface: TablePrinterModel
+		// Printer aufrufen, Daten siehe Interface: BasePrinterModel
 		ExcelExportKontoPlan lExcel = new ExcelExportKontoPlan(jKontoTable.getModel());
 		TextExportKontoPlan lTxt = new TextExportKontoPlan(jKontoTable.getModel());
 		try {
@@ -493,7 +502,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 	 */
 	private void btnExcelImport_actionPerformed(ActionEvent e) {
 		Trace.println(3, "KontoPlan.actionExcelImport()");
-		// Printer aufrufen, Daten siehe Interface: TablePrinterModel
+		// Printer aufrufen, Daten siehe Interface: BasePrinterModel
 		ExcelImport lExcel = new ExcelImport();
 		JFileChooser fc = new JFileChooser(Config.sDefaultDir);
 

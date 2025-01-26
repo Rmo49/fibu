@@ -61,13 +61,16 @@ public class Buchung {
             if (mID >= 0 && ((Buchung) pObject).getID() >= 0) {
                 return mID == ((Buchung) pObject).getID();
             }
-            if (!mDatum.equals(((Buchung) pObject).getDatum()))
-                return false;
+            if (!mDatum.equals(((Buchung) pObject).getDatum())) {
+				return false;
+			}
             String beleg = ((Buchung) pObject).getBeleg();
-            if ((beleg != null && !mBeleg.equals(((Buchung) pObject).getBeleg())) || (mSoll != ((Buchung) pObject).getSoll()) || (mHaben != ((Buchung) pObject).getHaben()))
-                return false;
-            if (Math.round(mBetrag) != Math.round(((Buchung) pObject).getBetrag()))
-                return false;
+            if ((beleg != null && !mBeleg.equals(((Buchung) pObject).getBeleg())) || (mSoll != ((Buchung) pObject).getSoll()) || (mHaben != ((Buchung) pObject).getHaben())) {
+				return false;
+			}
+            if (Math.round(mBetrag) != Math.round(((Buchung) pObject).getBetrag())) {
+				return false;
+			}
         } else {
             return false;
         }
@@ -82,8 +85,9 @@ public class Buchung {
             if (mID >= 0 && ((Buchung) pObject).getID() >= 0) {
                 return mID == ((Buchung) pObject).getID();
             }
-            if (!mDatum.equals(((Buchung) pObject).getDatum()) || (mSoll != ((Buchung) pObject).getSoll()) || (mHaben != ((Buchung) pObject).getHaben()) || (Math.round(mBetrag) != Math.round(((Buchung) pObject).getBetrag())))
-                return false;
+            if (!mDatum.equals(((Buchung) pObject).getDatum()) || (mSoll != ((Buchung) pObject).getSoll()) || (mHaben != ((Buchung) pObject).getHaben()) || (Math.round(mBetrag) != Math.round(((Buchung) pObject).getBetrag()))) {
+				return false;
+			}
         } else {
             return false;
         }

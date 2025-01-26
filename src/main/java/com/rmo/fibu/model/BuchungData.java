@@ -266,7 +266,9 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 	 */
 	public void save(Buchung pBuchung) throws FibuException {
 		Trace.println(2, "BuchungData.save(" + pBuchung.toString() +')');
-		if (pBuchung.isFehler()) return;
+		if (pBuchung.isFehler()) {
+			return;
+		}
 		try {
 			// neuen Recordset anlegen, falls vorher nicht gelesen
 			// wenn ID < 0, dann nicht gelesen
@@ -610,7 +612,9 @@ public class BuchungData extends DataBase implements BeanContextMembershipListen
 	private long getNextBuchungId() {
 		getLastBuchungId();
 		synchronized (this) {
-			if (mNextBuchungId <= 0) mNextBuchungId = 0;
+			if (mNextBuchungId <= 0) {
+				mNextBuchungId = 0;
+			}
 			// die nächste ist +1
 			return ++mNextBuchungId;
 		}

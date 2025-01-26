@@ -429,7 +429,7 @@ public class BuchungEingabe extends JInternalFrame {
 						focusGainedEnterField(mTfSoll, mTempBuchung.getSollAsString());
 						showKontoListe();
 						//mHasKontoLostFocus = false;
-						mFieldToFill = mTfSoll;					
+						mFieldToFill = mTfSoll;
 						try {
 							selectRowKontoList(mTfSoll.getText());
 						} catch (KontoNotFoundException ex) {
@@ -447,7 +447,7 @@ public class BuchungEingabe extends JInternalFrame {
 				}
 			}
 		});
-		
+
 		// überwachung der Tastatur-Eingabe
 		mTfSoll.addKeyListener(new KeyListener() {
 			@Override
@@ -569,8 +569,9 @@ public class BuchungEingabe extends JInternalFrame {
 	private void focusGainedEnterField(JTextComponent field, String defaultText) {
 		Trace.println(6, "BuchungEingabe.focusGainedEnterField()");
 		// nichts eintragen, wenn schon etwas drin.
-		if (field.getText() == null || field.getText().length() > 0)
+		if (field.getText() == null || field.getText().length() > 0) {
 			return;
+		}
 		field.setText(defaultText);
 		field.selectAll();
 	}
@@ -592,10 +593,11 @@ public class BuchungEingabe extends JInternalFrame {
 			mTfDatum.setText(datum.toString());
 			mTfDatum.setBackground(Color.white);
 			// Testen, ob es dem letzten Datum entspricht
-			if (mTfDatum.getText().equals(mTempBuchung.getDatumAsString()))
+			if (mTfDatum.getText().equals(mTempBuchung.getDatumAsString())) {
 				mDatumSame = true;
-			else
+			} else {
 				mDatumSame = false;
+			}
 			isTfEmpty(mTfDatum, true);
 			// TODOdeleteMessage
 //			deleteMessage();
@@ -611,8 +613,9 @@ public class BuchungEingabe extends JInternalFrame {
 		Trace.println(5, "BuchungEingabe.belegFocusGained()");
 		hideKontoListe();
 		// nichts tun, wenn bereits etwas eingegeben
-		if (mTfBeleg.getText() == null || mTfBeleg.getText().length() > 0)
+		if (mTfBeleg.getText() == null || mTfBeleg.getText().length() > 0) {
 			return;
+		}
 		if (mDatumSame && mBelegSame) {
 			mTfBeleg.setText(mTempBuchung.getBeleg());
 		} else {
@@ -624,8 +627,9 @@ public class BuchungEingabe extends JInternalFrame {
 	/** Beleg Eingaben prüfen, ob etwas eingegeben, Feld markieren */
 	private void belegFocusLost() {
 		Trace.println(5, "BuchungEingabe.belegFocusLost()");
-		if (mTfBeleg.getText() == null || mTfBeleg.getText().length() > 0)
+		if (mTfBeleg.getText() == null || mTfBeleg.getText().length() > 0) {
 			return;
+		}
 		isTfEmpty(mTfBeleg, true);
 		enableButtons();
 	}
@@ -639,8 +643,9 @@ public class BuchungEingabe extends JInternalFrame {
 	private boolean isTfEmpty(JTextComponent textField, boolean mark) {
 		// Document doc = textField.getDocument();
 		if ((textField.getText() == null) || (textField.getText().length() < 1)) {
-			if (mark)
+			if (mark) {
 				textField.setBackground(Color.yellow);
+			}
 			return true;
 		}
 		textField.setBackground(Color.white);
@@ -741,11 +746,11 @@ public class BuchungEingabe extends JInternalFrame {
 			if (getMid() < 0) {
 				mNewBookingsSaved = false;
 			}
-			
+
 			// 23.10.24 hier nicht mehr, da sonst mit neuer Buchung verglichen
-			// copyToTemp(); 
+			// copyToTemp();
 			//mBuchungListe.repaint();
-			
+
 			clearEingabe();
 			deleteMessage();
 			enableButtons();
@@ -821,16 +826,21 @@ public class BuchungEingabe extends JInternalFrame {
 	 */
 	public int hasEnterFieldsEmpty(boolean mark) {
 		int nrEmpty = 0;
-		if (isTfEmpty(mTfBeleg, mark))
+		if (isTfEmpty(mTfBeleg, mark)) {
 			nrEmpty++;
-		if (isTfEmpty(mTfText, mark))
+		}
+		if (isTfEmpty(mTfText, mark)) {
 			nrEmpty++;
-		if (isTfEmpty(mTfSoll, mark))
+		}
+		if (isTfEmpty(mTfSoll, mark)) {
 			nrEmpty++;
-		if (isTfEmpty(mTfHaben, mark))
+		}
+		if (isTfEmpty(mTfHaben, mark)) {
 			nrEmpty++;
-		if (isTfEmpty(mTfBetrag, mark))
+		}
+		if (isTfEmpty(mTfBetrag, mark)) {
 			nrEmpty++;
+		}
 		return nrEmpty;
 	}
 
@@ -865,16 +875,18 @@ public class BuchungEingabe extends JInternalFrame {
 	private void copyToTemp() {
 		try {
 			// --- Datum
-			if (mTempBuchung.getDatum() != null && mTempBuchung.getDatumAsString().equals(mTfDatum.getText()))
+			if (mTempBuchung.getDatum() != null && mTempBuchung.getDatumAsString().equals(mTfDatum.getText())) {
 				mDatumSame = true;
-			else
+			} else {
 				mDatumSame = false;
+			}
 			mTempBuchung.setDatum(mTfDatum.getText());
 			// --- Beleg
-			if (mTempBuchung.getBeleg() != null && mTempBuchung.getBeleg().equals(mTfBeleg.getText()))
+			if (mTempBuchung.getBeleg() != null && mTempBuchung.getBeleg().equals(mTfBeleg.getText())) {
 				mBelegSame = true;
-			else
+			} else {
 				mBelegSame = false;
+			}
 			mTempBuchung.setBeleg(mTfBeleg.getText());
 			// --- Text
 			mTempBuchung.setBuchungText(mTfText.getText());
@@ -953,17 +965,17 @@ public class BuchungEingabe extends JInternalFrame {
 		mId = pBuchung.getID();
 	}
 
-	
+
 	private void selectRowKontoList(String konto)  throws KontoNotFoundException  {
 		if (mParent.isBuchungView()) {
-			mKtoSelectFrame.selectRow(konto);				
+			mKtoSelectFrame.selectRow(konto);
 		}
 		else {
-			mKtoSelectDialog.selectRow(konto);	
+			mKtoSelectDialog.selectRow(konto);
 		}
 	}
 
-	
+
 	private String getKontoNrFromEingabe(String eingabe) throws KontoNotFoundException {
 		if (mParent.isBuchungView()) {
 			return mKtoSelectFrame.selectRow(eingabe);

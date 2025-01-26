@@ -57,7 +57,7 @@ public class ExcelExport {
 	 * @param rowNr
 	 *            die Zeilennummer für den Wert
 	 * @param colNr
-	 *            die Spalten nummer
+	 *            die Spalten nrToPrint
 	 */
 	protected void createBetrag(Row row, int rowNr, int colNr) {
 		Double lBetrag = (Double) mTableModel.getValueAt(rowNr, colNr);

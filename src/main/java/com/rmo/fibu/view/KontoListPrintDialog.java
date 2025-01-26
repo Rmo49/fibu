@@ -46,11 +46,11 @@ public class KontoListPrintDialog extends JDialog {
 	/** Initialisierung der Elemente */
 	private void jbInit() throws Exception {
 		this.getContentPane().setLayout(null);
-		
+
 		checkBox.setFont(Config.fontTextBold);
 		checkBox.setSelected(false);
 		checkBox.setVisible(true);
-		checkBox.setBounds(new Rectangle(14, 10, 200,40)); 
+		checkBox.setBounds(new Rectangle(14, 10, 200,40));
 
 
 		btnPrint.setFont(Config.fontTextBold);
@@ -72,7 +72,7 @@ public class KontoListPrintDialog extends JDialog {
 				btnCancel_action(e);
 			}
 		});
-		
+
 		jProgressBar.setBounds(new Rectangle(15, 10, 199, 19));
 		this.getContentPane().add(checkBox, null);
 		this.getContentPane().add(btnPrint, null);
@@ -83,7 +83,7 @@ public class KontoListPrintDialog extends JDialog {
 
 	/** Handler, wenn drucken gewählt wurde */
 	void btnPrint_action(ActionEvent e) {
-		// Printer aufrufen, Daten siehe Interface: TablePrinterModel
+		// Printer aufrufen, Daten siehe Interface: BasePrinterModel
 		KontoListPrinterModel lModel = new KontoListPrinterModel();
 		lModel.setMitSaldo(checkBox.isSelected());
 		KontoListPrinter lPrinter = new KontoListPrinter(lModel);

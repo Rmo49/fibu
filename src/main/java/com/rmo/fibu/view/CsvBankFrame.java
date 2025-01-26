@@ -216,7 +216,7 @@ public class CsvBankFrame extends JFrame {
 		}
 	}
 
-	
+
 	/**
 	 * Alle Einträge von der Liste in die DB speichern
 	 */
@@ -231,11 +231,11 @@ public class CsvBankFrame extends JFrame {
 			} catch (FibuException ex2) {
 				JOptionPane.showMessageDialog(this, ex2.getMessage(), "\"Fehler in DB", JOptionPane.ERROR_MESSAGE);
 				return;
-			}		
+			}
 		}
 	}
 
-	
+
 	/**
 	 * Die Setup Daten eingeben
 	 */
@@ -418,8 +418,8 @@ public class CsvBankFrame extends JFrame {
 			}
 			return "";
 		}
-		
-			
+
+
 		/**
 		 * Gibt die Daten einer Row zurück.
 		 * @param row
@@ -434,7 +434,7 @@ public class CsvBankFrame extends JFrame {
 				Trace.println(3, "getValueAt() " + ex.getMessage());
 				return lBank;
 			}
-			return lBank;						
+			return lBank;
 		}
 	}
 

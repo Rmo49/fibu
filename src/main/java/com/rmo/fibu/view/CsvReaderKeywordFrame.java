@@ -43,7 +43,7 @@ import com.rmo.fibu.util.DatumFormat;
 import com.rmo.fibu.util.Trace;
 
 /**
- * Liest CSV Keywords ein, schreibt diese in Tabelle. 
+ * Liest CSV Keywords ein, schreibt diese in Tabelle.
  * Wenn: "CSV-datei selektieren":
  * Eine Auswahl von dateien anzeigen, wenn ein File selektiert, wird das file an
  * CsvReaderTableFrame weitergegeben.
@@ -240,7 +240,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 
 		return lPanel;
 	}
-	
+
 
 	/**
 	 * Die Buttons in der ersten Reihe
@@ -248,7 +248,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 	 */
 	private JPanel initButtons1() {
 		JPanel flow1 = new JPanel(new FlowLayout());
-		
+
 		JButton btnAdd = new JButton("Dazufügen");
 		btnAdd.setFont(Config.fontTextBold);
 
@@ -281,7 +281,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 		flow1.add(btnSave);
 		return flow1;
 	}
-	
+
 	/**
 	 * Die Zeile mit  der Default Kontonummer
 	 * @return
@@ -350,7 +350,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 			}
 		});
 		flow4.add(btnSelectFile);
-		
+
 		// --- Ab Datum
 		JLabel labelDatum = new JLabel("von: ");
 		labelDatum.setFont(Config.fontTextBold);
@@ -371,8 +371,8 @@ public class CsvReaderKeywordFrame extends JFrame {
 
 		return flow4;
 	}
-	
-	
+
+
 	/**
 	 * Einen Eintrag dazufügen
 	 */
@@ -476,7 +476,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 	}
 
 	/**
-	 * Das eingegebenen Datums ab 
+	 * Das eingegebenen Datums ab
 	 */
 	private Date getSelectedDateAb() {
 		Date datum = null;
@@ -495,7 +495,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 	}
 
 	/**
-	 * Das eingegebenen Datums ab 
+	 * Das eingegebenen Datums ab
 	 */
 	private Date getSelectedDateBis() {
 		Date datum = null;
@@ -512,8 +512,8 @@ public class CsvReaderKeywordFrame extends JFrame {
 			return null;
 		}
 	}
-	
-	
+
+
 //	public String getBankName() {
 //		return mBankName;
 //	}

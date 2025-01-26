@@ -82,15 +82,17 @@ public class KontoCalculator {
 		// verbuche: wenn es ein Soll-Konto ist
 		if (lKonto.isSollKonto()) {
 			// wenn in Buchung in der Soll-Spalte steht: dazuzählen
-			if (pSoll)
+			if (pSoll) {
 				lSaldo += pBetrag;
-			else
+			} else {
 				lSaldo -= pBetrag;
+			}
 		} else {
-			if (pSoll)
+			if (pSoll) {
 				lSaldo -= pBetrag;
-			else
+			} else {
 				lSaldo += pBetrag;
+			}
 		}
 		lKonto.setSaldo(lSaldo);
 	}

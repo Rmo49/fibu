@@ -146,5 +146,5 @@
 		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-swing -->
 		
 	</dependencies>
-	<version>7-01</version>
+	<version>7-10</version>
 </project>

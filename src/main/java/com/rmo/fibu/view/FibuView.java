@@ -824,7 +824,7 @@ public class FibuView extends JFrame
 
 	/**
 	 * Eine Exception anzeigen
-	 * 
+	 *
 	 * @param ex
 	 */
 	private void showMessage(Exception ex) {
@@ -833,7 +833,7 @@ public class FibuView extends JFrame
 
 	/**
 	 * Eine Exception mit tiel anzeigen anzeigen
-	 * 
+	 *
 	 * @param ex
 	 */
 	private void showMessage(String titel, Exception ex) {

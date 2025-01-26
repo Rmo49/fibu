@@ -155,7 +155,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 
 		delKonto = new JCheckBox("Konto zuerst löschen");
 		delKonto.setSelected(true);
-		lPanel.add(delKonto);		
+		lPanel.add(delKonto);
 		lPanel.add(Box.createRigidArea(new Dimension(5, 5)));
 
 		btnKopieren = new JButton("kopieren");
@@ -170,7 +170,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 			}
 		});
 		lPanel.add(btnKopieren);
-		
+
 		return lPanel;
 	}
 
@@ -255,11 +255,11 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 			delKonti(kontoData);
 		}
 		// zuerst Startsalo aller bestehenden Konti auf 0 setzen
-		setSaldoToZero(kontoData);		
+		setSaldoToZero(kontoData);
 		copyKonti(kontoData);
 	}
 
-	
+
 	/**
 	 * Setzt alle Start-Saldo auf 0
 	 * @param kontoData
@@ -294,7 +294,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 			}
 		}
 	}
-	
+
 	/**
 	 * Alle Saldos kopieren
 	 * @param kontoData
@@ -328,7 +328,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 			}
 		}
 	}
-	
+
 	/**
 	 * Kopiert die Bank daten für CSV.
 	 */
@@ -342,7 +342,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 		catch (SQLException ex) {
 			// nix machen
 		}
-		
+
 		CsvBankDataFrom mPdfBankDataFrom = (CsvBankDataFrom) DataBeanContextFrom.getContext()
 				.getDataBean(CsvBankDataFrom.class);
 		Iterator<CsvBank> iterFrom = mPdfBankDataFrom.getIterator();

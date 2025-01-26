@@ -140,14 +140,16 @@ public abstract class BuchungOfKontoModel extends AbstractTableModel {
 	 * Die Summen und den Saldo berechnen
 	 */
 	protected void addSaldo(int kontoNr, boolean isSoll, Buchung pBuchung) {
-		if (pBuchung.getSoll() == kontoNr)
+		if (pBuchung.getSoll() == kontoNr) {
 			mSummeSoll += pBuchung.getBetrag();
-		else
+		} else {
 			mSummeHaben += pBuchung.getBetrag();
-		if (isSoll)
+		}
+		if (isSoll) {
 			mSaldo = mSummeSoll - mSummeHaben;
-		else
+		} else {
 			mSaldo = mSummeHaben - mSummeSoll;
+		}
 	}
 
 	/**

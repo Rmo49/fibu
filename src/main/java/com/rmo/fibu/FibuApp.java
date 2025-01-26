@@ -16,7 +16,7 @@ import com.rmo.fibu.view.FibuView;
  */
 public class FibuApp {
 
-	private static final String sVersion = "FibuLocal V7.01 (05.01.25)";
+	private static final String sVersion = "FibuLocal V7.10 (26.01.25)";
 	private static FibuView mFibu;
 
 	/********************************
@@ -40,7 +40,7 @@ public class FibuApp {
 			}
 			// alle Werte setzen, wenn noch nicht gemacht
 			Config.setAllProperties();
-			
+
 //			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 //			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 			UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");

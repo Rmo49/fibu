@@ -14,8 +14,8 @@ import com.rmo.fibu.model.KontoNrVector;
 
 /**
  * Druckt fortlaufende Seiten einer Tabelle. Die Daten müssen über das Interface
- * TablePrinterModel gesetzt werden. Das drucken wird mit der Methode print()
- * ausgelöst. Der TablePrinter kontrolliert die y-Position, wenn das Ende der
+ * BasePrinterModel gesetzt werden. Das drucken wird mit der Methode print()
+ * ausgelöst. Der BasePrinter kontrolliert die y-Position, wenn das Ende der
  * Seite erreicht ist, werden die Summen ausgegeben.
  */
 public class KontoListPrinter implements Printable {
@@ -23,12 +23,12 @@ public class KontoListPrinter implements Printable {
 	private KontoListPrinterInterface printerModel;
 	/** Der Vecort mit den Kontonummern */
 	private KontoNrVector mKontoNrList;
-	/** Die nummer im Vector */
+	/** Die nrToPrint im Vector */
 	private int mListNr;
 	/** Die aktuelle Kontonummer die gedruckt wird */
 	private int mKontoNr;
 	/** True, wenn das Konto vollständig gedruckt wurde */
-	private boolean mKtoAllesGedrucked;
+	private boolean mKontoGedrucked;
 	/** Die Seite des Kontos */
 	private int mKontoPage;
 	/** Zeigt an, ob die Seite vollständig gedruckt wurde */
@@ -64,7 +64,7 @@ public class KontoListPrinter implements Printable {
 	/***********************************************************************
 	 * Wird von der Klasse aufgerufen, die eine Tablle drucken will. JTable,
 	 * Kopfzeile etc. werden über TabelPrinterModel gesetzt (siehe Konstruktor).
-	 * 
+	 *
 	 * @throws Exception, falls Fehler beim Drucken.
 	 */
 	public void doPrint() throws PrinterException {
@@ -92,7 +92,7 @@ public class KontoListPrinter implements Printable {
 	 * Wird vom PrintHandler aufgerufen solange bis NO_SUCH_PAGE zurückgegeben wird.
 	 * JTable, Kopfzeile etc. werden über TabelPrinterModel gesetzt. Die Methode
 	 * muss jede einzelne Seite unabhängig berechnen, bzw. ausgeben können.
-	 * 
+	 *
 	 * @param g         Graphics umgebung
 	 * @param pageIndex Seite die gedruckt werden soll
 	 * @return Printable.PAGE_EXISTS wenn gedruckt, sonst Printable.NO_SUCH_PAGE
@@ -111,7 +111,8 @@ public class KontoListPrinter implements Printable {
 //			mPageLast = -1;
 			mListNr = 0;
 			mPrintedRows = 0;
-			mKtoAllesGedrucked = true;
+			// wenn true, wird das nächste Konto gelesen
+			mKontoGedrucked = true;
 			mAllKontoPrinted = false;
 		}
 
@@ -143,12 +144,12 @@ public class KontoListPrinter implements Printable {
 		// durchlaufen bis eine Seite gedruckt ist
 		while (!mPageFull && !mAllKontoPrinted) {
 			// nächstes Konto lesen falls das letzte gedruckt wurde
-			if (mKtoAllesGedrucked) {
+			if (mKontoGedrucked) {
 				if (mListNr < mKontoNrList.size()) {
 					mKontoNr = mKontoNrList.getAsInt(mListNr);
 					mListNr++;
 					mKontoPage = 1;
-					mKtoAllesGedrucked = false;
+					mKontoGedrucked = false;
 					// die Summen für die Summe am ende der Page
 					initSummen();
 				} else {
@@ -159,15 +160,15 @@ public class KontoListPrinter implements Printable {
 			if (!mAllKontoPrinted) {
 				// ein Konto durcken, oder fortsetzen falls noch nicht fertig gedruckt
 				printKonto(g2, printing);
-				// printFooter(g2, printing);
 			}
 		}
 	}
 
 	/** Die Seitennummer am Anfang der Seite */
 	private void printPageHeader(Graphics2D g, boolean printing) {
-		if (!printing)
+		if (!printing) {
 			return;
+		}
 		// Name der Fibu ausgeben
 		g.setFont(Config.printerNormalFont);
 		g.drawString(Config.sFibuTitel, 0, yPos);
@@ -181,14 +182,14 @@ public class KontoListPrinter implements Printable {
 
 	/**
 	 * Ein Konto drucken. Wenn nicht auf einer Seite möglich, dann wird
-	 * mKtoAllesGedrucked auf false gesetzt.
+	 * mKontoGedrucked auf false gesetzt.
 	 */
 	private void printKonto(Graphics2D g2, boolean printing) {
 		// --- Kopfzeile drucken
 		printKontoName(g2, printing);
 		// Konto-Eintraege drucken, setzt mPageFull wenn am Ende der Seite
 		printBuchungen(g2, printing);
-		if (mKtoAllesGedrucked) {
+		if (mKontoGedrucked) {
 			mPrintedRows = 0; // für nachstes Konto
 			// noch genuegend Platz für ein weiteres Konto?
 			yPos += spaceBetweenKonto();
@@ -240,13 +241,13 @@ public class KontoListPrinter implements Printable {
 	/**
 	 * Die Buchungen eines Kontos drucken inkl. Summen am Schluss. Berechnet die
 	 * schleppende Summe
-	 * 
+	 *
 	 * @param g
 	 * @param printing false wenn nur berechnet werden soll
 	 */
 	private void printBuchungen(Graphics2D g, boolean printing) {
 		while (yPos < (pageHeight - (spaceSummeFooter() * 2))) {
-			if (mKtoAllesGedrucked) {
+			if (mKontoGedrucked) {
 				break;
 			}
 			if (mPrintedRows == printerModel.getRowCount(mKontoNr) - 1) {
@@ -263,7 +264,7 @@ public class KontoListPrinter implements Printable {
 			}
 		}
 		if (isInFooter(yPos)) {
-			if (!mKtoAllesGedrucked) {
+			if (!mKontoGedrucked) {
 				printSumme(g, printing);
 			}
 			mPageFull = true;
@@ -286,6 +287,7 @@ public class KontoListPrinter implements Printable {
 					}
 					if (printerModel.isColToAdd(colNr)) {
 						// Die schleppende Summe ausgeben
+						g.setFont(Config.printerFontBold);
 						String text = Config.sDecimalFormat.format(mColSumme[colNr]);
 						printCelleText(g, colNr, text, true);
 					}
@@ -294,6 +296,7 @@ public class KontoListPrinter implements Printable {
 				// wenn die letzte Zeile eines Kontos (Summen) gedruckt
 //				if (mPrintedRows >= printerModel.getRowCount(mKontoNr)) {
 				yPos += spaceSummeFooter();
+				g.setFont(Config.printerFontBold);
 				printRow(g);
 				// Saldo drucken
 				double soll = (Double) printerModel.getValueAt(mKontoNr, mPrintedRows, 4);
@@ -313,7 +316,7 @@ public class KontoListPrinter implements Printable {
 				}
 
 				// für das nächste Konto
-				mKtoAllesGedrucked = true;
+				mKontoGedrucked = true;
 				mPrintedRows = 0;
 			}
 		} else {
@@ -323,7 +326,7 @@ public class KontoListPrinter implements Printable {
 
 	/**
 	 * Linie, über der Spalten mit Summen
-	 * 
+	 *
 	 * @param printing wenn gedrucked wird
 	 */
 	private void printSummeLine(Graphics2D g, boolean printing) {
@@ -351,7 +354,9 @@ public class KontoListPrinter implements Printable {
 	private void printCelle(Graphics2D g, int colNr) {
 		Object value = printerModel.getValueAt(mKontoNr, mPrintedRows, colNr);
 		String text = null;
-		boolean printRight = false;
+		boolean printRight = printerModel.getColRight(colNr);
+
+
 		// --- Werte formatieren
 		if (value instanceof Double) {
 			// wenn -1 dann nix anzeigen
@@ -360,7 +365,7 @@ public class KontoListPrinter implements Printable {
 			} else {
 				text = Config.sDecimalFormat.format(value);
 			}
-			printRight = true;
+//			printRight = true;
 		} else if (value instanceof Integer) {
 			// wenn 0 dann nix anzeigen
 			if (((Integer) value).intValue() == 0) {
@@ -368,15 +373,15 @@ public class KontoListPrinter implements Printable {
 			} else {
 				text = value.toString();
 			}
-			printRight = true;
+//			printRight = true;
 		} else if (value instanceof Date) {
 			text = DatumFormat.getDatumInstance().format(value);
 		} else {
-			printRight = printerModel.getColRight(colNr);
 			text = value.toString();
 		}
-		if (text == null || text.length() < 1)
+		if (text == null || text.length() < 1) {
 			return;
+		}
 		// --- Zelle ausgeben
 		if (text.charAt(0) == '_') {
 			printCelleLine(g, colNr);
@@ -400,15 +405,17 @@ public class KontoListPrinter implements Printable {
 			// wenn zu breit, Text verkürzen
 			allowedWidth -= g.getFontMetrics().getStringBounds(fillStr, g).getWidth();
 			while (g.getFontMetrics().getStringBounds(text, g).getWidth() > allowedWidth) {
-				if (printRight)
+				if (printRight) {
 					text = text.substring(1);
-				else
+				} else {
 					text = text.substring(0, text.length() - 1);
+				}
 			}
-			if (printRight)
+			if (printRight) {
 				text = fillStr + text;
-			else
+			} else {
 				text = text + fillStr;
+			}
 		}
 		// X-Position berechnen
 		double xPos = colStartX[colNr] + Config.printerColAbstand;
@@ -449,7 +456,7 @@ public class KontoListPrinter implements Printable {
 
 	/**
 	 * Die schleppende Summe, die evt. angezeigt werden muss.
-	 * 
+	 *
 	 */
 	private void addSumme() {
 		for (int i = 0; i < printerModel.getColCount(); i++) {
@@ -463,7 +470,7 @@ public class KontoListPrinter implements Printable {
 					}
 				} catch (ClassCastException e) {
 					// kann sein, dass keine Zahlen enthält
-					Trace.println(4, "TablePrinter.addSumme() ClassCastException: "
+					Trace.println(4, "BasePrinter.addSumme() ClassCastException: "
 							+ printerModel.getValueAt(mKontoNr, mPrintedRows, i).toString());
 				}
 			}
@@ -530,7 +537,7 @@ public class KontoListPrinter implements Printable {
 
 	/**
 	 * Berechnet, ob die yPos im Footerbereich ist.
-	 * 
+	 *
 	 * @param float yPos die position
 	 * @return true wenn im footerbereich, sonst false
 	 */

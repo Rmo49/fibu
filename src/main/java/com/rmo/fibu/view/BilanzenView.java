@@ -3,15 +3,8 @@ package com.rmo.fibu.view;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Cursor;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
 import java.awt.print.PrinterException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -33,9 +26,10 @@ import com.rmo.fibu.model.DbConnection;
 import com.rmo.fibu.model.Konto;
 import com.rmo.fibu.model.KontoCalculator;
 import com.rmo.fibu.model.KontoData;
+import com.rmo.fibu.util.BilanzPrinter;
+import com.rmo.fibu.util.BilanzPrinterModel;
+import com.rmo.fibu.util.BilanzPrinterWerte;
 import com.rmo.fibu.util.Config;
-import com.rmo.fibu.util.TablePrinter;
-import com.rmo.fibu.util.TablePrinterModel;
 import com.rmo.fibu.util.Trace;
 import com.rmo.fibu.view.util.BetragRenderer;
 import com.rmo.fibu.view.util.IntegerRenderer;
@@ -44,7 +38,7 @@ import com.rmo.fibu.view.util.IntegerRenderer;
  * Auswertung: Eröffnungsbilanz, Bilanz, ER. Ein Frame mit CardLayout für jeden
  * Typ. Wurde mit JBuilder-Designer erstellt!
  */
-public class BilanzenView extends JFrame implements Printable {
+public class BilanzenView extends JFrame { // implements Printable
 	private static final long serialVersionUID = 387966003598525362L;
 	public final static int ONE_SECOND = 1000;
 	/** Die DB zu dieser View */
@@ -220,41 +214,41 @@ public class BilanzenView extends JFrame implements Printable {
 	 * Wird vom PrintHandler aufgerufen. Die Methode muss jede einzelne Seite
 	 * unabhängig berechnen, bzw. ausgeben können.
 	 */
-	@Override
-	public int print(Graphics g, PageFormat pf, int pageIndex) throws PrinterException {
-		Trace.println(3, "BilanzenView.print()");
-		if (pageIndex >= 1) return Printable.NO_SUCH_PAGE;
-		Graphics2D g2 = (Graphics2D) g;
-		g2.translate(pf.getImageableX(), pf.getImageableY());
-		switch (tabPane.getSelectedIndex()) {
-		case 0:
-			printPage(g2, pf, "Start-Bilanz per ", tableStartBilanz);
-			break;
-		case 1:
-			printPage(g2, pf, "Bilanz per ", tableBilanz);
-			break;
-		case 2:
-			printPage(g2, pf, "Erfolgsrechnung per ", tableER);
-			break;
-		}
-		return Printable.PAGE_EXISTS;
-	}
+//	@Override
+//	public int print(Graphics g, PageFormat pf, int pageIndex) throws PrinterException {
+//		Trace.println(3, "BilanzenView.print()");
+//		if (pageIndex >= 1) return Printable.NO_SUCH_PAGE;
+//		Graphics2D g2 = (Graphics2D) g;
+//		g2.translate(pf.getImageableX(), pf.getImageableY());
+//		switch (tabPane.getSelectedIndex()) {
+//		case 0:
+//			printPage(g2, pf, "Start-Bilanz per ", tableStartBilanz);
+//			break;
+//		case 1:
+//			printPage(g2, pf, "Bilanz per ", tableBilanz);
+//			break;
+//		case 2:
+//			printPage(g2, pf, "Erfolgsrechnung per ", tableER);
+//			break;
+//		}
+//		return Printable.PAGE_EXISTS;
+//	}
 
 	/**
 	 * Druckt eine Auswertungsseite
 	 *
-	 * @todo 3 später mit mehreren Seiten (TablePrinter verwenden)
+	 * @todo 3 später mit mehreren Seiten (BasePrinter verwenden)
 	 */
-	private void printPage(Graphics2D g2, PageFormat pf, String titel, JTable table) {
-		g2.setFont(Config.printerTitelFont);
-		float y = Config.printerTitelFont.getSize2D();
-		g2.drawString(titel, 0, y);
-		g2.drawLine(0, (int) y + 4, (int) pf.getImageableWidth(), (int) y + 4);
-		g2.setFont(Config.printerNormalFont);
-		// der Rest + 30 Pixels tiefer
-		g2.translate(0, 30);
-		table.paint(g2);
-	}
+//	private void printPage(Graphics2D g2, PageFormat pf, String title, JTable table) {
+//		g2.setFont(Config.printerTitelFont);
+//		float y = Config.printerTitelFont.getSize2D();
+//		g2.drawString(title, 0, y);
+//		g2.drawLine(0, (int) y + 4, (int) pf.getImageableWidth(), (int) y + 4);
+//		g2.setFont(Config.printerNormalFont);
+//		// der Rest + 30 Pixels tiefer
+//		g2.translate(0, 30);
+//		table.paint(g2);
+//	}
 
 	// ----- Das Model für die Tabellen ---------------------------------------
 	/**
@@ -401,14 +395,23 @@ public class BilanzenView extends JFrame implements Printable {
 			double sollSaldo = -1; // -1 wird nie angezeigt
 			double habenSaldo = -1;
 			String text = null;
-			if (mSummeSoll > mSummeHaben) habenSaldo = mSummeSoll - mSummeHaben;
-			else sollSaldo = mSummeHaben - mSummeSoll;
-			if (kontoNrVon < Config.sERStart) {
-				if (habenSaldo > 0) text = "Gewinn";
-				else text = "Verlust";
+			if (mSummeSoll > mSummeHaben) {
+				habenSaldo = mSummeSoll - mSummeHaben;
 			} else {
-				if (habenSaldo > 0) text = "Verlust";
-				else text = "Gewinn";
+				sollSaldo = mSummeHaben - mSummeSoll;
+			}
+			if (kontoNrVon < Config.sERStart) {
+				if (habenSaldo > 0) {
+					text = "Gewinn";
+				} else {
+					text = "Verlust";
+				}
+			} else {
+				if (habenSaldo > 0) {
+					text = "Verlust";
+				} else {
+					text = "Gewinn";
+				}
 			}
 			switch (col) {
 			case 0:
@@ -494,13 +497,7 @@ public class BilanzenView extends JFrame implements Printable {
 			// Cursor verändern während Berechnung
 			this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			KontoCalculator calculator = new KontoCalculator();
-			/*
-			 * progressMonitor = new ProgressMonitor(this, "Test", "", 0, 100);
-			 * progressMonitor.setProgress(0);
-			 * progressMonitor.setMillisToDecideToPopup(2 * ONE_SECOND);
-			 * //Create a timer. timer = new Timer(ONE_SECOND, new
-			 * TimerListener()); timer.start(); task.go();
-			 */
+
 			calculator.calculateSaldo();
 			setUpBilanzen();
 			repaintAll();
@@ -534,30 +531,65 @@ public class BilanzenView extends JFrame implements Printable {
 	/**
 	 * Drucken einer Seite. Wenn ausgeführt, wird die Methode print aufgerufen
 	 */
-	private void btnPrint_action(ActionEvent e) {
-		TablePrinterModel tablePrinterModel = null;
-		String aktuellesDatum = null;
-		aktuellesDatum = readAktuellesDatum();
+	private void btnPrint_action(ActionEvent event) {
+//		BasePrinterModel tablePrinterModel = null;
+//		String aktuellesDatum = null;
+		// hier wird ein JOptionpane aufgerufen
+//		aktuellesDatum = readAktuellesDatum();
+//		if (aktuellesDatum == null) {
+//			// wenn abbrechen gedrückt
+//			return;
+//		}
 
-		switch (tabPane.getSelectedIndex()) {
-		case 0:
-			tablePrinterModel = new BilanzenPrinterModel(tableStartBilanz, "Start-Bilanz per "
-					+ Config.sDatumVon.toString());
-			break;
-		case 1:
-			if (aktuellesDatum == null) {
-				return;
-			}
-			tablePrinterModel = new BilanzenPrinterModel(tableBilanz, "Bilanz per " + aktuellesDatum);
-			break;
-		case 2:
-			if (aktuellesDatum == null) {
-				return;
-			}
-			tablePrinterModel = new BilanzenPrinterModel(tableER, "Erfolgsrechnung per " + aktuellesDatum);
-			break;
+		//----- Dialog aufrufen
+		BilanzenPrintDialog bpDialog = new BilanzenPrintDialog(this, "Bilanzen drucken", true);
+		bpDialog.setVisible(true);
+
+		// hier gehts weiter nach dem Dialog
+		if (bpDialog.isCancelSelected()) {
+			return;
 		}
-		TablePrinter lPrinter = new TablePrinter(tablePrinterModel);
+
+		BilanzPrinterModel bilanzPrinterModel = new BilanzPrinterModel();
+		boolean eineSelektiert = false;
+
+		if (bpDialog.getPosStartBilanz() > 0) {
+			BilanzPrinterWerte werte = new BilanzPrinterWerte();
+			werte.nrToPrint = bpDialog.getPosStartBilanz();
+			werte.bilanzNr = 1;
+			werte.title = "Start Bilanz per " + Config.sDatumVon;
+			werte.tabelle = tableStartBilanz;
+			bilanzPrinterModel.addBilanz(werte);
+			eineSelektiert = true;
+		}
+
+		if (bpDialog.getPosBilanz() > 0) {
+			BilanzPrinterWerte werte = new BilanzPrinterWerte();
+			werte.nrToPrint = bpDialog.getPosBilanz();
+			werte.bilanzNr = 2;
+			werte.title = "Bilanz per " + bpDialog.getDatum();
+			werte.tabelle = tableBilanz;
+			bilanzPrinterModel.addBilanz(werte);
+			eineSelektiert = true;
+		}
+
+		if (bpDialog.getPosER() > 0) {
+			BilanzPrinterWerte werte = new BilanzPrinterWerte();
+			werte.nrToPrint = bpDialog.getPosER();
+			werte.bilanzNr = 3;
+			werte.title = "Erfolgsrechnung per " + bpDialog.getDatum();
+			werte.tabelle = tableER;
+			bilanzPrinterModel.addBilanz(werte);
+			eineSelektiert = true;
+		}
+
+		// wenn alle auf 0 stehen
+		if (!eineSelektiert) {
+			return;
+		}
+
+		//---- drucken
+		BilanzPrinter lPrinter = new BilanzPrinter(bilanzPrinterModel);
 		try {
 			lPrinter.doPrint();
 		} catch (PrinterException ex) {
@@ -565,24 +597,6 @@ public class BilanzenView extends JFrame implements Printable {
 		}
 	}
 
-	/**
-	 * Das aktuelle Datum für die Ausgabe der Bilanz und ER
-	 */
-	private String readAktuellesDatum() {
-		DateFormat dateFormat = new SimpleDateFormat("d.M.yyyy");
-		Calendar cal = Calendar.getInstance();
-		Calendar calBis = Calendar.getInstance();
-		calBis.setTime(Config.sDatumBis);
-		if (cal.compareTo(calBis) > 0) {
-			cal = calBis;
-		}
-		else {
-			// letzte des Monats setzen
-			cal.set(Calendar.DAY_OF_MONTH, 1);
-			cal.add(Calendar.DATE, -1);
-		}
-		return JOptionPane.showInputDialog(this, "Abschluss-Datum", dateFormat.format(cal.getTime()));
-	}
 
 	@Override
 	public void setVisible(boolean visible) {
@@ -594,92 +608,6 @@ public class BilanzenView extends JFrame implements Printable {
 
 	}
 
-
-	// -------- innere Klasse für drucken ------------------------------------
-	/**
-	 * Stellt die Verbindung zu den Daten her und steuert die Darstellung.
-	 */
-	private class BilanzenPrinterModel implements TablePrinterModel {
-		/** Das Model zur Tabelle */
-		private JTable mTableToPrint;
-		private String mKopfzeile;
-
-		public BilanzenPrinterModel(JTable auswertungTable, String kopfzeile) {
-			mTableToPrint = auswertungTable;
-			mKopfzeile = kopfzeile;
-		}
-
-		/** Die Tabelle, die gedruckt werden soll */
-		@Override
-		public JTable getTableToPrint() {
-			return mTableToPrint;
-		}
-
-		/** Die Anzahl Kopfzeilen */
-		@Override
-		public int getHeaderCount() {
-			return 2;
-		}
-
-		/**
-		 * Die Kopfzeile, wir linksbündig angezeigt. Die Seitenzahl wird
-		 * automatisch rechts generiert
-		 */
-		@Override
-		public String getHeader(int nr) {
-			if (nr == 0) {
-				return Config.sFibuTitel;
-			} else {
-				return mKopfzeile;
-			}
-		}
-
-		/** Die Anzahl Spalten */
-		@Override
-		public int getColCount() {
-			return 4;
-		}
-
-		/**
-		 * Die relative Spaltenbreiten, diese werden der Seitenbreite angepasst.
-		 */
-		@Override
-		public int getColSize(int columnIndex) {
-			switch (columnIndex) {
-			case 0:
-				return 7;
-			case 1:
-				return 50;
-			default:
-				return 20;
-			}
-		}
-
-		/** Die Spalten-Nummern, die eine Summen enthalten sollen. */
-		@Override
-		public boolean getColSumme(int columnIndex) {
-			if (columnIndex >= 2) return true;
-			else return false;
-		}
-
-		/**
-		 * Die Spalten, die rechtsbündig gedruckt werden. Zahlen werden
-		 * automatisch rechtsbündig gedruckt, hier angeben, wenn Ueberschrift
-		 * auch rechtsbündig sein soll
-		 */
-		@Override
-		public boolean getColRight(int columnIndex) {
-			if (columnIndex <= 1) return false;
-			else return true;
-		}
-
-		/** Die überschrift einer Spalte der Liste. */
-		@Override
-		public String getColName(int columnIndex) {
-			return mTableToPrint.getModel().getColumnName(columnIndex);
-		}
-
-	}// /endOfJournalPrinterModel
 
 	/********************************
 	 * Start für Einzeltest

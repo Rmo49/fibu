@@ -32,11 +32,11 @@ import com.rmo.fibu.exception.KontoNotFoundException;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.Konto;
 import com.rmo.fibu.model.KontoData;
+import com.rmo.fibu.util.BasePrinterModel;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.DatumFormat;
 import com.rmo.fibu.util.ExcelExportKonto;
-import com.rmo.fibu.util.TablePrinter;
-import com.rmo.fibu.util.TablePrinterModel;
+import com.rmo.fibu.util.JournalPrinter;
 import com.rmo.fibu.util.Trace;
 
 /**
@@ -44,7 +44,7 @@ import com.rmo.fibu.util.Trace;
  * Bedienungselemente. Mitte die Liste der gefundenen Buchungen.
  */
 public class KontoView extends JFrame
-	implements TablePrinterModel, TableModelListener  {
+	implements BasePrinterModel, TableModelListener  {
 	private static final long serialVersionUID = -1758211182591434071L;
 
 	/** Die Breite der KontoListe */
@@ -240,14 +240,14 @@ public class KontoView extends JFrame
 		JScrollPane lScrollPane = new JScrollPane(mKontoTable);
 		lScrollPane.setPreferredSize(new Dimension(KTOTEXT_WIDTH * Config.windowTextSize, 100));
 		lScrollPane.setMinimumSize(new Dimension(KTONR_WIDTH * Config.windowTextSize, 100));
-		
+
 		addListeners();
 		return lScrollPane;
 	}
 
-	
+
 	/**
-	 * Die Anzeige der Buttons, 
+	 * Die Anzeige der Buttons,
 	 */
 	public void enableButtons() {
 		if (! mKontoSelected) {
@@ -261,14 +261,14 @@ public class KontoView extends JFrame
 			mButtonSort.setEnabled(true);
 			mButtonExcel.setEnabled(true);
 			mButtonPrint.setEnabled(true);
-			
+
 		}
 		if (mBuchungenFrame.isBuchungSelected()) {
 			mButtonBuchung.setEnabled(true);
 		}
 		else {
 			mButtonBuchung.setEnabled(false);
-		}		
+		}
 	}
 
 	private void addListeners() {
@@ -280,10 +280,11 @@ public class KontoView extends JFrame
 				}
 			}
 		});
-		
+
 		mKontoCellSelection = mKontoTable.getSelectionModel();
 		mKontoCellSelection.addListSelectionListener(new ListSelectionListener() {
-		      public void valueChanged(ListSelectionEvent e) {
+		      @Override
+			public void valueChanged(ListSelectionEvent e) {
 		    	  int[] selectedRow = mKontoTable.getSelectedRows();
 		    	  if (selectedRow.length > 0) {
 		    		  mKontoSelected = true;
@@ -292,8 +293,8 @@ public class KontoView extends JFrame
 		    		  mKontoSelected = false;
 		    	  }
 		    	  enableButtons();
-		      }	    	  
-		});		
+		      }
+		});
 
 	}
 
@@ -315,7 +316,6 @@ public class KontoView extends JFrame
 	/**
 	 * Die Kopfzeile, wird linksbündig angezeigt, Seitenzahl rechts
 	 */
-	@Override
 	public String getHeader(int nr) {
 		try {
 			Konto lKonto = mKontoData.read(mKontoNrShow);
@@ -329,6 +329,19 @@ public class KontoView extends JFrame
 	@Override
 	public int getColCount() {
 		return 7;
+	}
+
+	/**
+	 * Die Spalten, die summiert werden sollen
+	 */
+
+	@Override
+	public boolean isColToAdd(int columnIndex) {
+		if (columnIndex == 4 || columnIndex == 5) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	/**
@@ -352,13 +365,12 @@ public class KontoView extends JFrame
 		}
 	}
 
-	/** Die Spalten, die eine Summen enthalten sollen */
+	/**
+	 * Die Spalten, die eine Summen enthalten sollen
+	 */
 	@Override
 	public boolean getColSumme(int columnIndex) {
-		if (columnIndex == 4 || columnIndex == 5)
-			return true;
-		else
-			return false;
+		return isColToAdd(columnIndex);
 	}
 
 	/**
@@ -368,8 +380,9 @@ public class KontoView extends JFrame
 	 */
 	@Override
 	public boolean getColRight(int columnIndex) {
-		if ((columnIndex == 1) || (columnIndex >= 4))
+		if ((columnIndex == 1) || (columnIndex >= 4)) {
 			return true;
+		}
 		return false;
 	}
 
@@ -404,7 +417,7 @@ public class KontoView extends JFrame
 	 */
 	private void actionExcelExport() {
 		Trace.println(3, "KontoView.actionExcelPerformed()");
-		// Printer aufrufen, Daten siehe Interface: TablePrinterModel
+		// Printer aufrufen, Daten siehe Interface: BasePrinterModel
 		ExcelExportKonto lExcel = new ExcelExportKonto(this.getTableToPrint().getModel());
 		try {
 			lExcel.doExport(mKontoNrShow);
@@ -422,8 +435,8 @@ public class KontoView extends JFrame
 	 */
 	private void actionPrint() {
 		Trace.println(3, "KontoView.actionPrintPerformed()");
-		// Printer aufrufen, Daten siehe Interface: TablePrinterModel
-		TablePrinter lPrinter = new TablePrinter(this);
+		// Printer aufrufen, Daten siehe Interface: BasePrinterModel
+		JournalPrinter lPrinter = new JournalPrinter(this);
 		try {
 			lPrinter.doPrint();
 		} catch (PrinterException ex) {
@@ -436,7 +449,7 @@ public class KontoView extends JFrame
 		}
 	}
 
-	
+
 	/**
 	 * Close-Button wurde gedrückt.
 	 */
@@ -444,7 +457,7 @@ public class KontoView extends JFrame
 		this.setVisible(false);
 	}
 
-	
+
 	/**
 	 * Die selektierte Kontonummer setzen
 	 * @return
@@ -512,6 +525,8 @@ public class KontoView extends JFrame
 		public Class<?> getColumnClass(int col) {
 			return getValueAt(0, col).getClass();
 		}
+
+
 
 		/*
 		 * if (col == 0) return Integer.valueOf(0).getClass(); else return new

@@ -3,8 +3,8 @@ package com.rmo.fibu.util;
 //import java.util.Iterator;
 //import com.rmo.fibu.model.Konto;
 
-/** Das Interface zum TablePrinter.
- *  Klassen, die den TablePrinter verwenden, müssen dieses Interface
+/** Das Interface zum BasePrinter.
+ *  Klassen, die den BasePrinter verwenden, müssen dieses Interface
  * implementieren.
  */
 public interface KontoListPrinterInterface {
@@ -52,5 +52,5 @@ public interface KontoListPrinterInterface {
 	 * @param col Spalte
 	 * @return Wert der Zelle */
 	public Object getValueAt(int kontoNr, int row, int col);
-	
+
 }

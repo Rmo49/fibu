@@ -26,7 +26,7 @@ import com.rmo.fibu.model.CsvBank;
 public class PdfParser {
 
 	private CsvBank mBank;
-	// Datum von bis 
+	// Datum von bis
 	private Date mDateVon = null;
 	private Date mDateBis = null;
 
@@ -129,7 +129,7 @@ public class PdfParser {
 		}
 		// pdfDoku.close(); Wie closen? (hatte Fehlermeldung)
 		return buchungen;
-		
+
 	}
 
 
@@ -158,7 +158,7 @@ public class PdfParser {
 		return null;
 	}
 
-	
+
 	/**
 	 * Von einer Zeile die Buchungen auslesen.
 	 * , speziell für Cumulus
@@ -166,7 +166,7 @@ public class PdfParser {
 	 * @return BuchungCsv eine Buchug
 	 */
 	private BuchungCsv makeBuchungCumulus(List <String> pdfZeile) {
-		// TODO allgemein für pdf definieren, 
+		// TODO allgemein für pdf definieren,
 		if (pdfZeile.size() >= mBank.getAnzahlSpalten()) {
 			BuchungCsv buchung = new BuchungCsv();
 			String datum = pdfZeile.get(mBank.getSpalteDatum()-1);

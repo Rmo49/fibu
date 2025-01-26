@@ -17,7 +17,7 @@ import com.rmo.fibu.util.Trace;
  *
  */
 public class CsvBankDataFrom extends DataBaseFrom {
-	
+
 	private final static String TABLE_NAME = "pdfcompany";
 
 	private final int COLS_V2 = 5;		// Anzahl Cols in der Version 2
@@ -82,7 +82,7 @@ public class CsvBankDataFrom extends DataBaseFrom {
 			lBank.setSpaltenArray(mReadSet.getString(7));
 		}
 	}
-	
+
 
 	// ----- Iterator ---------------------------------------------
 

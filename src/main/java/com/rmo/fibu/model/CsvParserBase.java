@@ -155,6 +155,7 @@ public abstract class CsvParserBase {
 			}
 			if (datumOk) {
 				if (lineValues.length < 4) {
+					// wenn nicht vollständig
 					lBuchungCsv.setText(buchungFalsch);
 					lBuchungCsv.setBetrag("0");
 					lBuchungCsv.setHaben(mCompany.getKontoNrDefault());
