@@ -13,6 +13,8 @@
 	  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	
+
+	
 	<repositories>
 	    <repository>
 	    <id>com.e-iceblue</id>
@@ -146,5 +148,5 @@
 		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-swing -->
 		
 	</dependencies>
-	<version>7-10</version>
+	<version>7-16</version>
 </project>

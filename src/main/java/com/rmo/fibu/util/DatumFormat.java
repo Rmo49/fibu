@@ -25,6 +25,10 @@ public class DatumFormat extends SimpleDateFormat {
         set2DigitYearStart(start2Year.getTime());
     }
 
+    /**
+     * 
+     * @return
+     */
     public static DatumFormat getDatumInstance() {
         if (instance == null) {
             instance = new DatumFormat();

@@ -147,8 +147,7 @@ public class FibuView extends JFrame
 	 */
 	private void initProperties() {
 		Trace.println(3, "FibuView.initProperties()");
-		// Config.readProperties();
-		Locale newLocal = new Locale(Config.languageLanguage, Config.languageCountry);
+		Locale newLocal = Locale.of(Config.languageLanguage, Config.languageCountry);
 		Locale.setDefault(newLocal);
 		Locale loc = Locale.getDefault();
 		Trace.println(3, "Locale County:" + loc.getCountry() + " Language:" + loc.getLanguage());

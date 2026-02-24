@@ -10,14 +10,14 @@ import com.rmo.fibu.util.Config;
  * @author Ruedi
  *
  */
-public class JTextFiledExt extends JTextField {
+public class JTextFiledBold extends JTextField {
 
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = -278586863536877235L;
 
-	public JTextFiledExt() {
+	public JTextFiledBold() {
 		setFont(Config.fontText);
 	}
 

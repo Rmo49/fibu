@@ -2,7 +2,9 @@ package com.rmo.fibu.view;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -12,15 +14,18 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -46,6 +51,9 @@ import com.rmo.fibu.model.KontoNrVector;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.PdfParser;
 import com.rmo.fibu.util.Trace;
+import com.rmo.fibu.util.Datum;
+import com.rmo.fibu.view.util.JLabelBold;
+import com.rmo.fibu.view.util.JButtonBold;
 
 /**
  * Wird über CsvReaderKeywordFrame gestartet, oder direkt von MainFrame
@@ -67,9 +75,21 @@ public class CsvReaderBuchungFrame extends JFrame {
 	// file von dem gelesen werden soll
 	private File mFile = null;
 	// Datum von bis
-	private Date mDateVon = null;
-	private Date mDateBis = null;
-
+	private Datum mDateVon = null;
+	private Datum mDateBis = null;
+	// Prefix der eingefügt werden soll
+	private JTextField mBuchungPrefix = null;
+	private final Dimension prefixSize = new Dimension(10 * Config.windowTextSize, Config.windowTextSize + 12);
+	// die TextFelder für die Eingabe des Datums
+	private final Dimension mDatumSize = new Dimension(6 * Config.windowTextSize, Config.windowTextSize + 12);
+	private JTextField mTfDatumAb; // ab Datum
+	private Datum mDatumSelVon = null;
+	private JTextField mTfDatumBis; // bis Datum
+	private Datum mDatumSelBis = null;
+	private JComboBox<String> mKontoNr = null;
+	private JCheckBox mReplaceKtoNr = null;
+	private JRadioButton mSollRadio = null;
+	private JRadioButton mHabenRadio = null;
 
 	// view elemente
 	private JTable mTableView = new JTable();
@@ -77,7 +97,10 @@ public class CsvReaderBuchungFrame extends JFrame {
 
 	/** Das Model zu dieser View, Verbindung zur DB */
 	private CsvBuchungModel mBuchungModel;
+	// alle Buchungen in der Liste
 	private List<BuchungCsv> mBuchungList = new ArrayList<>();
+	Iterator<BuchungCsv> mBuchungListIter = null;
+
 	/** Verbindung zur DB */
 	private BuchungData mBuchungData = null;
 	private String nextBelegNr = null;
@@ -103,13 +126,15 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 * Construtor needs filename with CSV-data
 	 */
 	public CsvReaderBuchungFrame(File file, CsvBank bank, Date von, Date bis) {
-		super("CSV Buchungen anpassen");
+		super("CSV Buchungen anpassen V2.0");
 		Trace.println(3, "CsvReaderBuchungFrame(file: " + file.getAbsolutePath() + ")");
 		this.mFile = file;
 		this.mBank = bank;
 		this.mBankName = bank.getBankName();
-		this.mDateVon = von;
-		this.mDateBis = bis;
+		this.mDateVon = new Datum();
+		this.mDateVon.setDatum(von);
+		this.mDateBis = new Datum();
+		this.mDateBis.setDatum(bis);;
 		init();
 	}
 
@@ -129,15 +154,18 @@ public class CsvReaderBuchungFrame extends JFrame {
 				try {
 					CsvBankData bankData = (CsvBankData) DataBeanContext.getContext().getDataBean(CsvBankData.class);
 					this.mBank = bankData.readData(mBankName);
-				}
-				catch (FibuException ex) {
+				} catch (FibuException ex) {
 					Trace.println(1, "CsvReaderBuchungFrame Exception: " + ex.getMessage());
 				}
 			}
 		} else {
 			csvEinlesen();
 		}
+		if (!setDatumVonListe()) {
+			return;
+		}
 		initView();
+//		this.setVisible(true);
 	}
 
 	/**
@@ -147,10 +175,15 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 */
 	private void initView() {
 		Trace.println(4, "CsvReaderBuchungFrame.initView()");
+		
+//		Trace.println(5, "width: " + Config.winCsvReaderBuchungDim.width + " height: " + Config.winCsvReaderBuchungDim.height);
+//		Trace.println(5, "x: " + Config.winCsvReaderBuchungLoc.x + " y: " + Config.winCsvReaderBuchungLoc.y);
+		
 		getContentPane().add(initTable(), BorderLayout.CENTER);
 		getContentPane().add(initBottom(), BorderLayout.PAGE_END);
-		setSize(Config.winCsvReaderBuchungDim);
-		setLocation(Config.winCsvReaderBuchungLoc);
+		this.setSize(Config.winCsvReaderBuchungDim);
+		this.setLocation(Config.winCsvReaderBuchungLoc);
+		this.pack();
 	}
 
 	/**
@@ -200,10 +233,10 @@ public class CsvReaderBuchungFrame extends JFrame {
 		kontoNummern.setModel(new DefaultComboBoxModel<>(new KontoNrVector()));
 		kontoNummern.setFont(Config.fontText);
 
-		TableColumn sollColumn = mTableView.getColumnModel().getColumn(3);
-		sollColumn.setCellEditor(new DefaultCellEditor(kontoNummern));
-		sollColumn = mTableView.getColumnModel().getColumn(4);
-		sollColumn.setCellEditor(new DefaultCellEditor(kontoNummern));
+		TableColumn ktoNrColumn = mTableView.getColumnModel().getColumn(3);
+		ktoNrColumn.setCellEditor(new DefaultCellEditor(kontoNummern));
+		ktoNrColumn = mTableView.getColumnModel().getColumn(4);
+		ktoNrColumn.setCellEditor(new DefaultCellEditor(kontoNummern));
 	}
 
 	/**
@@ -212,21 +245,96 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 * @return
 	 */
 	private Container initBottom() {
-		JPanel flow = new JPanel(new FlowLayout());
+		JPanel buttons = new JPanel(new GridLayout(4, 1));
 
-		JButton btnChange = new JButton("Buchungstext anpassen");
-		btnChange.setFont(Config.fontTextBold);
+		JPanel buttons1 = new JPanel(new FlowLayout());
 
+		JButtonBold btnChange = new JButtonBold("Buchungstext anpassen");
 		btnChange.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				buchungenAnpassen();
 			}
 		});
-		flow.add(btnChange);
+		buttons1.add(btnChange);
+		buttons.add(buttons1);
 
-		JButton btnSaveFibu = new JButton("Speichern in Fibu");
-		btnSaveFibu.setFont(Config.fontTextBold);
+		// ------ die 2. Zeile
+		JPanel buttons2 = new JPanel(new FlowLayout());
+
+		JLabelBold labelDatum = new JLabelBold("ändern von: ");
+		buttons2.add(labelDatum);
+		mTfDatumAb = new JTextField(mDatumSelVon.toString());
+		mTfDatumAb.setFont(Config.fontText);
+		mTfDatumAb.setPreferredSize(mDatumSize);
+		buttons2.add(mTfDatumAb);
+
+		// --- bis Datum
+		JLabelBold labelDatum2 = new JLabelBold("bis: ");
+		buttons2.add(labelDatum2);
+		mTfDatumBis = new JTextField(mDatumSelBis.toString());
+		mTfDatumBis.setFont(Config.fontText);
+		mTfDatumBis.setPreferredSize(mDatumSize);
+		buttons2.add(mTfDatumBis);
+
+		JLabelBold label2 = new JLabelBold("Prefix: ");
+		buttons2.add(label2);
+
+		mBuchungPrefix = new JTextField();
+		mBuchungPrefix.setPreferredSize(prefixSize);
+		mBuchungPrefix.setFont(Config.fontText);
+		buttons2.add(mBuchungPrefix);
+
+		JButtonBold btnPrefix = new JButtonBold("Prefix einsetzen");
+		btnPrefix.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				prefixInsert();
+			}
+		});
+		buttons2.add(btnPrefix);
+		buttons.add(buttons2);
+
+		// ----- 3. Zeile
+		JPanel buttons3 = new JPanel(new FlowLayout());
+
+		JLabelBold label3 = new JLabelBold("KontoNr: ");
+		buttons3.add(label3);
+
+		mKontoNr = new JComboBox<>();
+		mKontoNr.setModel(new DefaultComboBoxModel<>(new KontoNrVector()));
+		mKontoNr.setFont(Config.fontText);
+		buttons3.add(mKontoNr);
+
+		mSollRadio = new JRadioButton("Soll");
+		mSollRadio.setSelected(true);
+		buttons3.add(mSollRadio);
+
+		mHabenRadio = new JRadioButton("Haben");
+		buttons3.add(mHabenRadio);
+
+		ButtonGroup group = new ButtonGroup();
+		group.add(mSollRadio);
+		group.add(mHabenRadio);
+
+		mReplaceKtoNr = new JCheckBox("überschreiben");
+		mReplaceKtoNr.setSelected(false);
+		buttons3.add(mReplaceKtoNr);
+
+		JButtonBold btnKtoNr = new JButtonBold("KontoNr. ändern");
+		btnKtoNr.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setKontoNummer();
+			}
+		});
+		buttons3.add(btnKtoNr);
+		buttons.add(buttons3);
+
+		// ----- 4. Zeile
+		JPanel buttons4 = new JPanel(new FlowLayout());
+
+		JButtonBold btnSaveFibu = new JButtonBold("Speichern in Fibu");
 		btnSaveFibu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -234,19 +342,83 @@ public class CsvReaderBuchungFrame extends JFrame {
 				mBuchungModel.fireTableDataChanged();
 			}
 		});
-		flow.add(btnSaveFibu);
+		buttons4.add(btnSaveFibu);
 
-		JButton btnSaveFile = new JButton("Speichern in Datei");
-		btnSaveFile.setFont(Config.fontTextBold);
+		JButtonBold btnSaveFile = new JButtonBold("Speichern in Datei");
 		btnSaveFile.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				saveInDatei();
 			}
 		});
-		flow.add(btnSaveFile);
+		buttons4.add(btnSaveFile);
+		buttons.add(buttons4);
 
-		return flow;
+		return buttons;
+	}
+
+	// ---------- Einlesen ----------------------------
+
+	/**
+	 * Einlesen alle Daten vom CSV file oder PDF file, Zeile um Zeile.
+	 */
+	private void csvEinlesen() {
+		Trace.println(5, "CsvReaderBuchungFrame.csvEinlesen()");
+		if (mBank.getDocType() == CsvBank.docTypeCsv) {
+			// wenn von CSV einlesen
+			CsvParserBase csvParser = null;
+			if (mBankName.equalsIgnoreCase(CsvParserBase.companyNamePost)) {
+				csvParser = new CsvParserPost(mFile, mDateVon, mDateBis);
+			} else if (mBankName.equalsIgnoreCase(CsvParserBase.companyNameCS)) {
+				csvParser = new CsvParserCs(mFile, mDateVon, mDateBis);
+			} else if (mBankName.equalsIgnoreCase(CsvParserBase.companyNameRaiff)) {
+				csvParser = new CsvParserRaiff(mFile, mDateVon, mDateBis);
+			} else if (mBankName.equalsIgnoreCase(CsvParserBase.companyNameMB)) {
+				csvParser = new CsvParserMB(mFile, mDateVon, mDateBis);
+			} else {
+				StringBuffer sb = new StringBuffer(100);
+				sb.append("Kein Setup für: '");
+				sb.append(mBankName);
+				sb.append("' gefunden \n Impmentationen vorhanden von: ");
+				sb.append(CsvParserBase.companyNamePost);
+				sb.append(", ");
+				sb.append(CsvParserBase.companyNameCS);
+				sb.append(", ");
+				sb.append(CsvParserBase.companyNameRaiff);
+				sb.append(", ");
+				sb.append(CsvParserBase.companyNameMB);
+				sb.append(" gefunden");
+				JOptionPane.showMessageDialog(this, sb.toString(), "CSV Datei selektieren", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			// hier werden die Daten eingelesen, Zeile um Zeile
+			Trace.println(5, "CsvReaderBuchungFrame.datenEinlesen() => start Parsing CSV");
+			mBuchungList = csvParser.startParsing(mBank);
+		} else {
+			// wenn von PDF einlesen
+			Trace.println(5, "CsvReaderBuchungFrame.datenEinlesen() => start Parsing PDF");
+			PdfParser pdfParser = new PdfParser(mFile, mDateVon, mDateBis);
+			mBuchungList = pdfParser.startParsing(mBank);
+			if (mBuchungList.size() <= 0) {
+				StringBuffer sb = new StringBuffer(100);
+				sb.append("Keine Buchungen für: '");
+				sb.append(mBankName);
+				sb.append("' gefunden. \n");
+				sb.append("PDF Steuerdaten anpassen in: Setup > [PDF Steuerdaten eingeben]");
+				JOptionPane.showMessageDialog(this, sb.toString(), "PDF Datei selektieren", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+		}
+		Trace.println(5, "CsvReaderBuchungFrame.csvEinlesen() => end Parsing");
+	}
+
+	// ------- Buchungen automatisch anpasse ---------------------------------
+
+	/**
+	 * Die standard KontoNr
+	 */
+	protected String getKontoNrDefault() {
+		return mBank.getKontoNrDefault();
 	}
 
 	/**
@@ -271,6 +443,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 		if (buchungCsv == null) {
 			return;
 		}
+		// Die Liste der Keyword, iterator mit der ID der Bank gelesen
 		CsvKeyKontoData keywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
 		Iterator<CsvKeyKonto> lIter = keywordData.getIterator(mBank.getBankID());
 		int pos = -1;
@@ -346,8 +519,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 		int maxLength = buchungCsv.getText().length();
 		if (pos < 0) {
 			pos = 0;
-		}
-		else {
+		} else {
 			if (pos >= maxLength) {
 				pos = 0;
 			}
@@ -429,6 +601,9 @@ public class CsvReaderBuchungFrame extends JFrame {
 				}
 				p++;
 			}
+			if (p > buchungText.length()) {
+				p = buchungText.length();
+			}
 			textNew.append(buchungText.substring(pos + 1, p));
 		}
 		if (textNew.length() > Config.sCsvTextLen) {
@@ -437,25 +612,161 @@ public class CsvReaderBuchungFrame extends JFrame {
 		return textNew.toString();
 	}
 
-	/**
-	 * Die ID der Bank
-	 */
-//	protected int getBankId() {
-//		CsvBankData bankData = (CsvBankData) DataBeanContext.getContext().getDataObject(CsvBankData.class);
-//		try {
-//			return bankData.readData(mBankName).getBankID();
-//		} catch (FibuException ex) {
-//			// do nothing
-//		}
-//		return 0;
-//	}
+	// ------- manuell bearbeiten -----------------------
 
 	/**
-	 * Die standard KontoNr
+	 * Die Datum von bis gemäss eingelesener Liste setzen
 	 */
-	protected String getKontoNrDefault() {
-		return mBank.getKontoNrDefault();
+	private boolean setDatumVonListe() {
+		Trace.println(5, "CsvReaderBuchungFrame.setDatumVonListe()");
+		boolean returnValue = true;
+		mBuchungListIter = mBuchungList.iterator();
+		String von = Config.sDatumVon.toString();
+		try {
+			// das erste Datum
+			von = mBuchungListIter.next().getDatum();
+		}
+		catch (Exception ex) {
+			JOptionPane.showMessageDialog(this, "Keine Daten vorhanden", "Buchungen einlesen", JOptionPane.INFORMATION_MESSAGE);
+			returnValue = false;
+		}
+		String bis = Config.sDatumBis.toString();
+		while (mBuchungListIter.hasNext()) {
+			bis = mBuchungListIter.next().getDatum();
+		}
+		try {
+			mDatumSelVon = new Datum(von);
+			mDatumSelBis = new Datum(bis);
+		}
+		catch (ParseException ex) {
+			Trace.println(1, "CsvReaderBuchungFrame.setDatumVonListe(), Probleme beim Datum lesen");
+		}
+		Trace.println(5, "CsvReaderBuchungFrame.setDatumVonListe() : " + returnValue);
+		return returnValue;
 	}
+
+	/**
+	 * Den Prefix-Wert in selektierten Buchungen eintragen
+	 */
+	private void prefixInsert() {
+		if (!setSelectedDate()) return;
+		mBuchungListIter = mBuchungList.iterator();
+		// Iteration über alle Buchungen
+		while (mBuchungListIter.hasNext()) {
+			prefixInBuchung(mBuchungListIter.next());
+		}
+		mTableView.repaint();
+	}
+
+	/**
+	 * Den insert-String in den Buchungstext einbauen.
+	 * 
+	 * @param csvBuchung
+	 */
+	private void prefixInBuchung(BuchungCsv csvBuchung) {
+		if (inRange(csvBuchung)) {
+			String text = mBuchungPrefix.getText() + csvBuchung.getText();
+			text = text.length() > Config.sCsvTextLen ? text.substring(0, Config.sCsvTextLen) : text;
+			csvBuchung.setText(text);
+		}
+	}
+
+	/**
+	 * Die selektierte Datum in Date setzen
+	 */
+	private boolean setSelectedDate() {
+		try {
+			mDatumSelVon = new Datum(mTfDatumAb.getText());
+			mDatumSelBis = new Datum(mTfDatumBis.getText());
+		}
+		catch (ParseException ex) {
+			JOptionPane.showMessageDialog(this, "Datumformat falsch", "Datum", JOptionPane.INFORMATION_MESSAGE);
+			return false;
+		}
+		return true;
+	}
+	
+	/**
+	 * Ist das Datum der Buchung innerhalb des Ranges
+	 * 
+	 * @param csvBuchung
+	 * @return
+	 */
+	private boolean inRange(BuchungCsv csvBuchung) {
+		Datum datum = null;
+		try {
+			datum = new Datum(csvBuchung.getDatum());
+		} catch (ParseException ex) {
+			// TODO wenn falsches Datum Meldung
+		}
+		if ((datum.compareTo(mDatumSelVon) >= 0) && (datum.compareTo(mDatumSelBis) <= 0)) {
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Die Kontonummer einsetzen in selektierten Buchungen
+	 */
+	private void setKontoNummer() {
+		if (!setSelectedDate()) return;
+		mBuchungListIter = mBuchungList.iterator();
+		// Iteration über alle Buchungen
+		while (mBuchungListIter.hasNext()) {
+			setKtoNrInBuchung(mBuchungListIter.next());
+		}
+		mTableView.repaint();
+	}
+
+	/**
+	 * Kontonummer in der Buchung einsetzen
+	 * @param csvBuchung
+	 */
+	private void setKtoNrInBuchung(BuchungCsv csvBuchung) {
+		if (inRange(csvBuchung)) {
+			String ktoNr = (String) mKontoNr.getSelectedItem();
+			if (mSollRadio.isSelected()) {
+				if (mReplaceKtoNr.isSelected()) {
+					csvBuchung.setSoll(ktoNr);
+				} else {
+					if ((csvBuchung.getSoll() == null) || (csvBuchung.getSoll().length() == 0)) {
+						csvBuchung.setSoll(ktoNr);
+					}
+				}
+			}
+			else {
+				if (mReplaceKtoNr.isSelected()) {
+					csvBuchung.setHaben(ktoNr);
+				} else {
+					if ((csvBuchung.getHaben()== null) || (csvBuchung.getHaben().length() == 0)) {
+						csvBuchung.setHaben(ktoNr);
+					}
+				}
+			}
+		}
+	}
+
+	
+	/**
+	 * Das eingegebenen Datums ab
+	 */
+//	private Date getSelectedDate() {
+//		Date datum = null;
+//		if (mTfDatumAb.getText().length() == 0) {
+//			mTfDatumAb.setText(Config.sDatumVon.toString());
+//		}
+//		DatumFormat df = DatumFormat.getDatumInstance();
+//		try {
+//			datum = df.parse(mTfDatumAb.getText());
+//			return datum;
+//		} catch (ParseException ex) {
+//			JOptionPane.showMessageDialog(this, ex.getMessage(),
+//					"Datum fehlerhaft", JOptionPane.ERROR_MESSAGE);
+//			return null;
+//		}
+//	}
+
+	// ------- speichern ---------------------
 
 	/**
 	 * Die Buchungen in der DB speichern.
@@ -496,6 +807,8 @@ public class CsvReaderBuchungFrame extends JFrame {
 	}
 
 	/**
+	 * Von der CSV Liste in Buchung für Fibu schreiben
+	 * 
 	 * @param buchungCsv
 	 * @param buchung
 	 * @return -1: Fehler und abbrechen, 0: Fehler, nicht abbrechen 1: alles ok
@@ -655,59 +968,6 @@ public class CsvReaderBuchungFrame extends JFrame {
 			sb.append(message);
 		}
 		return sb.toString();
-	}
-
-	/**
-	 * Einlesen alle Daten vom CSV file oder PDF file, Zeile um Zeile.
-	 */
-	private void csvEinlesen() {
-		Trace.println(5, "CsvReaderBuchungFrame.csvEinlesen()");
-		if (mBank.getDocType() == CsvBank.docTypeCsv) {
-			// wenn von CSV einlesen
-			CsvParserBase parser = null;
-			if (mBankName.equalsIgnoreCase(CsvParserBase.companyNamePost)) {
-				parser = new CsvParserPost(mFile, mDateVon, mDateBis);
-			} else if (mBankName.equalsIgnoreCase(CsvParserBase.companyNameCS)) {
-				parser = new CsvParserCs(mFile, mDateVon, mDateBis);
-			} else if (mBankName.equalsIgnoreCase(CsvParserBase.companyNameRaiff)) {
-				parser = new CsvParserRaiff(mFile, mDateVon, mDateBis);
-			} else if (mBankName.equalsIgnoreCase(CsvParserBase.companyNameMB)) {
-				parser = new CsvParserMB(mFile, mDateVon, mDateBis);
-			} else {
-				StringBuffer sb = new StringBuffer(100);
-				sb.append("Kein Setup für: '");
-				sb.append(mBankName);
-				sb.append("' gefunden \n Impmentationen vorhanden von: ");
-				sb.append(CsvParserBase.companyNamePost);
-				sb.append(", ");
-				sb.append(CsvParserBase.companyNameCS);
-				sb.append(", ");
-				sb.append(CsvParserBase.companyNameRaiff);
-				sb.append(", ");
-				sb.append(CsvParserBase.companyNameMB);
-				sb.append(" gefunden");
-				JOptionPane.showMessageDialog(this, sb.toString(), "CSV Datei selektieren", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			// hier werden die Daten eingelesen, Zeile um Zeile
-			Trace.println(5, "CsvReaderBuchungFrame.datenEinlesen() => start Parsing");
-			mBuchungList = parser.startParsing(mBank);
-		}
-		else {
-			// wenn von PDF einlesen
-			PdfParser pdfParser = new PdfParser(mFile, mDateVon, mDateBis);
-			mBuchungList = pdfParser.startParsing(mBank);
-			if (mBuchungList.size() <= 0) {
-				StringBuffer sb = new StringBuffer(100);
-				sb.append("Keine Buchungen für: '");
-				sb.append(mBankName);
-				sb.append("' gefunden. \n");
-				sb.append("PDF Steuerdaten anpassen in: Setup > [PDF Steuerdaten eingeben]");
-				JOptionPane.showMessageDialog(this, sb.toString(), "PDF Datei selektieren", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-		}
-		Trace.println(5, "CsvReaderBuchungFrame.csvEinlesen() => end Parsing");
 	}
 
 	/** wenn Fenster geschlossen */

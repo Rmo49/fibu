@@ -36,7 +36,7 @@ import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.Datum;
 import com.rmo.fibu.util.Trace;
 import com.rmo.fibu.view.util.JFormattedTextFieldExt;
-import com.rmo.fibu.view.util.JTextFiledExt;
+import com.rmo.fibu.view.util.JTextFiledBold;
 
 /**
  * Eingabe aller Werte einer Buchung.
@@ -180,33 +180,34 @@ public class BuchungEingabe extends JInternalFrame {
 		lConstraints.fill = GridBagConstraints.HORIZONTAL;
 		lConstraints.gridwidth = 1;
 		lConstraints.weightx = 10.0;
+		
 		// --- Datum mit parser
-		mTfDatum = new JTextFiledExt();
+		mTfDatum = new JTextFiledBold();
 		lLayout.setConstraints(mTfDatum, lConstraints);
 		lPanel.add(mTfDatum);
 
 		// --- Beleg ----------------------------------
 		lConstraints.weightx = 10.0;
-		mTfBeleg = new JTextFiledExt();
+		mTfBeleg = new JTextFiledBold();
 		lLayout.setConstraints(mTfBeleg, lConstraints);
 		lPanel.add(mTfBeleg);
 
 		// --- Text -----------------------------------
 		lConstraints.weightx = 100.0;
-		mTfText = new JTextFiledExt();
+		mTfText = new JTextFiledBold();
 		lLayout.setConstraints(mTfText, lConstraints);
 		lPanel.add(mTfText);
 
 		// --- Soll ----------------------------
 		lConstraints.weightx = 5.0;
-		mTfSoll = new JTextFiledExt();
+		mTfSoll = new JTextFiledBold();
 		mTfSoll.setColumns(4);
 		lLayout.setConstraints(mTfSoll, lConstraints);
 		lPanel.add(mTfSoll);
 
 		// --- Haben ------------------------
 		lConstraints.gridwidth = GridBagConstraints.RELATIVE;
-		mTfHaben = new JTextFiledExt();
+		mTfHaben = new JTextFiledBold();
 		mTfHaben.setColumns(4);
 		lLayout.setConstraints(mTfHaben, lConstraints);
 		lPanel.add(mTfHaben);
@@ -599,8 +600,6 @@ public class BuchungEingabe extends JInternalFrame {
 				mDatumSame = false;
 			}
 			isTfEmpty(mTfDatum, true);
-			// TODOdeleteMessage
-//			deleteMessage();
 			enableButtons();
 		} catch (ParseException pEx) {
 			mTfDatum.setBackground(Color.yellow);

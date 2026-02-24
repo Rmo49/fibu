@@ -163,7 +163,7 @@ public class CsvBankData extends DataBase {
 				// wenn nicht gefunden, neues anlegen
 				addRow(pCompany);
 			}
-		} catch (java.sql.SQLException e) {
+	} catch (java.sql.SQLException e) {
 			throw new FibuException("PdfKeyword.add() \n Message: " + e.getMessage());
 		}
 	}

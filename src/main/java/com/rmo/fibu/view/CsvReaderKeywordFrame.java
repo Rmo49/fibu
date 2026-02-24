@@ -9,6 +9,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Iterator;
@@ -130,7 +131,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 	 * Initialisierung der verschiedenen Views
 	 */
 	private void initView() {
-		Trace.println(5, "CsvReaderFrame.initView()");
+		Trace.println(5, "CsvReaderKeywordFrame.initView()");
 		getContentPane().add(initTop(), BorderLayout.PAGE_START);
 		getContentPane().add(initTable(), BorderLayout.CENTER);
 		Container container = initBottom();
@@ -428,8 +429,12 @@ public class CsvReaderKeywordFrame extends JFrame {
 			mBank.setKontoNrDefault(selecteKto);
 			mBank.setDirPath(mDirPath.getText());
 			mBankData.addData(mBank);
-		} catch (FibuException e) {
+		} catch (SQLException e) {
 			Trace.println(1, "Fehler in CsvKeywordPanel.saveAction: " + e.getMessage());
+		}
+		catch (FibuException ex) {
+			Trace.println(1, "Fehler in CsvKeywordPanel.saveAction: " + ex.getMessage());
+			
 		}
 	}
 

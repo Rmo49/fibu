@@ -107,9 +107,9 @@ public class BilanzPrinterTest extends TestCase implements BasePrinterModel {
 
 	// TODO wahrscheinlich löschen
 	/** Die Kopfzeile, wir linksböndig angezeigt, Seitenzahl rechts */
-	public String getHeader(int nr) {
-		return "Kopfzeile Test";
-	}
+//	public String getHeader(int nr) {
+//		return "Kopfzeile Test";
+//	}
 
 	/** Die max. Anzahl Spalten */
 	@Override

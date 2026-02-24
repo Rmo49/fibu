@@ -53,13 +53,13 @@ public class BilanzPrinterModel implements BasePrinterModel {
 	 * Die Kopfzeile, wir linksbündig angezeigt. Die Seitenzahl wird automatisch
 	 * rechts generiert
 	 */
-	public String getHeader(int nr) {
-		if (nr == 0) {
-			return Config.sFibuTitel;
-		} else {
-			return mTitel;
-		}
-	}
+//	public String getHeader(int nr) {
+//		if (nr == 0) {
+//			return Config.sFibuTitel;
+//		} else {
+//			return mTitel;
+//		}
+//	}
 
 
 	@Override

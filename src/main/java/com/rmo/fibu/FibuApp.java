@@ -16,7 +16,7 @@ import com.rmo.fibu.view.FibuView;
  */
 public class FibuApp {
 
-	private static final String sVersion = "FibuLocal V7.10 (26.01.25)";
+	private static final String sVersion = "FibuLocal V7.16 (17.2.26)";
 	private static FibuView mFibu;
 
 	/********************************
@@ -40,6 +40,8 @@ public class FibuApp {
 			}
 			// alle Werte setzen, wenn noch nicht gemacht
 			Config.setAllProperties();
+			Trace.println(1, "Trace Level: " + Config.traceLevel);
+
 
 //			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 //			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");

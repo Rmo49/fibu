@@ -393,8 +393,10 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 			}
 			try {
 				mCsvKeywordData.add(lCvsKeyword);
-			} catch (FibuException ex) {
-				// do nothing
+			} catch (SQLException ex) {
+				Trace.println(6, "copyCvsKeywords SQLException: " + ex.getMessage());
+				message.setText("Fehler beim CvsKeyword kopieren, siehe Trace");
+				message.setVisible(true);
 			}
 		}
 	}

@@ -1,12 +1,11 @@
+Kontoblatt
+- bei Kontoblatt=>Excelexport sollte im Dateiname der FibuName vorangestellt werden.
+
 Buchung
-- Einlesen mit PDF bein BLKB Fehler: Kein Setup für BLKB gefunden
+- Einlesen mit PDF bein BLKB Datum wird nur in der Form 23.06 geliefert (ohne Jahr)
 - Setup: wenn eine Zeile gelöscht, dann sollten auch die Schlüsselworte gelöscht werden.
 
-- Wenn mit Maus in Beleg dann wird nicht hochgezählt, nur mit Tabulator
-- Kleine Fehler wenn Kontonummer edititert wird: Wenn Backspace springt auf erstes Konto
-- Wenn in Soll und Haben, dann mit yPos operieren => PdfSetup anpassen ???
 - Wenn Buchung eingegeben, dann noch blau in der Liste, kann diese nicht ändern
-
 
 Fibus
 - Alle DB's anzeigen, auch wenn nicht in der Liste (gilt für Situationen, wenn nicht richtig angelegt).
@@ -15,17 +14,16 @@ Util
 - Trace auf java.util.logging umstellen, siehe auch Link in Chrome unter Java
 => erster Versuch in der Klasse FibuView.
 
-- Kontoplan kein refresh nach Datenspeicherung (2x Speichern drücken)
+View
+- Check wenn zu kleine Werte für die Darstellung vor allem width und height
 
 
 --- Erweiterungen ---------------------------------
 
 Fibu Ausgabe
-- Alle Bilanzen als PDF ausdrucken
-- Bilanz Wählen: jede auf einer Seite oder zusammen
-- Journal Wählen: Datum von bis
+- Alle Bilanzen als PDF ausdrucken (kann auch mit Einstellung beim Drucken gemacht weden).
+- Journal drucken wählen: Datum von bis
 - Kontoblatt Wählen: KontoNr von bis, Datum von bis
-
 
 - Wenn alte DB geöffnet dann Tabellen auf neue Version migrieren (siehe checkTableVersion())
 - Wenn Fibu kopieren fertig [Schliessen] Button einbauen und aktivieren.
@@ -39,5 +37,3 @@ Fibu Ausgabe
 - Summen Fettschrift möglich?
 
 
---------------------------------
-Fehler Maria DB, siehe: D:\Daten\MariaDB

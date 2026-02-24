@@ -22,6 +22,9 @@ public class CsvParserMB extends CsvParserBase {
 	private String[] textToDelete = {"Karte:"};
 	// die Spalte des Betrages
 	private final int mBetragCol = 4;
+	// wenn Komma dann durch Punkt ersetzen
+	private final char komma = ',';
+	private final char punkt = '.';
 
 	public CsvParserMB(File file, Date von, Date bis) {
 		super(file, von, bis);
@@ -85,20 +88,25 @@ public class CsvParserMB extends CsvParserBase {
 	 */
 	@Override
 	protected void readBetrag(BuchungCsv buchung) {
+		if (lineValues.length < mBetragCol+1) {
+			buchung.setBetrag("check col");
+			return;
+		}
 		if (lineValues[mBetragCol] != null && lineValues[mBetragCol].length() > 1) {
+			String betrag = lineValues[mBetragCol];
 			// wenn -xx dann Belastung
-			if (lineValues[mBetragCol].contains("-")) {
-				// ist eine
-				String betrag = lineValues[mBetragCol];
+			if (betrag.contains("-")) {
+				// ist eine Belastung
 				betrag = betrag.substring(1, betrag.length());
-				buchung.setBetrag(betrag);
 				buchung.setHaben(mCompany.getKontoNrDefault());
 			}
 			else {
-			// ist eine Gutschrift
-			buchung.setBetrag(lineValues[mBetragCol]);
-			buchung.setSoll(mCompany.getKontoNrDefault());
+				// ist eine Gutschrift
+				buchung.setSoll(mCompany.getKontoNrDefault());
 			}
+			// wenn , durch punkt ersetzen
+			betrag = betrag.replace(komma, punkt);
+			buchung.setBetrag(betrag);
 		}
 	}
 

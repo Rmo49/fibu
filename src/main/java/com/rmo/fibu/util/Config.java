@@ -222,6 +222,7 @@ public class Config {
 	}
 
 	public static void setAllProperties() throws FibuException {
+		Trace.println(2, "Config.setAllProperties()");
 		// --- alle Property werte setzen
 		traceLevel = readNumber(traceLevelToken, traceLevel);
 
@@ -358,7 +359,7 @@ public class Config {
 	 * Alle einträge der Fibu-Liste lesen, diese in das Model der JList kopieren.
 	 */
 	private static DefaultListModel<String> readList(String property, String separtor) throws FibuException {
-		Trace.println(3, "Config.readList()");
+		Trace.println(3, "Config.readList() of Fibus");
 		if (property == null) {
 			return null;
 		}

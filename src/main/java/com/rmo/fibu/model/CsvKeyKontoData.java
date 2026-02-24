@@ -133,16 +133,12 @@ public class CsvKeyKontoData extends DataBase {
 	 * Ein Eintrag für eine Keyword speichern, falls nicht vorhanden ist, wird ein
 	 * neues Tupel angelegt.
 	 */
-	public void add(CsvKeyKonto pKeyword) throws FibuException {
-		try {
-			if (findRow(pKeyword)) {
-				updateRow(pKeyword);
-			} else {
-				// wenn nicht gefunden, neues anlegen
-				addRow(pKeyword);
-			}
-		} catch (java.sql.SQLException e) {
-			throw new FibuException("CsvKeyKontoData.add() \n Message: " + e.getMessage());
+	public void add(CsvKeyKonto pKeyword) throws SQLException {
+		if (findRow(pKeyword)) {
+			updateRow(pKeyword);
+		} else {
+			// wenn nicht gefunden, neues anlegen
+			addRow(pKeyword);
 		}
 	}
 
@@ -236,10 +232,9 @@ public class CsvKeyKontoData extends DataBase {
 	 * Das Tupel CsvKeyword ändern, der ResultSet steht bereits auf der richtigen Position
 	 * CompanyId und Suchwort stimmen.
 	 */
-	public void updateRow(CsvKeyKonto pKeyword) throws FibuException {
+	public void updateRow(CsvKeyKonto pKeyword) throws SQLException {
 		Trace.println(7, "CsvKeyKontoData.update()");
 
-		try {
 			int i = 1;
 			if (mVersion >= 2) {
 				i++;
@@ -252,9 +247,6 @@ public class CsvKeyKontoData extends DataBase {
 				mResultSet.updateString(++i, pKeyword.getTextNeu());
 			}
 			mResultSet.updateRow();
-		} catch (java.sql.SQLException e) {
-			throw new FibuException("Keyword ändern, Message: " + e.getMessage());
-		}
 	}
 
 	/**
@@ -333,6 +325,8 @@ public class CsvKeyKontoData extends DataBase {
 		mResultSet.beforeFirst();
 		while (mResultSet.next()) {
 			if (mResultSet.getInt(2) == pKeyword.getBankId()) {
+				String such = mResultSet.getString(3);
+				System.out.println(such);
 				if (mResultSet.getString(3).equalsIgnoreCase(pKeyword.getSuchWort())) {
 					return true;
 				}
@@ -366,7 +360,7 @@ public class CsvKeyKontoData extends DataBase {
 			lQuery.append("INSERT INTO PdfKeyword VALUES ('");
 		} else {
 			// die erste Column (ID) leer, da Autoincrement
-			if (pKeyword.getId() < 0) {
+			if (pKeyword.getId() <= 0) {
 				lQuery.append("INSERT INTO PdfKeyword VALUES (null,'");
 			}
 			// wenn die ID bereits bekannt ist.
