@@ -183,7 +183,7 @@ public class ExcelExportKonto {
 	 * @throws PrinterException
 	 */
 	private void writeWorkbook(int kontoNr) throws PrinterException {
-		String fileName = "/Konto" + kontoNr + ".xls";
+		String fileName = "/" + Config.sFibuDbName + "-Konto" + kontoNr + ".xls";
 		try {
 			String lFileName = Config.sDefaultDir + fileName;
 			FileOutputStream fileOut = new FileOutputStream(lFileName);

@@ -1,6 +1,3 @@
-Kontoblatt
-- bei Kontoblatt=>Excelexport sollte im Dateiname der FibuName vorangestellt werden.
-
 Buchung
 - Einlesen mit PDF bein BLKB Datum wird nur in der Form 23.06 geliefert (ohne Jahr)
 - Setup: wenn eine Zeile gelöscht, dann sollten auch die Schlüsselworte gelöscht werden.
