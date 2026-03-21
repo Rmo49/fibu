@@ -1,8 +1,5 @@
 package com.rmo.fibu.model.from;
 
-import java.beans.beancontext.BeanContextServiceAvailableEvent;
-import java.beans.beancontext.BeanContextServiceRevokedEvent;
-import java.beans.beancontext.BeanContextServicesListener;
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,7 +15,7 @@ import com.rmo.fibu.model.Konto;
  * Konti werden mit der Klasse Konto sichtbar gemacht.
  * Wird verwendet um Daten zu kopieren.
  */
-public class KontoDataFrom extends DataBaseFrom implements BeanContextServicesListener, Serializable {
+public class KontoDataFrom extends DataObjectFrom implements Serializable {
 	private static final long serialVersionUID = 6158252894613753607L;
 
 
@@ -97,15 +94,6 @@ public class KontoDataFrom extends DataBaseFrom implements BeanContextServicesLi
 			// rmo: wenn als erstes Statement, dann Exception
 			pKonto.setKontoNr(pResult.getString(1));
 		}
-	}
-
-	// ------- Bean Support ---------------------
-	@Override
-	public void serviceAvailable(BeanContextServiceAvailableEvent bcsae) {
-	}
-
-	@Override
-	public void serviceRevoked(BeanContextServiceRevokedEvent bcsre) {
 	}
 
 }

@@ -47,7 +47,7 @@ public class DbConnectionFrom {
 			}
 		} catch (Exception ex) {
 			throw new FibuRuntimeException(ex + ex.getMessage() +
-					"\n Solution: Check config file, Is MySql running? Check Verwaltung > Dienste > MySql57");
+					"\n Solution: Check config file, Is MySql running? Check: Dienste > MariaDB");
 		}
 		return sConnection;
 	}

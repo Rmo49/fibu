@@ -1,11 +1,11 @@
 package com.rmo.fibu.util;
 
 /**
- * Wo befinden sich die Worte innerhalb der
+ * Wo befinden sich die Worte innerhalb des Dokumentes
  * @author ruedi
  *
  */
-public class PdfWordLocation {
+public class PdfWord {
 
 	public String word;
 	public int posX = 0;

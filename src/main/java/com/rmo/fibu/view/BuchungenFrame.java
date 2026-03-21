@@ -60,7 +60,7 @@ public class BuchungenFrame extends BuchungenBaseFrame
 	  */
 	 private void init() {
 		 Trace.println(1,"BuchungenFrame.init()");
-		 mBuchungData = (BuchungData) DataBeanContext.getContext().getDataBean(BuchungData.class);
+		 mBuchungData = (BuchungData) DataBeanContext.getDataBean(BuchungData.class);
 		 initView();
 	 }
 

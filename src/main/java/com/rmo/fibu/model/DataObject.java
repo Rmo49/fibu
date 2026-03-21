@@ -1,29 +1,30 @@
-package com.rmo.fibu.model.from;
+package com.rmo.fibu.model;
 
 import java.sql.Connection;
 
 import com.rmo.fibu.exception.FibuRuntimeException;
 
 /**
-Erweiterung des Data-Models auf die Connection2
+Basis-Klasse aller DB-Model-Klassen, die Zugriff auf DB implementieren,
+Ist zuständig für den Bean-Support aller Model-Klassen.
  */
-public abstract class DataBaseFrom { //extends DataBase {
+public abstract class DataObject {
 
 	/**
-	 * Model constructor comment.
+	 * DataObject constructor.
 	 */
-	public DataBaseFrom() throws Exception {
-		super();
+	public DataObject() {
 	}
+
 
 	/** Die Connection zu der DB */
 	protected Connection getConnection() throws FibuRuntimeException {
-		return DbConnectionFrom.getConnection();
+		return DbConnection.getConnection();
 	}
+
 
 	/**
 	 * Jede Klasse muss den check implementieren
 	 */
 	public abstract void checkTableVersion();
-
 }

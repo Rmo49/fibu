@@ -1,6 +1,10 @@
+
+--- Fehler ------------------------------
+
 Buchung
+- Einlesen Raiffeisen 2023, warum keine Daten vorhanden? => evt. etwas anzeigen
+
 - Einlesen mit PDF bein BLKB Datum wird nur in der Form 23.06 geliefert (ohne Jahr)
-- Setup: wenn eine Zeile gelöscht, dann sollten auch die Schlüsselworte gelöscht werden.
 
 - Wenn Buchung eingegeben, dann noch blau in der Liste, kann diese nicht ändern
 
@@ -8,14 +12,17 @@ Fibus
 - Alle DB's anzeigen, auch wenn nicht in der Liste (gilt für Situationen, wenn nicht richtig angelegt).
 
 Util
-- Trace auf java.util.logging umstellen, siehe auch Link in Chrome unter Java
-=> erster Versuch in der Klasse FibuView.
 
 View
 - Check wenn zu kleine Werte für die Darstellung vor allem width und height
 
+Test
+- KontoNrVectorTest Probleme bei den Testcases
 
 --- Erweiterungen ---------------------------------
+
+Parser einlesen
+- eingenes Fenster für Schlüsselworte eingeben, dies wird von Einlese-Fenster aufgerufen
 
 Fibu Ausgabe
 - Alle Bilanzen als PDF ausdrucken (kann auch mit Einstellung beim Drucken gemacht weden).

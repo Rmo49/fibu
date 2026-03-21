@@ -13,23 +13,23 @@ public class BilanzPrinterModel implements BasePrinterModel {
 	private JTable mTableToPrint;
 	private String mTitel;
 	/** version 2 mit mehreren Einträgen */
-	private ArrayList<BilanzPrinterWerte> bilanzListe = new ArrayList<BilanzPrinterWerte>();
+	private ArrayList<BilanzPrinterWerte> bilanzListe = new ArrayList<>();
 
 	public BilanzPrinterModel(JTable tabletoPrint, String kopfzeile) {
 		mTableToPrint = tabletoPrint;
 		mTitel = kopfzeile;
 	}
-	
+
 	public BilanzPrinterModel() {
 	}
-	
+
 	public void addBilanz(BilanzPrinterWerte werte) {
 		bilanzListe.add(werte);
 	}
-	
+
 	/**
 	 * Git eine Bilanz zurück, wenn in der Reihenfolge >= der übergebenden.
-	 * Wenn 0 dann 1, wenn 1 auch 1 oder 2, 
+	 * Wenn 0 dann 1, wenn 1 auch 1 oder 2,
 	 * @return
 	 */
 	public Iterator<BilanzPrinterWerte> getInterator() {
@@ -124,6 +124,6 @@ public class BilanzPrinterModel implements BasePrinterModel {
 	public String getColName(int columnIndex) {
 		return mTableToPrint.getModel().getColumnName(columnIndex);
 	}
-	
+
 
 } // end of BilanzenPrinterModel

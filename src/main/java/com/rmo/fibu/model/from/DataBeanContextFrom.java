@@ -1,21 +1,28 @@
 package com.rmo.fibu.model.from;
 
-import java.beans.beancontext.BeanContextSupport;
-import java.util.Iterator;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.rmo.fibu.util.Trace;
 
-public class DataBeanContextFrom extends BeanContextSupport {
-
-	private static final long serialVersionUID = 1633487783198824158L;
+/**
+ * Der Context des Models. Enthält alle Model-Beans (Konto, Buchung etc.).
+ * für das Kopieren
+ * Ist ein Singelton
+ */
+public class DataBeanContextFrom   {
 
 	private static DataBeanContextFrom sDataBeanContext = null;
+
+	/**
+	 * Die Map mit allen Klassen
+	 */
+	private final Map<Class<?>, DataObjectFrom> beans = new HashMap<>();
 
 	/**
 	 * DataBeanContext constructor comment.
 	 */
 	private DataBeanContextFrom() {
-		super();
 		setup();
 	}
 
@@ -32,42 +39,31 @@ public class DataBeanContextFrom extends BeanContextSupport {
 	}
 
 	/**
-	 * Gibt ein DataObjekt der gesuchten Klasse zurück
+	 * Ein bean der Liste dazufügen.
+	 * @param <T>
+	 * @param type
+	 * @param instance
 	 */
-	public Object getDataBean(Class<?> pClass) {
-		Iterator<?> lIter = iterator();
-		while (lIter.hasNext()) {
-			Object lObj = lIter.next();
-			// rmo: kann so verglichen werden?
-			if (lObj.getClass().equals(pClass)) {
-				return lObj;
-			}
-		}
-		return null;
+	public <T> void addBean(Class<T> type, DataObjectFrom instance) {
+	    beans.put(type, instance);
 	}
 
 	/**
-	 * Gibt ein DataObjekt der gesuchten Klasse zurück. Ist nur hier für Testzwecke,
-	 * da ein anderer Parameter verwendet wird.
+	 * Gibt das Bean der gesuchten Klasse zurück
+	 * @param <T>
+	 * @param type
+	 * @return
 	 */
-	public Object getDataObject(Object pObject) {
-		Object[] lBeans = toArray();
-		for (Object lBean : lBeans) {
-			if (lBean.getClass().equals(pObject)) {
-				return lBean;
-			}
-		}
-		return null;
+	public <T> T getDataBean(Class<T> type) {
+	    return type.cast(beans.get(type));
 	}
 
 	/**
 	 * In alle Data Klassen die Methode checkTableVersion() aufrufen.
 	 */
 	public void checkAllTableVersions() {
-		Iterator<?> lIter = iterator();
-		while (lIter.hasNext()) {
-			DataBaseFrom base = (DataBaseFrom) lIter.next();
-			base.checkTableVersion();
+		for (DataObjectFrom data : beans.values()) {
+			data.checkTableVersion();
 		}
 	}
 
@@ -76,10 +72,11 @@ public class DataBeanContextFrom extends BeanContextSupport {
 	 */
 	private void setup() {
 		try {
-			add(new KontoDataFrom());
-			add(new CsvBankDataFrom());
-			add(new CsvKeywordDataFrom());
-			add(new FibuDataFrom());
+			addBean(KontoDataFrom.class, new KontoDataFrom());
+			addBean(CsvBankDataFrom.class,  new CsvBankDataFrom());
+			addBean(CsvKeywordDataFrom.class, new CsvKeywordDataFrom());
+			addBean(FibuDataFrom.class, new FibuDataFrom());
+
 		} catch (Exception e) {
 			Trace.println(1, "Error in DataBeanContext.setup(): " + e.getMessage());
 		}

@@ -44,7 +44,7 @@ public class BetragRenderer extends DefaultTableCellRenderer {
 //		super.setForeground(Color.yellow);
 //		super.setBackground(Color.yellow);
 		if (mBuchungModel != null) {
-			mBuchungData = (BuchungData) DataBeanContext.getContext().getDataBean(BuchungData.class);
+			mBuchungData = DataBeanContext.getDataBean(BuchungData.class);
 		}
 	}
 

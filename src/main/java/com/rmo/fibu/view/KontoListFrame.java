@@ -45,7 +45,7 @@ import com.rmo.fibu.util.Trace;
 	public KontoListFrame() {
 		// title resizable closable maximizable iconifiable
 		super("Konto Liste (Frame)", false, false, false, false);
-		mKontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
+		mKontoData = (KontoData) DataBeanContext.getDataBean(KontoData.class);
 		// beim Data als Observer anmelden
 		//mKtoData.addKtoObserver(this);
 		init();

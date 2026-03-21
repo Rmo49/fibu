@@ -15,10 +15,10 @@ import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.FibuRuntimeException;
 import com.rmo.fibu.model.Buchung;
 import com.rmo.fibu.model.BuchungData;
-import com.rmo.fibu.model.CsvBank;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.DbConnection;
 import com.rmo.fibu.util.Config;
+import com.rmo.fibu.util.ParserBank;
 import com.rmo.fibu.util.Trace;
 
 /** Die View aller Buchungen. UseCases: Buchungen eingeben, suchen, bearbeiten, löschen.
@@ -91,7 +91,7 @@ public class BuchungView extends JFrame implements BuchungEingabeInterface {
 	 */
 	private void init() {
 		Trace.println(1,"BuchungView.init()");
-		mBuchungData = (BuchungData) DataBeanContext.getContext().getDataBean(BuchungData.class);
+		mBuchungData = (BuchungData) DataBeanContext.getDataBean(BuchungData.class);
 
 		mBuchungMenu = new BuchungMenu(this);
 		initView();
@@ -373,7 +373,7 @@ public class BuchungView extends JFrame implements BuchungEingabeInterface {
 	 * Aufruf der View für CSV einlesen, mit der bankId
 	 * @param pCompany
 	 */
-	public void csvAction (CsvBank bank) {
+	public void csvAction (ParserBank bank) {
 		if (mCsvFrame == null) {
 			mCsvFrame = new CsvReaderKeywordFrame(bank, this);
 		}

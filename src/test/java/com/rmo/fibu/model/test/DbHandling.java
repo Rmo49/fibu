@@ -4,6 +4,9 @@ import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.model.DbConnection;
 import com.rmo.fibu.model.FibuDataBase;
 
+/**
+ * Zum Verwalten der Datenbank
+ */
 public class DbHandling {
 
 	/**
@@ -40,5 +43,12 @@ public class DbHandling {
 		return 1;
 	}
 
+	public static void initAll() {
+		initKontos();
+	}
 
+	public static void initKontos() {
+
+
+	}
 }

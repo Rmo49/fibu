@@ -22,7 +22,7 @@ public class KontoListPrinterModel implements KontoListPrinterInterface
 
 	public KontoListPrinterModel() {
 		mBuchungTable = new BuchungOfKontoModelNormal();
-		mKontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
+		mKontoData = (KontoData) DataBeanContext.getDataBean(KontoData.class);
 	}
 
 	/** Der Iterator, der verwendet werden muss

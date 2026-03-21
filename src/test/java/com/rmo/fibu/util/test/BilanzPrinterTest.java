@@ -6,23 +6,23 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
+import org.junit.jupiter.api.BeforeAll;
+
 import com.rmo.fibu.util.BasePrinterModel;
 import com.rmo.fibu.util.BilanzPrinter;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+
 
 /**
- * Test für BasePrinter.
+ * Test für BasePrinter, frage mich, was hier getestet werden soll.
  */
 
-public class BilanzPrinterTest extends TestCase implements BasePrinterModel {
+public class BilanzPrinterTest implements BasePrinterModel {
 
 	private JTable table;
 
 	public BilanzPrinterTest(String name) {
-		super(name);
+
 		// Initialisierung einer Tabelle
 		TableModel dataModel = new AbstractTableModel() {
 			private static final long serialVersionUID = 5945736873892866473L;
@@ -59,31 +59,16 @@ public class BilanzPrinterTest extends TestCase implements BasePrinterModel {
 
 
 
-	/***************************
-	 * Diese Tests starten
-	*/
-	public static void main(String[] args) {
-		  junit.textui.TestRunner.run(suite());
-	}
-
 	/** Setup Test-Objects
 	 */
-	@Override
-	public void setUp() {
+	@BeforeAll
+	void setUp() {
 		try {
 		} catch (Exception e) {
 			e.printStackTrace(System.out);
 		}
 	}
 
-	/** Hier werden alle TestSchritte zusammengestellt.
-	 Generisch oder Einzeln, wobei bei Generisch die Reihenfolge nicht bestimmt werden kann.
-	*/
-	public static Test suite() {
-		// Generisch: alle Tests von KontoModel
-		TestSuite suite = new TestSuite(BilanzPrinterTest.class);
-		return suite;
-	}
 
 	/** Die Tabelle drucken mit der BasePrinter Klasse.
 	 */
@@ -99,7 +84,7 @@ public class BilanzPrinterTest extends TestCase implements BasePrinterModel {
 		return table;
 	}
 
-	/** Die Kopfzeile, wir linksböndig angezeigt, Seitenzahl rechts */
+	/** Die Kopfzeile, wir linksbündig angezeigt, Seitenzahl rechts */
 	@Override
 	public int getHeaderCount() {
 		return 1;

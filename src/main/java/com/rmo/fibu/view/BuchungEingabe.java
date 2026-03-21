@@ -180,7 +180,7 @@ public class BuchungEingabe extends JInternalFrame {
 		lConstraints.fill = GridBagConstraints.HORIZONTAL;
 		lConstraints.gridwidth = 1;
 		lConstraints.weightx = 10.0;
-		
+
 		// --- Datum mit parser
 		mTfDatum = new JTextFiledBold();
 		lLayout.setConstraints(mTfDatum, lConstraints);
@@ -548,8 +548,8 @@ public class BuchungEingabe extends JInternalFrame {
 			public void focusLost(FocusEvent e) {
 				if (!e.isTemporary()) {
 					focusLostEnterField(mTfBetrag);
-					String xx = mTfBetrag.getText();
-					System.out.println(xx.toString());
+//					String xx = mTfBetrag.getText();
+//					System.out.println(xx.toString());
 				}
 			}
 		});

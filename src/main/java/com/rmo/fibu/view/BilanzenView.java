@@ -150,7 +150,7 @@ public class BilanzenView extends JFrame { // implements Printable
 	 */
 	private void initData() {
 		// die Verbindung zur DB
-		mKontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
+		mKontoData = (KontoData) DataBeanContext.getDataBean(KontoData.class);
 		// ----- Bilanz
 		modelBilanz = new AuswertungModel(Config.sBilanzStart, Config.sBilanzEnd, false);
 		modelBilanz.setUpData();

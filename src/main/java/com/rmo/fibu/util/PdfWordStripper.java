@@ -21,7 +21,7 @@ public class PdfWordStripper extends PDFTextStripper {
 	 * 7'500 66 442
 	 * 03.01.23 66 457 <= das ist ein neues Wort auf einer neuen Zeile
 	 */
-    public List<PdfWordLocation> pdfWords = new ArrayList<>();
+    public List<PdfWord> pdfWords = new ArrayList<>();
 
     public PdfWordStripper() throws IOException {
     }
@@ -34,7 +34,7 @@ public class PdfWordStripper extends PDFTextStripper {
         String[] wordsInStream = str.split(getWordSeparator());
         if(wordsInStream!=null){
             for(String word :wordsInStream){
-            	PdfWordLocation pwl = new PdfWordLocation();
+            	PdfWord pwl = new PdfWord();
             	pwl.word = word;
                	pwl.posX = (int) textPositions.get(0).getXDirAdj();
                	pwl.posY = (int) textPositions.get(0).getYDirAdj();

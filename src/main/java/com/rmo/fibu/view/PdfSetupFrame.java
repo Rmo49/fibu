@@ -26,6 +26,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 import javax.swing.event.TableModelEvent;
@@ -33,14 +34,15 @@ import javax.swing.event.TableModelListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.FibuRuntimeException;
-import com.rmo.fibu.model.CsvBank;
-import com.rmo.fibu.model.CsvBankData;
+import com.rmo.fibu.model.ParserBankData;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.util.Config;
+import com.rmo.fibu.util.ParserBank;
 import com.rmo.fibu.util.PdfDokument;
 import com.rmo.fibu.util.PdfParser;
 import com.rmo.fibu.util.PdfWordStripper;
@@ -57,16 +59,18 @@ public class PdfSetupFrame extends JFrame
 	private static final long serialVersionUID = -6429166001920978382L;
 
 	// die View Elemente
-	private CsvBank mBank;
+	private ParserBank mBank;
 
 	private JTextField mWordBefore;
 	private JButton mBtnSearch;
+	private JButton mBtnReadAll;
 	private JScrollPane mTableScroll;
 
 	private JTextField mDatumSpalte;
 	private JTextField mTextSpalte;
 	private JTextField mSollSpalte;
-	private JTextField mHabenSplalte;
+	private JTextField mHabenSpalte;
+	private JTextField mSaldoSpalte;
 
 	// view der tabelle
 	private JTable mTableView = null;
@@ -79,7 +83,7 @@ public class PdfSetupFrame extends JFrame
 	private File mPdfFile;
 
 	/** Verbindung zur DB */
-	private CsvBankData mBankData = null;
+	private ParserBankData mBankData = null;
 
 
 	/**
@@ -87,7 +91,7 @@ public class PdfSetupFrame extends JFrame
 	 *
 	 * @param pParent Referenz zu den Buchungen
 	 */
-	public PdfSetupFrame(CsvBank bank) {
+	public PdfSetupFrame(ParserBank bank) {
 		super("Steuerdaten eingeben für PDF-Datei");
 		mBank = bank;
 		init();
@@ -113,7 +117,8 @@ public class PdfSetupFrame extends JFrame
 		mDatumSpalte.setText(Integer.toString(mBank.getSpalteDatum()));
 		mTextSpalte.setText (Integer.toString(mBank.getSpalteText()));
 		mSollSpalte.setText (Integer.toString(mBank.getSpalteSoll()));
-		mHabenSplalte.setText (Integer.toString(mBank.getSpalteHaben()));
+		mHabenSpalte.setText (Integer.toString(mBank.getSpalteHaben()));
+		mSaldoSpalte.setText (Integer.toString(mBank.getSpalteSaldo()));
 	}
 
 
@@ -131,7 +136,7 @@ public class PdfSetupFrame extends JFrame
 
 	private Container initAll() {
 		JPanel allPanel = new JPanel();
-		allPanel.setLayout(new BoxLayout(allPanel, BoxLayout.Y_AXIS));
+		allPanel.setLayout(new BoxLayout(allPanel, BoxLayout.PAGE_AXIS));
 
 		Border blackline;
 
@@ -140,34 +145,29 @@ public class PdfSetupFrame extends JFrame
 
 		lLabel = new JLabel("Steuerdaten für: " + mBank.getBankName());
 		lLabel.setFont(Config.fontText);
-		lLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		lLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 		allPanel.add(lLabel);
 
 		JPanel lPanel2 = new JPanel(new FlowLayout());
-		lLabel = new JLabel("Zeile vor Buchungen");
+		lLabel = new JLabel("Zeile vor erster Buchungen");
 		lLabel.setFont(Config.fontText);
-		lLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		lPanel2.add(lLabel);
 
 		mWordBefore = new JTextField(20);
 		mWordBefore.setFont(Config.fontTextBold);
-		mWordBefore.setAlignmentX(Component.LEFT_ALIGNMENT);
-		mWordBefore.setText("Kartenlimite");
+		mWordBefore.setText("");
+		mWordBefore.setToolTipText("Ein Wort in der Zeile vor der ersten Buchung");
 		lPanel2.add(mWordBefore);
 
-//		lPanel2.setBorder(blackline);
-		lPanel2.setAlignmentX(Component.LEFT_ALIGNMENT);
-		Dimension size = new Dimension(500,30);
-		lPanel2.setMaximumSize(size);
-		lPanel2.setPreferredSize(size);
-		lPanel2.setMinimumSize(size);
-
+		lPanel2.setAlignmentX(Component.CENTER_ALIGNMENT);
 		allPanel.add(lPanel2);
 
+		//---- die Buttons
+		JPanel lPanel3 = new JPanel(new FlowLayout());
 		mBtnSearch = new JButton("Nächste Zeile einlesen");
 		mBtnSearch.setFont(Config.fontTextBold);
-		mBtnSearch.setAlignmentX(Component.LEFT_ALIGNMENT);
-		allPanel.add(mBtnSearch);
+		mBtnSearch.setToolTipText("Die Zeile lesen um die erste Buchung zu sehen");
+		lPanel3.add(mBtnSearch);
 
 		mBtnSearch.addActionListener(new ActionListener() {
 			@Override
@@ -176,16 +176,28 @@ public class PdfSetupFrame extends JFrame
 			}
 		});
 
+		mBtnReadAll = new JButton("Alle Zeilen lesen");
+		mBtnReadAll.setFont(Config.fontTextBold);
+		mBtnReadAll.setToolTipText("Für Testzwecke, Inhalt des ganzen Dokumentes anzeigen");
+		lPanel3.add(mBtnReadAll);
+
+		mBtnReadAll.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				leseAlleZeilen();
+			}
+		});
+
+		lPanel3.setAlignmentX(Component.CENTER_ALIGNMENT);
+		allPanel.add(lPanel3);
+
+
+		//----- die Tabelle
 		// model initialisieren, da vor der mTableView gebraucht
 		mTableModel = new PdfBuchungModel();
 		mTableModel.addTableModelListener(this);
 
 		mTableScroll = new JScrollPane(initTable());
-//		size = new Dimension(500,50);
-//		mTableScroll.setMaximumSize(size);
-//		mTableScroll.setPreferredSize(size);
-//		mTableScroll.setMinimumSize(size);
-//		mTableScroll.setSize(200,30);
 		mTableScroll.setBorder(blackline);
 		allPanel.add(mTableScroll);
 
@@ -199,11 +211,13 @@ public class PdfSetupFrame extends JFrame
 		paneList.add(new JLabel("Soll"));
 		paneList.add(mSollSpalte = new JTextField() );
 		paneList.add(new JLabel("Haben"));
-		paneList.add(mHabenSplalte = new JTextField() );
-		size = new Dimension(200,150);
-		paneList.setMaximumSize(size);
-		paneList.setPreferredSize(size);
-		paneList.setMinimumSize(size);
+		paneList.add(mHabenSpalte = new JTextField() );
+		paneList.add(new JLabel("Saldo"));
+		paneList.add(mSaldoSpalte = new JTextField() );
+		Dimension groesse = new Dimension(200,150);
+		paneList.setMaximumSize(groesse);
+		paneList.setPreferredSize(groesse);
+		paneList.setMinimumSize(groesse);
 
 		allPanel.add(paneList);
 
@@ -218,7 +232,6 @@ public class PdfSetupFrame extends JFrame
 				speichern();
 			}
 		});
-
 
 		return allPanel;
 	}
@@ -272,6 +285,65 @@ public class PdfSetupFrame extends JFrame
 		}
 		mTableModel.addData(zeile);
 //		pdfZeile = PfdBuchnungen.
+	}
+
+
+	/**
+	 * Alle Zeilen lesen und ausgeben.
+	 * File öffnen
+	 */
+	private void leseAlleZeilen() {
+		File datei = selectPdfFile();
+		if (datei == null) {
+			JOptionPane.showMessageDialog(this, "Kann Datei nicht öffnen", "PDF setup", JOptionPane.ERROR_MESSAGE);
+		}
+		else {
+			leseAlleZeilen(datei);
+		}
+	}
+
+	/**
+	 * Alle Zeilen lesen und in TextArea schreiben
+	 * alles einlesen, erste Zeile auslesen.
+	 */
+	private void leseAlleZeilen(File datei) {
+        JFrame frame = new JFrame("Einstellungen");
+        JTextArea textArea = new JTextArea();
+
+		mPdfFile = datei;
+		PdfWordStripper stripper = PdfParser.pdfStripWords(mPdfFile);
+		PdfDokument pdfDoku = new PdfDokument(stripper.pdfWords);
+
+		List<String> zeile = pdfDoku.getFirstLine();
+		if (zeile == null) {
+			// suchwort nicht gefunden
+			JOptionPane.showMessageDialog(this, "keine Eintäge gefunden", "PDF Test", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		textArea.append(getString(zeile) + "\n");
+		while (zeile.size() > 0) {
+			zeile = pdfDoku.nextLine();
+			textArea.append(getString(zeile) + "\n");
+		}
+
+        frame.add(new JScrollPane(textArea)); // Mit Scrollbalken
+        frame.setSize(400, 300);
+        frame.setVisible(true);
+
+	}
+
+	/**
+	 * Liste in String umwandeln
+	 * @param zeile
+	 * @return
+	 */
+	private String getString(List<String> zeile) {
+		StringBuffer sb = new StringBuffer(30);
+		for (String wort : zeile) {
+			sb.append(wort);
+			sb.append(";");
+		}
+		return sb.toString();
 	}
 
 	/**
@@ -330,7 +402,7 @@ public class PdfSetupFrame extends JFrame
 			return null;
 		}
 		try {
-			PDDocument document = PDDocument.load(file);
+			PDDocument document = Loader.loadPDF(file);
 			stripper = new PdfWordStripper();
 			stripper.setSortByPosition(true);
 			stripper.setStartPage(0);
@@ -361,11 +433,12 @@ public class PdfSetupFrame extends JFrame
 		mBank.setSpalteDatum(mDatumSpalte.getText());
 		mBank.setSpalteText(mTextSpalte.getText());
 		mBank.setSpalteSoll(mSollSpalte.getText());
-		mBank.setSpalteHaben(mHabenSplalte.getText());
+		mBank.setSpalteHaben(mHabenSpalte.getText());
+		mBank.setSpalteSaldo(mSaldoSpalte.getText());
 		mBank.setSpaltenArray(mBank.getSpaltenArray());
 
 		try {
-			mBankData = (CsvBankData) DataBeanContext.getContext().getDataBean(CsvBankData.class);
+			mBankData = (ParserBankData) DataBeanContext.getDataBean(ParserBankData.class);
 			mBankData.addData(mBank);
 		}
 		catch (FibuException ex) {

@@ -1,4 +1,4 @@
-package com.rmo.fibu.model;
+package com.rmo.fibu.util;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +14,7 @@ import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
-import com.rmo.fibu.util.Trace;
+import com.rmo.fibu.model.BuchungCsv;
 
 
 
@@ -23,16 +23,12 @@ import com.rmo.fibu.util.Trace;
  * Nach Initialisierung mit File, liest die erste Buchung mit nextBuchung.
  * @author Ruedi
  */
-public abstract class CsvParserBase {
+public abstract class CsvParserBase extends ParserBase {
 
-	// Name der bisher implementierten Parser.
-	static public String	companyNamePost = "Post";
-	static public String	companyNameCS = "CS";
-	static public String	companyNameRaiff = "Raiffeisen";
-	static public String	companyNameMB = "MB";
 	static private String	buchungFalsch = ">>> Fehlerhafte Buchung in CSV file <<<";
 
-	protected CsvBank		mCompany = null;
+
+	protected ParserBank	mCompany = null;
 	// Datum von bis
 	private Date mDateVon = null;
 	private Date mDateBis = null;
@@ -52,40 +48,6 @@ public abstract class CsvParserBase {
 	protected static final String ANSI_CODE = "windows-1252";
 	protected static final String UTF_CODE = "UTF8";
 
-	/**
-	 * Prüft, ob Parser vorhanden
-	 * @param companyName
-	 * @return Fehlermeldung-String
-	 */
-	public static String parserVorhanden(String companyName) {
-		boolean hatParser = false;
-		if (companyName.equalsIgnoreCase(CsvParserBase.companyNamePost)) {
-			hatParser = true;
-			}
-		if (companyName.equalsIgnoreCase(CsvParserBase.companyNameCS)) {
-			hatParser = true;
-		}
-		if (companyName.equalsIgnoreCase(CsvParserBase.companyNameRaiff)) {
-			hatParser = true;
-		}
-		if (companyName.equalsIgnoreCase(CsvParserBase.companyNameMB)) {
-			hatParser = true;
-		}
-		StringBuffer sb = new StringBuffer(100);
-		if (!hatParser) {
-			sb.append("Kein Parser für: ");
-			sb.append(companyName);
-			sb.append("\n Implementationen vorhanden für: ");
-			sb.append(CsvParserBase.companyNamePost);
-			sb.append(", ");
-			sb.append(CsvParserBase.companyNameCS);
-			sb.append(", ");
-			sb.append(CsvParserBase.companyNameRaiff);
-			sb.append(", ");
-			sb.append(CsvParserBase.companyNameMB);
-		}
-		return sb.toString();
-	}
 
 	/**
 	 * Konstruktor, initialisiert gemeinsame Daten.
@@ -118,7 +80,7 @@ public abstract class CsvParserBase {
 	 * Startet das parsing, gibt Buchungen zurück
 	 * @return
 	 */
-	public List<BuchungCsv> startParsing(CsvBank bank) {
+	public List<BuchungCsv> startParsing(ParserBank bank) {
 		this.mCompany = bank;
 		List<BuchungCsv> buchungList = new ArrayList<>();
 
@@ -265,21 +227,6 @@ public abstract class CsvParserBase {
 		return txt.toString();
 	}
 
-	/**
-	 * Die führenden + und - und das Tausender Trennzeichen entfernen.
-	 * @param betrag
-	 * @return
-	 */
-	protected String removeTrennzeichen(String betrag) {
-		if (betrag.startsWith("+") || betrag.startsWith("-")) {
-			betrag = betrag.substring(1, betrag.length());
-		}
-		int posTausend = betrag.indexOf("'");
-		if (posTausend > 0) {
-			betrag = betrag.substring(0,posTausend) + betrag.substring(posTausend+1, betrag.length());
-		}
-		return betrag;
-	}
 
 //------ Was implementiert werden muss -----------------------------------------
 

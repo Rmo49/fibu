@@ -30,7 +30,7 @@ public class Datum extends Date {
 	/**
 	 * Setzt das Datum, falls richtig eingegeben in der Form 25.7.01 Wenn ok, wird
 	 * das Datum gesetzt.
-	 * 
+	 *
 	 * @exception ParseException falls nicht richtig formatiert oder nicht im
 	 *            Bereich der Buchhaltung liegt
 	 */
@@ -49,7 +49,7 @@ public class Datum extends Date {
 
 	/**
 	 * Setzt das Datum, falls richtig eingegeben. Wenn ok, wird das Datum gesetzt
-	 * 
+	 *
 	 * @exception ParseException falls nicht richtig formatiert ist.
 	 */
 	public void setNewDatum(String text) throws ParseException {

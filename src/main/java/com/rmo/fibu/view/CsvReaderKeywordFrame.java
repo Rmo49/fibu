@@ -32,15 +32,15 @@ import javax.swing.table.TableColumn;
 
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.FibuRuntimeException;
-import com.rmo.fibu.model.CsvBank;
-import com.rmo.fibu.model.CsvBankData;
-import com.rmo.fibu.model.CsvKeyKonto;
-import com.rmo.fibu.model.CsvKeyKontoData;
-import com.rmo.fibu.model.CsvParserBase;
+import com.rmo.fibu.model.ParserBankData;
+import com.rmo.fibu.model.ParserKeyWord;
+import com.rmo.fibu.model.ParserKeywordData;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.KontoNrVector;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.DatumFormat;
+import com.rmo.fibu.util.ParserBank;
+import com.rmo.fibu.util.ParserBase;
 import com.rmo.fibu.util.Trace;
 
 /**
@@ -63,9 +63,9 @@ public class CsvReaderKeywordFrame extends JFrame {
 	private BuchungView mParent = null;
 
 	// der Name des Institus von dem csv-buchungen eingelesen werden.
-	private CsvBank mBank = null;
+	private ParserBank mBank = null;
 	private String bankFullName = null;
-	private CsvBankData mBankData = null;
+	private ParserBankData mBankData = null;
 
 	private JComboBox<String> mKtoNrDefault;
 	private KontoNrVector mKtoNr;
@@ -84,7 +84,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 	/** Das Model zur Konto-Tabelle */
 	private CsvKeywordModel mKeywordModel;
 	/** Verbindung zur DB */
-	private CsvKeyKontoData mKeywordData = null;
+	private ParserKeywordData mKeywordData = null;
 
 	// Das Frame für die Buchungen bearbeiten
 	private CsvReaderBuchungFrame mCsvBuchungFrame = null;
@@ -95,7 +95,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 	 * @param pBankId, ID der gewählten Bank
 	 * @param pParent     Referenz zu den Buchungen
 	 */
-	public CsvReaderKeywordFrame(CsvBank pBank, BuchungView pParent) {
+	public CsvReaderKeywordFrame(ParserBank pBank, BuchungView pParent) {
 		super("Schlüsselworte für Buchungen einlsesen, V4.0");
 		mBank = pBank;
 		mParent = pParent;
@@ -106,20 +106,22 @@ public class CsvReaderKeywordFrame extends JFrame {
 	 */
 	public boolean init() {
 		Trace.println(3, "CsvReaderKeywordFrame.init()");
+		String err = null;
 		// wenn PDF
-		if (mBank.getDocType() == CsvBank.docTypePdf) {
-			// nix
+		if (mBank.getDocType() == ParserBase.docTypePdf) {
+			err = ParserBase.parserVorhanden(ParserBase.docTypePdf, mBank.getBankName());
 		}
 		else {
 			// prüfen, ob auch eine Implementation vorhanden ist.
-			String err = CsvParserBase.parserVorhanden(mBank.getBankName());
-			if (err.length() > 1) {
-				JOptionPane.showMessageDialog(this, err, "CSV Datei selektieren", JOptionPane.ERROR_MESSAGE);
-				return false;
-			}
+			err = ParserBase.parserVorhanden(ParserBase.docTypeCsv, mBank.getBankName());
 		}
-		mKeywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
-		mBankData = (CsvBankData) DataBeanContext.getContext().getDataBean(CsvBankData.class);
+		if (err.length() > 1) {
+			JOptionPane.showMessageDialog(this, err, "Parser Datei selektieren", JOptionPane.ERROR_MESSAGE);
+			return false;
+		}
+
+		mKeywordData = (ParserKeywordData) DataBeanContext.getDataBean(ParserKeywordData.class);
+		mBankData = (ParserBankData) DataBeanContext.getDataBean(ParserBankData.class);
 
 		// die Version zurücksetzen, wenn das erstemal geöffnet
 		mKeywordData.resetVersion();
@@ -378,7 +380,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 	 * Einen Eintrag dazufügen
 	 */
 	private void addAction() {
-		CsvKeyKonto lKeyword = new CsvKeyKonto();
+		ParserKeyWord lKeyword = new ParserKeyWord();
 		lKeyword.setId(-1);
 		lKeyword.setBankId(mBank.getBankID());
 		lKeyword.setKontoNr(" ");
@@ -403,7 +405,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 		int rowNr = mTableView.getSelectedRow();
 		if (rowNr >= 0) {
 			try {
-				CsvKeyKonto lKeyword = mKeywordData.readAt(mBank.getBankID(), rowNr);
+				ParserKeyWord lKeyword = mKeywordData.readAt(mBank.getBankID(), rowNr);
 				mKeywordData.deleteRow(lKeyword.getId());
 				mKeywordModel.fireTableDataChanged();
 			} catch (Exception ex) {
@@ -416,9 +418,9 @@ public class CsvReaderKeywordFrame extends JFrame {
 	 * Die Keywords in der DB speichern.
 	 */
 	private void saveAction() {
-		CsvKeyKonto csvKeyword = null;
+		ParserKeyWord csvKeyword = null;
 
-		Iterator<CsvKeyKonto> iter = mKeywordData.getIterator(mBank.getBankID());
+		Iterator<ParserKeyWord> iter = mKeywordData.getIterator(mBank.getBankID());
 		try {
 			while (iter.hasNext()) {
 				csvKeyword = iter.next();
@@ -434,7 +436,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 		}
 		catch (FibuException ex) {
 			Trace.println(1, "Fehler in CsvKeywordPanel.saveAction: " + ex.getMessage());
-			
+
 		}
 	}
 
@@ -454,7 +456,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 				Config.sCsvFileName = mDirPath.getText();
 				JFileChooser chooser = new JFileChooser();
 				chooser.setCurrentDirectory(file);
-				if (mBank.getDocType() == CsvBank.docTypeCsv) {
+				if (mBank.getDocType() == ParserBase.docTypeCsv) {
 					chooser.setFileFilter(new FileNameExtensionFilter("CSV", "csv"));
 				}
 				else {
@@ -609,7 +611,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 		 */
 		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-			CsvKeyKonto lKeyword = null;
+			ParserKeyWord lKeyword = null;
 			try {
 				lKeyword = mKeywordData.readAt(mBank.getBankID(), rowIndex);
 			} catch (FibuException ex) {
@@ -676,7 +678,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 		public Object getValueAt(int row, int col) {
 			Trace.println(7, "CsvKeywordModel.getValueAt(" + row + ',' + col + ')');
 			try {
-				CsvKeyKonto lKeyword = mKeywordData.readAt(bankId, row);
+				ParserKeyWord lKeyword = mKeywordData.readAt(bankId, row);
 				if (mKeywordData.getVersion() <= 2) {
 					switch (col) {
 					case 0:

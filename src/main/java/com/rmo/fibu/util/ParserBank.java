@@ -1,4 +1,4 @@
-package com.rmo.fibu.model;
+package com.rmo.fibu.util;
 
 /**
  * Die Bank von der CSV- oder PDF-files eingelesen werden.
@@ -6,12 +6,7 @@ package com.rmo.fibu.model;
  * @author Ruedi
  *
  */
-public class CsvBank {
-
-	static final public int docTypeCsv = 1;
-	static final public int docTypePdf = 2;
-	static final public String[] docTypes = { "CSV", "PDF"};
-
+public class ParserBank {
 
 	private int bankID;
 	private String bankName;
@@ -28,13 +23,14 @@ public class CsvBank {
 	private int spalteText;
 	private int spalteSoll;
 	private int spalteHaben;
+	private int spalteSaldo;
 	private int anzahlSpalten = 0; // die höchste Nummer der Spalten
 
 
-	public CsvBank() {
+	public ParserBank() {
 	}
 
-	public CsvBank(String bankName, String kontoNrDefault, String dirPath, int docType) {
+	public ParserBank(String bankName, String kontoNrDefault, String dirPath, int docType) {
 		this.bankName = bankName;
 		this.kontoNrDefault = kontoNrDefault;
 		this.dirPath = dirPath;
@@ -86,7 +82,7 @@ public class CsvBank {
 	 */
 	public void setDocType(int typeOfDoc) {
 		this.docType = typeOfDoc;
-		this.docString = docTypes[typeOfDoc-1];
+		this.docString = ParserBase.docTypes[typeOfDoc-1];
 	}
 
 	/**
@@ -218,6 +214,27 @@ public class CsvBank {
 		this.spalteHaben = parse(spalteHaben);
 	}
 
+	/**
+	 * @return the spalteSaldo
+	 */
+	public int getSpalteSaldo() {
+		return spalteSaldo;
+	}
+
+	/**
+	 * @param spalteSaldo the spalteSaldo to set
+	 */
+	public void setSpalteSaldo(int spalteSaldo) {
+		this.spalteSaldo = spalteSaldo;
+	}
+
+	/**
+	 * @param spalteSaldo the spalteSaldo to set
+	 */
+	public void setSpalteSaldo(String spalteSaldo) {
+		this.spalteSaldo = parse(spalteSaldo);
+	}
+
 
 	/**
 	 * @return the spaltenArray
@@ -231,6 +248,8 @@ public class CsvBank {
 		buffer.append(spalteSoll);
 		buffer.append(",");
 		buffer.append(spalteHaben);
+		buffer.append(",");
+		buffer.append(spalteSaldo);
 		spaltenArray = buffer.toString();
 		return spaltenArray;
 	}
@@ -260,6 +279,9 @@ public class CsvBank {
 			case 3:
 				setSpalteHaben(parse(words[i]));
 				break;
+			case 4:
+				setSpalteSaldo(parse(words[i]));
+				break;
 			}
 		}
 	}
@@ -286,7 +308,7 @@ public class CsvBank {
 	/**
 	 * @return the anzahlSpalten
 	 */
-	public int getAnzahlSpalten() {
+	protected int getAnzahlSpalten() {
 		return anzahlSpalten;
 	}
 

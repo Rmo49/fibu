@@ -99,8 +99,8 @@ public class KontoView extends JFrame
 	private void init() {
 		Trace.println(1, "KontoView.init()");
 		// mBuchungData = (BuchungData)
-		// DataBeanContext.getContext().getDataBean(BuchungData.class);
-		mKontoData = (KontoData) DataBeanContext.getContext().getDataBean(
+		// DataBeanContext.getDataBean(BuchungData.class);
+		mKontoData = (KontoData) DataBeanContext.getDataBean(
 				KontoData.class);
 		initView();
 		enableButtons();

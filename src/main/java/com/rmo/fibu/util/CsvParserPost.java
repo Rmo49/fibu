@@ -1,10 +1,12 @@
-package com.rmo.fibu.model;
+package com.rmo.fibu.util;
 
 import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import com.rmo.fibu.model.BuchungCsv;
 
 public class CsvParserPost extends CsvParserBase {
 
@@ -77,12 +79,12 @@ public class CsvParserPost extends CsvParserBase {
 	@Override
 	protected void readBetrag(BuchungCsv buchung) {
 		if (lineValues[mBetragCol] != null && lineValues[mBetragCol].length() > 0) {
-			buchung.setBetrag(removeTrennzeichen(lineValues[mBetragCol]));
+			buchung.setBetrag(betragClean(lineValues[mBetragCol]));
 			buchung.setSoll(mCompany.getKontoNrDefault());
 		}
 		if (lineValues[mBetragCol+1] != null && lineValues[mBetragCol+1].length() > 0) {
 			// ist eine Lastschrift
-			buchung.setBetrag(removeTrennzeichen(lineValues[mBetragCol+1]));
+			buchung.setBetrag(betragClean(lineValues[mBetragCol+1]));
 			buchung.setHaben(mCompany.getKontoNrDefault());
 		}
 	}
@@ -92,7 +94,7 @@ public class CsvParserPost extends CsvParserBase {
 	 */
 //	@Override
 //	protected int getCompanyId() {
-//		CsvBankData companyData = (CsvBankData) DataBeanContext.getContext().getDataObject(CsvBankData.class);
+//		ParserBankData companyData = (ParserBankData) DataBeanContext.getDataObject(ParserBankData.class);
 //		try {
 //			return companyData.readData(CsvParserBase.companyNamePost).getCompanyID();
 //		}
@@ -107,7 +109,7 @@ public class CsvParserPost extends CsvParserBase {
 	 */
 //	@Override
 //	protected String getKontoNrDefault() {
-//		CsvBankData companyData = (CsvBankData) DataBeanContext.getContext().getDataObject(CsvBankData.class);
+//		ParserBankData companyData = (ParserBankData) DataBeanContext.getDataObject(ParserBankData.class);
 //		try {
 //			return companyData.readData(CsvParserBase.companyNamePost).getKontoNrDefault();
 //		}

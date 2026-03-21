@@ -46,8 +46,8 @@ public abstract class BuchungOfKontoModel extends AbstractTableModel {
 	}
 
 	public BuchungOfKontoModel() {
-		mBuchungData = (BuchungData) DataBeanContext.getContext().getDataBean(BuchungData.class);
-		mKontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
+		mBuchungData = (BuchungData) DataBeanContext.getDataBean(BuchungData.class);
+		mKontoData = (KontoData) DataBeanContext.getDataBean(KontoData.class);
 	}
 
 	/**

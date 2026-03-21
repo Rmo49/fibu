@@ -1,8 +1,5 @@
 package com.rmo.fibu.model;
 
-import java.beans.beancontext.BeanContextServiceAvailableEvent;
-import java.beans.beancontext.BeanContextServiceRevokedEvent;
-import java.beans.beancontext.BeanContextServicesListener;
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +17,7 @@ import com.rmo.fibu.util.Trace;
  * Konto-Model der Fibu, Verbindung zu Kontorahmen in der DB. Schnittstelle zur
  * DB. Konti werden mit der Klasse Konto sichtbar gemacht.
  */
-public class KontoData extends DataBase implements BeanContextServicesListener, Serializable {
+public class KontoData extends DataObject implements Serializable {
 	private static final long serialVersionUID = 6158252894613753607L;
 
 	/**
@@ -30,8 +27,8 @@ public class KontoData extends DataBase implements BeanContextServicesListener, 
 	private Statement mReadStmt;
 
 	/**
-	 * Der Set mit allen Konto-Daten von dem gelesen wird. Ist ein scrollable
-	 * Set der von allen Methoden verwendet wird. KontoNr: LongInteger <br>
+	 * Der Set mit allen Konto-Daten von dem gelesen wird. Ist ein scrollable Set
+	 * der von allen Methoden verwendet wird. KontoNr: LongInteger <br>
 	 * KontoText: String <br>
 	 * StartSaldo: Double (Währung) <br>
 	 * Saldo: Double (Währung) <br>
@@ -53,14 +50,13 @@ public class KontoData extends DataBase implements BeanContextServicesListener, 
 	}
 
 	/**
-	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
-	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
+	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind. Diese
+	 * Methode wird nach dem Start der Fibu aufgerufen.
 	 */
 	@Override
 	public void checkTableVersion() {
 
 	}
-
 
 	/**
 	 * Max. Anzahl Zeilen in der Tabelle.
@@ -73,8 +69,8 @@ public class KontoData extends DataBase implements BeanContextServicesListener, 
 	}
 
 	/**
-	 * Das Konto wird gespeichert. Falls die KontoNr nicht vorhanden ist, wird
-	 * ein neues Konto angelegt
+	 * Das Konto wird gespeichert. Falls die KontoNr nicht vorhanden ist, wird ein
+	 * neues Konto angelegt
 	 */
 	public void add(Konto pKonto) throws KontoNotFoundException {
 		try {
@@ -129,7 +125,7 @@ public class KontoData extends DataBase implements BeanContextServicesListener, 
 	 * @return Konto an der position, null wenn nicht vorhanden
 	 */
 	public Konto readAt(int position) throws KontoNotFoundException {
-		Trace.println(7, "KontoData.readAt()");
+		Trace.println(7, "KontoData.readAt(" + position + ")");
 		try {
 			setupReadSet();
 			if (mReadSet.absolute(position + 1)) {
@@ -165,8 +161,8 @@ public class KontoData extends DataBase implements BeanContextServicesListener, 
 	}
 
 	/**
-	 * Das Konto an der Position position löschen. Falls kein Konto vorhanden
-	 * ist, wird die Exception KontoNotFoundException geworfen.
+	 * Das Konto an der Position position löschen. Falls kein Konto vorhanden ist,
+	 * wird die Exception KontoNotFoundException geworfen.
 	 */
 	public void deleteAt(int position) throws KontoNotFoundException {
 		try {
@@ -239,8 +235,8 @@ public class KontoData extends DataBase implements BeanContextServicesListener, 
 
 		KontoIterator() {
 			try {
-				mReadStmt = getConnection()
-						.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+				mReadStmt = getConnection().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+						ResultSet.CONCUR_UPDATABLE);
 				mReadSet = mReadStmt.executeQuery("SELECT * FROM Kontorahmen ORDER BY KontoNr");
 				mReadSet.beforeFirst();
 			} catch (SQLException ex) {
@@ -280,8 +276,8 @@ public class KontoData extends DataBase implements BeanContextServicesListener, 
 	}
 
 	/**
-	 * Kopiert die End-Saldi zu Start-Saldo, wenn konto nicht gefunden, wird
-	 * neue angelegt.
+	 * Kopiert die End-Saldi zu Start-Saldo, wenn konto nicht gefunden, wird neue
+	 * angelegt.
 	 */
 	public void copyExcelToKonto(ExcelImport lExcel) throws KontoNotFoundException {
 		Konto lKonto = null;
@@ -304,8 +300,8 @@ public class KontoData extends DataBase implements BeanContextServicesListener, 
 				lKonto.setIstSollKonto(false);
 			}
 			if (lKontoNr < Config.sERStart) {
-			lKonto.setStartSaldo(lExcel.getDoubleAt(rowNr, 4));
-			lKonto.setSaldo(lExcel.getDoubleAt(rowNr, 4));
+				lKonto.setStartSaldo(lExcel.getDoubleAt(rowNr, 4));
+				lKonto.setSaldo(lExcel.getDoubleAt(rowNr, 4));
 			} else {
 				lKonto.setStartSaldo(0);
 				lKonto.setSaldo(0);
@@ -399,8 +395,7 @@ public class KontoData extends DataBase implements BeanContextServicesListener, 
 	}
 
 	/**
-	 * Max. Anzahl Zeilen in der Tabelle berechnen Werden im mMaxRows
-	 * gespeichert.
+	 * Max. Anzahl Zeilen in der Tabelle berechnen Werden im mMaxRows gespeichert.
 	 */
 	private synchronized void calculateMaxRows() {
 		try {
@@ -418,8 +413,8 @@ public class KontoData extends DataBase implements BeanContextServicesListener, 
 	}
 
 	/**
-	 * Setzt das Statement (Connection zur DB) und den Scroll-Set, der für
-	 * Insert oder update verwendet werden kann.
+	 * Setzt das Statement (Connection zur DB) und den Scroll-Set, der für Insert
+	 * oder update verwendet werden kann.
 	 */
 	private synchronized void setupReadSet() throws SQLException {
 		if (mReadStmt == null) {
@@ -428,15 +423,6 @@ public class KontoData extends DataBase implements BeanContextServicesListener, 
 		if (mReadSet == null) {
 			mReadSet = mReadStmt.executeQuery("SELECT * FROM Kontorahmen ORDER BY KontoNr");
 		}
-	}
-
-	// ------- Bean Support ---------------------
-	@Override
-	public void serviceAvailable(BeanContextServiceAvailableEvent bcsae) {
-	}
-
-	@Override
-	public void serviceRevoked(BeanContextServiceRevokedEvent bcsre) {
 	}
 
 }

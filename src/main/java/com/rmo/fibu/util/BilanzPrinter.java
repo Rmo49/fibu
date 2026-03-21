@@ -31,7 +31,7 @@ public class BilanzPrinter extends BasePrinter implements BasePrinterModel {
 	/**
 	 * Eine Seite drucken. Die Methode muss selber wissen was wann noch fortgesetzt
 	 * werden soll.
-	 * 
+	 *
 	 * @param g
 	 * @param pageIndex
 	 * @param printing
@@ -70,7 +70,7 @@ public class BilanzPrinter extends BasePrinter implements BasePrinterModel {
 
 	/**
 	 * Gibt es eine Bilanz zu drucken? wenn Bilanz >= lastNrToPrint, dann drucken
-	 * 
+	 *
 	 * @return
 	 */
 	private BilanzPrinterWerte naechsteBilanz() {

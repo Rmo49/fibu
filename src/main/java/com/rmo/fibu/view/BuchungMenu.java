@@ -9,10 +9,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import com.rmo.fibu.model.CsvBank;
-import com.rmo.fibu.model.CsvBankData;
+import com.rmo.fibu.model.ParserBankData;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.util.Config;
+import com.rmo.fibu.util.ParserBank;
 
 /** Die Menu-Steuerung der Buchung-View.
  * @author Ruedii
@@ -113,12 +113,12 @@ public class BuchungMenu {
 	 * @param mnuCsv
 	 */
 	private void insertCsvMenu(JMenu mnuCsv) {
-		CsvBankData 	mBankData = null;
-		mBankData = (CsvBankData) DataBeanContext.getContext().getDataBean(CsvBankData.class);
-		Iterator<CsvBank> iter = mBankData.getIterator();
+		ParserBankData 	mBankData = null;
+		mBankData = (ParserBankData) DataBeanContext.getDataBean(ParserBankData.class);
+		Iterator<ParserBank> iter = mBankData.getIterator();
 		JMenuItem mnuItem;
 		while (iter.hasNext()) {
-			CsvBank bank = iter.next();
+			ParserBank bank = iter.next();
 			mnuItem = new JMenuItem(bank.getBankName());
 			mnuItem.setFont(Config.fontTextBold);
 

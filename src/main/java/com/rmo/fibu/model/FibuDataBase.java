@@ -67,8 +67,8 @@ public class FibuDataBase {
 			statement.execute(CREATE_FIBUDATEN);
 			statement.execute(CREATE_KONTORAHMEN);
 			statement.execute(CREATE_BUCHUNG);
-			statement.execute(CsvBankData.CREATE_CSVBANK_V2);
-			statement.execute(CsvKeyKontoData.CREATE_CSVKEYWORD_V2);
+			statement.execute(ParserBankData.CREATE_CSVBANK_V2);
+			statement.execute(ParserKeywordData.CREATE_CSVKEYWORD_V2);
 			statement.close();
 			Config.sFibuTitel = "Fibu Name";
 			vonBisDatumSetzen();
@@ -90,7 +90,7 @@ public class FibuDataBase {
 		// Stammdaten einlesen
 		readFibuData();
 		// ruft alle checks in den Data Klassen
-		DataBeanContext.getContext().checkAllTableVersions();
+		DataBeanContext.checkAllTableVersions();
 		// alle Konti neu berechnen
 		Trace.println(2, "FibuDataBase.openFibu, Konto calculate");
 		KontoCalculator calculator = new KontoCalculator();
@@ -177,7 +177,7 @@ public class FibuDataBase {
 
 	private static FibuData getFibuData() {
 		if (mFibuData == null) {
-			mFibuData = (FibuData) DataBeanContext.getContext().getDataBean(FibuData.class);
+			mFibuData = (FibuData) DataBeanContext.getDataBean(FibuData.class);
 		}
 		return mFibuData;
 	}

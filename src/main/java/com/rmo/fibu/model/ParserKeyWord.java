@@ -5,7 +5,7 @@ package com.rmo.fibu.model;
  * @author Ruedi
  *
  */
-public class CsvKeyKonto {
+public class ParserKeyWord {
 
 	private int Id;
 	private int bankId;
@@ -14,10 +14,10 @@ public class CsvKeyKonto {
 	private String sh;
 	private String textNeu;
 
-	public CsvKeyKonto() {
+	public ParserKeyWord() {
 	}
 
-	public CsvKeyKonto(int bankId, String suchWort, String kontoNr, String sh, String textNeu) {
+	public ParserKeyWord(int bankId, String suchWort, String kontoNr, String sh, String textNeu) {
 		this.bankId = bankId;
 		this.suchWort = suchWort;
 		this.kontoNr = kontoNr;

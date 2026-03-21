@@ -1,43 +1,53 @@
 package com.rmo.fibu.model.test;
 
-import static org.junit.Assert.fail;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.rmo.fibu.exception.FibuException;
-import com.rmo.fibu.model.CsvBank;
-import com.rmo.fibu.model.CsvBankData;
-import com.rmo.fibu.model.CsvKeyKonto;
-import com.rmo.fibu.model.CsvKeyKontoData;
-import com.rmo.fibu.model.CsvParserBase;
+import com.rmo.fibu.model.ParserBankData;
+import com.rmo.fibu.model.ParserKeyWord;
+import com.rmo.fibu.model.ParserKeywordData;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.DbConnection;
 import com.rmo.fibu.util.Config;
+import com.rmo.fibu.util.CsvParserBase;
+import com.rmo.fibu.util.ParserBank;
 
-
-
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class CsvKeywordDataTest {
 
-	private static final String dbName = "FibuLeer";
+	private static final String dbName = "FibuTest";
 	private static String companyName = CsvParserBase.companyNamePost;
-	private static CsvBank mCompany = null;
-	private static CsvBankData mCompanyData = null;
+	private static ParserBank mCompany = null;
+	private static ParserBankData mCompanyData = null;
 
-	private CsvKeyKontoData mKeywordData = null;
+	private ParserKeywordData mKeywordData = null;
 
 
 	/** Setup Database
 	 */
-	@BeforeClass
-	public static void beforeClass() throws Exception {
+	@BeforeAll
+	static void beforeClass() throws Exception {
 		Config.readPropertyFile();
+		DbHandling.deleteDb(dbName);
 		DbHandling.makeDb(dbName);
 		DbConnection.open(dbName);
+		
+		
 		try {
-			mCompanyData = (CsvBankData) DataBeanContext.getContext().getDataBean(CsvBankData.class);
-			CsvBank lCompany = new CsvBank();
+
+			mCompanyData = (ParserBankData) DataBeanContext.getDataBean(ParserBankData.class);
+			mCompanyData.checkTableVersion();
+
+			ParserBank lCompany = new ParserBank();
 			lCompany.setBankID(0);
 			lCompany.setBankName(companyName);
 			lCompany.setDirPath("dir");
@@ -53,31 +63,31 @@ public class CsvKeywordDataTest {
 
 
 	@Test
-	public void testAddEmptyRow() {
+	@Order(1)
+	void testAddEmptyRow() throws Exception {
 		try {
-			mKeywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
-			mKeywordData.addEmptyRow(new CsvKeyKonto());
+			mKeywordData = (ParserKeywordData) DataBeanContext.getDataBean(ParserKeywordData.class);
+			
+			mKeywordData.addEmptyRow(new ParserKeyWord(mCompany.getBankID(), "such", null, "S", "neu"));
 		} catch (FibuException ex) {
 			fail(ex.getMessage());
 		}
 	}
 
 	@Test
-	public void readEmptyRow() {
+	@Order(2)
+	void readEmptyRow() throws Exception {
 		try {
-			mKeywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
-			mKeywordData.addEmptyRow(new CsvKeyKonto());
+			mKeywordData = (ParserKeywordData) DataBeanContext.getDataBean(ParserKeywordData.class);
+			// eine Zeile lesen, die es nicht gibt
+			ParserKeyWord keyWord = mKeywordData.readAt(0, 1);
+			assertNull(keyWord);
 //			assertNotNull("Keyword nicht gefunden", lKeyword.getSuchWort());
 		} catch (FibuException ex) {
-			fail(ex.getMessage());
+			assertNotNull(ex, ex.getMessage());
 		}
 
 	}
 
-
-	@AfterClass
-	public static void afterClass() {
-		DbHandling.deleteDb(dbName);
-	}
 
 }

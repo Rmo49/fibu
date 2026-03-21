@@ -1,10 +1,12 @@
-package com.rmo.fibu.model;
+package com.rmo.fibu.util;
 
 import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import com.rmo.fibu.model.BuchungCsv;
 
 public class CsvParserRaiff extends CsvParserBase {
 
@@ -82,39 +84,10 @@ public class CsvParserRaiff extends CsvParserBase {
 			else {
 				buchung.setSoll(mCompany.getKontoNrDefault());
 			}
-			buchung.setBetrag(removeTrennzeichen(lineValues[mBetragCol]));
+			buchung.setBetrag(betragClean(lineValues[mBetragCol]));
 		}
 	}
 
-	/**
-	 * Die ID der Bank
-	 */
-//	@Override
-//	protected int getCompanyId() {
-//		CsvBankData companyData = (CsvBankData) DataBeanContext.getContext().getDataObject(CsvBankData.class);
-//		try {
-//			return companyData.readData(CsvParserBase.companyNameRaiff).getCompanyID();
-//		}
-//		catch (FibuException ex){
-//			// do nothing
-//		}
-//		return 0;
-//	}
-
-	/**
-	 * Die standard KontoNr
-	 */
-//	@Override
-//	protected String getKontoNrDefault() {
-//		CsvBankData companyData = (CsvBankData) DataBeanContext.getContext().getDataObject(CsvBankData.class);
-//		try {
-//			return companyData.readData(CsvParserBase.companyNameRaiff).getKontoNrDefault();
-//		}
-//		catch (FibuException ex){
-//			// do nothing
-//		}
-//		return "";
-//	}
 
 	/**
 	 * Den encoding string, muss von detail Implementation gesetzt werden.

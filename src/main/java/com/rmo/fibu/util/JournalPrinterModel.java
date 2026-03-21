@@ -15,7 +15,7 @@ public class JournalPrinterModel implements BasePrinterModel
 
 	public JournalPrinterModel() {
 		BuchungData mBuchungData =
-			(BuchungData) DataBeanContext.getContext().getDataBean(BuchungData.class);
+			(BuchungData) DataBeanContext.getDataBean(BuchungData.class);
 		mBuchungTable = new JTable(new BuchungModel(mBuchungData));
 	}
 

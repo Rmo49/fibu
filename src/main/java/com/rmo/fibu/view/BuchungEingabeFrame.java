@@ -86,7 +86,7 @@ public class BuchungEingabeFrame extends JFrame implements BuchungEingabeInterfa
 	@Override
 	public BuchungData getBuchungData() {
 		if (mBuchungData == null) {
-			mBuchungData = (BuchungData) DataBeanContext.getContext().getDataBean(BuchungData.class);
+			mBuchungData = (BuchungData) DataBeanContext.getDataBean(BuchungData.class);
 		}
 		return mBuchungData;
 	}

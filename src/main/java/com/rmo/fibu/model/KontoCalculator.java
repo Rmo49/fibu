@@ -17,7 +17,7 @@ public class KontoCalculator {
 	private HashMap<String, Konto> mKonti; // temporärer Speicher
 
 	public KontoCalculator() {
-		mKontoData = (KontoData) DataBeanContext.getContext().getDataBean(
+		mKontoData = (KontoData) DataBeanContext.getDataBean(
 				KontoData.class);
 		mKonti = new HashMap<>(mKontoData.getRowCount());
 	}
@@ -51,8 +51,7 @@ public class KontoCalculator {
 	/** Durchlaufe alle Buchungen und berechne Saldo */
 	private void verbucheSaldo() throws KontoNotFoundException {
 		Trace.println(3, "KontoCalculator.verbucheSaldo()");
-		BuchungData lBuchungData = (BuchungData) DataBeanContext.getContext()
-				.getDataBean(BuchungData.class);
+		BuchungData lBuchungData = (BuchungData) DataBeanContext.getDataBean(BuchungData.class);
 		Iterator<Buchung> buchungIter = lBuchungData.getIterator();
 		while (buchungIter.hasNext()) {
 			Buchung lBuchung = buchungIter.next();

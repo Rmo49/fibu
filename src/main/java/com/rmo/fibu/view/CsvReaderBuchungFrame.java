@@ -36,24 +36,26 @@ import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.model.Buchung;
 import com.rmo.fibu.model.BuchungCsv;
 import com.rmo.fibu.model.BuchungData;
-import com.rmo.fibu.model.CsvBank;
-import com.rmo.fibu.model.CsvBankData;
-import com.rmo.fibu.model.CsvKeyKonto;
-import com.rmo.fibu.model.CsvKeyKontoData;
-import com.rmo.fibu.model.CsvParserBase;
-import com.rmo.fibu.model.CsvParserCs;
-import com.rmo.fibu.model.CsvParserMB;
-import com.rmo.fibu.model.CsvParserPost;
-import com.rmo.fibu.model.CsvParserRaiff;
+import com.rmo.fibu.model.ParserBankData;
+import com.rmo.fibu.model.ParserKeyWord;
+import com.rmo.fibu.model.ParserKeywordData;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.JsonFile;
 import com.rmo.fibu.model.KontoNrVector;
 import com.rmo.fibu.util.Config;
-import com.rmo.fibu.util.PdfParser;
-import com.rmo.fibu.util.Trace;
+import com.rmo.fibu.util.CsvParserBase;
+import com.rmo.fibu.util.CsvParserMB;
+import com.rmo.fibu.util.CsvParserPost;
+import com.rmo.fibu.util.CsvParserRaiff;
 import com.rmo.fibu.util.Datum;
-import com.rmo.fibu.view.util.JLabelBold;
+import com.rmo.fibu.util.ParserBank;
+import com.rmo.fibu.util.ParserBase;
+import com.rmo.fibu.util.PdfParser;
+import com.rmo.fibu.util.PdfParserCler;
+import com.rmo.fibu.util.PdfParserCumulus;
+import com.rmo.fibu.util.Trace;
 import com.rmo.fibu.view.util.JButtonBold;
+import com.rmo.fibu.view.util.JLabelBold;
 
 /**
  * Wird über CsvReaderKeywordFrame gestartet, oder direkt von MainFrame
@@ -71,7 +73,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 
 	// der Name des Institus von dem csv-buchungen eingelesen werden.
 	private String mBankName = null;
-	private CsvBank mBank = null;
+	private ParserBank mBank = null;
 	// file von dem gelesen werden soll
 	private File mFile = null;
 	// Datum von bis
@@ -106,7 +108,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	private String nextBelegNr = null;
 	private int returnValue = 0;
 	/** Damit die Version von Csv gelesen werden kann */
-//	private CsvKeyKontoData mKeywordData = null;
+//	private ParserKeywordData mKeywordData = null;
 	/** mit diesem Tag wird der Anfang und Ende der anzahl Worte angezeigt */
 	private String tagStart = "/";
 	private char tagWort = 'w';
@@ -125,8 +127,8 @@ public class CsvReaderBuchungFrame extends JFrame {
 	/**
 	 * Construtor needs filename with CSV-data
 	 */
-	public CsvReaderBuchungFrame(File file, CsvBank bank, Date von, Date bis) {
-		super("CSV Buchungen anpassen V2.0");
+	public CsvReaderBuchungFrame(File file, ParserBank bank, Date von, Date bis) {
+		super("Eingelesene Buchungen anpassen V2.1");
 		Trace.println(3, "CsvReaderBuchungFrame(file: " + file.getAbsolutePath() + ")");
 		this.mFile = file;
 		this.mBank = bank;
@@ -134,7 +136,8 @@ public class CsvReaderBuchungFrame extends JFrame {
 		this.mDateVon = new Datum();
 		this.mDateVon.setDatum(von);
 		this.mDateBis = new Datum();
-		this.mDateBis.setDatum(bis);;
+		this.mDateBis.setDatum(bis);
+
 		init();
 	}
 
@@ -143,7 +146,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 */
 	private void init() {
 		Trace.println(4, "CsvReaderBuchungFrame.init()");
-//		mKeywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
+//		mKeywordData = (ParserKeywordData) DataBeanContext.getDataBean(ParserKeywordData.class);
 		// wenn Bank nicht gesetzt, dann von json einlesen
 		if (mBankName.length() < 1) {
 			mBuchungList = JsonFile.readFromFile();
@@ -152,7 +155,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 
 				mBankName = mBuchungList.get(0).getCompanyName();
 				try {
-					CsvBankData bankData = (CsvBankData) DataBeanContext.getContext().getDataBean(CsvBankData.class);
+					ParserBankData bankData = (ParserBankData) DataBeanContext.getDataBean(ParserBankData.class);
 					this.mBank = bankData.readData(mBankName);
 				} catch (FibuException ex) {
 					Trace.println(1, "CsvReaderBuchungFrame Exception: " + ex.getMessage());
@@ -175,13 +178,14 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 */
 	private void initView() {
 		Trace.println(4, "CsvReaderBuchungFrame.initView()");
-		
+
 //		Trace.println(5, "width: " + Config.winCsvReaderBuchungDim.width + " height: " + Config.winCsvReaderBuchungDim.height);
 //		Trace.println(5, "x: " + Config.winCsvReaderBuchungLoc.x + " y: " + Config.winCsvReaderBuchungLoc.y);
-		
+
 		getContentPane().add(initTable(), BorderLayout.CENTER);
 		getContentPane().add(initBottom(), BorderLayout.PAGE_END);
 		this.setSize(Config.winCsvReaderBuchungDim);
+		this.setMinimumSize(Config.winCsvReaderBuchungDim);
 		this.setLocation(Config.winCsvReaderBuchungLoc);
 		this.pack();
 	}
@@ -250,6 +254,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 		JPanel buttons1 = new JPanel(new FlowLayout());
 
 		JButtonBold btnChange = new JButtonBold("Buchungstext anpassen");
+		btnChange.setToolTipText("Wenn SuchWort gefunden wird KontoNr eingesetzt");
 		btnChange.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -364,29 +369,25 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 */
 	private void csvEinlesen() {
 		Trace.println(5, "CsvReaderBuchungFrame.csvEinlesen()");
-		if (mBank.getDocType() == CsvBank.docTypeCsv) {
+		if (mBank.getDocType() == ParserBase.docTypeCsv) {
 			// wenn von CSV einlesen
 			CsvParserBase csvParser = null;
-			if (mBankName.equalsIgnoreCase(CsvParserBase.companyNamePost)) {
+			if (mBankName.equalsIgnoreCase(ParserBase.companyNamePost)) {
 				csvParser = new CsvParserPost(mFile, mDateVon, mDateBis);
-			} else if (mBankName.equalsIgnoreCase(CsvParserBase.companyNameCS)) {
-				csvParser = new CsvParserCs(mFile, mDateVon, mDateBis);
-			} else if (mBankName.equalsIgnoreCase(CsvParserBase.companyNameRaiff)) {
+			} else if (mBankName.equalsIgnoreCase(ParserBase.companyNameRaiff)) {
 				csvParser = new CsvParserRaiff(mFile, mDateVon, mDateBis);
-			} else if (mBankName.equalsIgnoreCase(CsvParserBase.companyNameMB)) {
+			} else if (mBankName.equalsIgnoreCase(ParserBase.companyNameMB)) {
 				csvParser = new CsvParserMB(mFile, mDateVon, mDateBis);
 			} else {
 				StringBuffer sb = new StringBuffer(100);
 				sb.append("Kein Setup für: '");
 				sb.append(mBankName);
 				sb.append("' gefunden \n Impmentationen vorhanden von: ");
-				sb.append(CsvParserBase.companyNamePost);
+				sb.append(ParserBase.companyNamePost);
 				sb.append(", ");
-				sb.append(CsvParserBase.companyNameCS);
+				sb.append(ParserBase.companyNameRaiff);
 				sb.append(", ");
-				sb.append(CsvParserBase.companyNameRaiff);
-				sb.append(", ");
-				sb.append(CsvParserBase.companyNameMB);
+				sb.append(ParserBase.companyNameMB);
 				sb.append(" gefunden");
 				JOptionPane.showMessageDialog(this, sb.toString(), "CSV Datei selektieren", JOptionPane.ERROR_MESSAGE);
 				return;
@@ -397,18 +398,27 @@ public class CsvReaderBuchungFrame extends JFrame {
 		} else {
 			// wenn von PDF einlesen
 			Trace.println(5, "CsvReaderBuchungFrame.datenEinlesen() => start Parsing PDF");
-			PdfParser pdfParser = new PdfParser(mFile, mDateVon, mDateBis);
-			mBuchungList = pdfParser.startParsing(mBank);
-			if (mBuchungList.size() <= 0) {
+			PdfParser pdfParser = null;
+			if (mBankName.equalsIgnoreCase(ParserBase.companyNameCumulus)) {
+				pdfParser = new PdfParserCumulus(mFile, mDateVon, mDateBis);
+			} else if (mBankName.equalsIgnoreCase(ParserBase.companyNameCler)) {
+				pdfParser = new PdfParserCler(mFile, mDateVon, mDateBis);
+			} else {
 				StringBuffer sb = new StringBuffer(100);
-				sb.append("Keine Buchungen für: '");
+				sb.append("Kein Setup für: '");
 				sb.append(mBankName);
+				sb.append("' gefunden \n Impmentationen vorhanden von: ");
+				sb.append(ParserBase.companyNameCumulus);
+				sb.append(", ");
+				sb.append(ParserBase.companyNameCler);
 				sb.append("' gefunden. \n");
 				sb.append("PDF Steuerdaten anpassen in: Setup > [PDF Steuerdaten eingeben]");
 				JOptionPane.showMessageDialog(this, sb.toString(), "PDF Datei selektieren", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
+			mBuchungList = pdfParser.startParsing(mBank);
 		}
+
 		Trace.println(5, "CsvReaderBuchungFrame.csvEinlesen() => end Parsing");
 	}
 
@@ -439,17 +449,17 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 * Text gelöscht, bzw. ersetzt mit dem neuen Text
 	 */
 	protected void buchungAnpassen(BuchungCsv buchungCsv) {
-		Trace.println(7, "CsvReaderBuchungFrame.buchungAnpassen()");
 		if (buchungCsv == null) {
 			return;
 		}
+		Trace.println(7, "CsvReaderBuchungFrame.buchungAnpassen() " + buchungCsv.getText());
 		// Die Liste der Keyword, iterator mit der ID der Bank gelesen
-		CsvKeyKontoData keywordData = (CsvKeyKontoData) DataBeanContext.getContext().getDataBean(CsvKeyKontoData.class);
-		Iterator<CsvKeyKonto> lIter = keywordData.getIterator(mBank.getBankID());
+		ParserKeywordData keywordData = (ParserKeywordData) DataBeanContext.getDataBean(ParserKeywordData.class);
+		Iterator<ParserKeyWord> lIter = keywordData.getIterator(mBank.getBankID());
 		int pos = -1;
 		// Iteration über alle Keywörter
 		while (lIter.hasNext()) {
-			CsvKeyKonto keyword = lIter.next();
+			ParserKeyWord keyword = lIter.next();
 			pos = posSuchWort(buchungCsv.getText(), keyword.getSuchWort());
 			// Suchwort gefunden
 			if (pos >= 0) {
@@ -504,7 +514,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	/**
 	 * Die Kontonummer setzen wenn etwas gefunden im Text.
 	 */
-	private void setKonto(BuchungCsv buchungCsv, CsvKeyKonto keyword) {
+	private void setKonto(BuchungCsv buchungCsv, ParserKeyWord keyword) {
 		if (keyword.getSh().equalsIgnoreCase("H")) {
 			buchungCsv.setHaben(keyword.getKontoNr());
 		} else {
@@ -550,7 +560,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	}
 
 	/**
-	 * Den Text ersetzen, gemäss angaben im CsvKeyKonto. Für Version 3 und höher.
+	 * Den Text ersetzen, gemäss angaben im ParserKeyWord. Für Version 3 und höher.
 	 */
 	private String textChange(String buchungText, String keywordText, int pos) {
 		StringBuffer textNew = new StringBuffer(100);
@@ -625,9 +635,9 @@ public class CsvReaderBuchungFrame extends JFrame {
 		try {
 			// das erste Datum
 			von = mBuchungListIter.next().getDatum();
-		}
-		catch (Exception ex) {
-			JOptionPane.showMessageDialog(this, "Keine Daten vorhanden", "Buchungen einlesen", JOptionPane.INFORMATION_MESSAGE);
+		} catch (Exception ex) {
+			JOptionPane.showMessageDialog(this, "Keine Daten vorhanden", "Buchungen einlesen",
+					JOptionPane.INFORMATION_MESSAGE);
 			returnValue = false;
 		}
 		String bis = Config.sDatumBis.toString();
@@ -637,8 +647,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 		try {
 			mDatumSelVon = new Datum(von);
 			mDatumSelBis = new Datum(bis);
-		}
-		catch (ParseException ex) {
+		} catch (ParseException ex) {
 			Trace.println(1, "CsvReaderBuchungFrame.setDatumVonListe(), Probleme beim Datum lesen");
 		}
 		Trace.println(5, "CsvReaderBuchungFrame.setDatumVonListe() : " + returnValue);
@@ -649,7 +658,9 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 * Den Prefix-Wert in selektierten Buchungen eintragen
 	 */
 	private void prefixInsert() {
-		if (!setSelectedDate()) return;
+		if (!setSelectedDate()) {
+			return;
+		}
 		mBuchungListIter = mBuchungList.iterator();
 		// Iteration über alle Buchungen
 		while (mBuchungListIter.hasNext()) {
@@ -660,7 +671,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 
 	/**
 	 * Den insert-String in den Buchungstext einbauen.
-	 * 
+	 *
 	 * @param csvBuchung
 	 */
 	private void prefixInBuchung(BuchungCsv csvBuchung) {
@@ -678,17 +689,16 @@ public class CsvReaderBuchungFrame extends JFrame {
 		try {
 			mDatumSelVon = new Datum(mTfDatumAb.getText());
 			mDatumSelBis = new Datum(mTfDatumBis.getText());
-		}
-		catch (ParseException ex) {
+		} catch (ParseException ex) {
 			JOptionPane.showMessageDialog(this, "Datumformat falsch", "Datum", JOptionPane.INFORMATION_MESSAGE);
 			return false;
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Ist das Datum der Buchung innerhalb des Ranges
-	 * 
+	 *
 	 * @param csvBuchung
 	 * @return
 	 */
@@ -709,7 +719,9 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 * Die Kontonummer einsetzen in selektierten Buchungen
 	 */
 	private void setKontoNummer() {
-		if (!setSelectedDate()) return;
+		if (!setSelectedDate()) {
+			return;
+		}
 		mBuchungListIter = mBuchungList.iterator();
 		// Iteration über alle Buchungen
 		while (mBuchungListIter.hasNext()) {
@@ -720,6 +732,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 
 	/**
 	 * Kontonummer in der Buchung einsetzen
+	 *
 	 * @param csvBuchung
 	 */
 	private void setKtoNrInBuchung(BuchungCsv csvBuchung) {
@@ -733,12 +746,11 @@ public class CsvReaderBuchungFrame extends JFrame {
 						csvBuchung.setSoll(ktoNr);
 					}
 				}
-			}
-			else {
+			} else {
 				if (mReplaceKtoNr.isSelected()) {
 					csvBuchung.setHaben(ktoNr);
 				} else {
-					if ((csvBuchung.getHaben()== null) || (csvBuchung.getHaben().length() == 0)) {
+					if ((csvBuchung.getHaben() == null) || (csvBuchung.getHaben().length() == 0)) {
 						csvBuchung.setHaben(ktoNr);
 					}
 				}
@@ -746,7 +758,6 @@ public class CsvReaderBuchungFrame extends JFrame {
 		}
 	}
 
-	
 	/**
 	 * Das eingegebenen Datums ab
 	 */
@@ -772,7 +783,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 * Die Buchungen in der DB speichern.
 	 */
 	private void saveInFibu() {
-		mBuchungData = (BuchungData) DataBeanContext.getContext().getDataBean(BuchungData.class);
+		mBuchungData = (BuchungData) DataBeanContext.getDataBean(BuchungData.class);
 		BuchungCsv buchungCsv = null;
 		Buchung buchungNew = new Buchung();
 		Iterator<BuchungCsv> iter = mBuchungList.iterator();
@@ -808,7 +819,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 
 	/**
 	 * Von der CSV Liste in Buchung für Fibu schreiben
-	 * 
+	 *
 	 * @param buchungCsv
 	 * @param buchung
 	 * @return -1: Fehler und abbrechen, 0: Fehler, nicht abbrechen 1: alles ok
@@ -972,12 +983,12 @@ public class CsvReaderBuchungFrame extends JFrame {
 
 	/** wenn Fenster geschlossen */
 	@Override
-	public void setVisible(boolean b) {
-		if (!b) {
+	public void setVisible(boolean makeVisible) {
+		if (!makeVisible) {
 			Config.winCsvReaderBuchungDim = getSize();
 			Config.winCsvReaderBuchungLoc = getLocation();
 		}
-		super.setVisible(b);
+		super.setVisible(makeVisible);
 	}
 
 	// ----- Model der Buchung-Tabelle --------------------------------------

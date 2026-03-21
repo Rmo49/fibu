@@ -37,7 +37,7 @@ public class ColumnRenderer extends DefaultTableCellRenderer  {
 	/** Initialisiert den Renderer */
 	private void init(){
 		if (mBuchungModel != null) {
-			mBuchungData = (BuchungData) DataBeanContext.getContext().getDataBean(BuchungData.class);
+			mBuchungData = (BuchungData) DataBeanContext.getDataBean(BuchungData.class);
 		}
 	}
 

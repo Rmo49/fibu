@@ -51,7 +51,7 @@ import com.rmo.fibu.util.Trace;
 	protected KtoSelectBase(BuchungEingabe eingabe) {
 		mEingabe = eingabe;
 		// title resizable closable maximizable iconifiable
-		mKontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
+		mKontoData = (KontoData) DataBeanContext.getDataBean(KontoData.class);
 		init();
 	}
 

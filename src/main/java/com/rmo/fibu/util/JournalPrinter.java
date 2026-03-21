@@ -43,7 +43,7 @@ public class JournalPrinter extends BasePrinter {
 		yPos += spaceForOneRow();
 		if (printing) {
 			g.setFont(Config.printerNormalFont);
-			
+
 			while (mPrintedRows <= getTableModel().getRowCount()) {
 				if (yPos > (pageHeight - spaceSummeFooter())) {
 					// wenn kein Platz mehr

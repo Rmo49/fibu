@@ -82,7 +82,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 	 */
 	public KontoplanView() {
 		super("Kontoplan V1.1");
-		mKontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
+		mKontoData = (KontoData) DataBeanContext.getDataBean(KontoData.class);
 		// beim Data als Observer anmelden
 		// mKtoData.addKtoObserver(this);
 		initForm();

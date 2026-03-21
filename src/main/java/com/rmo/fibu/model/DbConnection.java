@@ -45,12 +45,12 @@ public class DbConnection {
 					sConnection = DriverManager.getConnection(Config.dbUrl + dbName,
 							Config.userName, Config.password);
 				}
-				Trace.println(1, "Connected to the database");
+				Trace.println(1, "Connected to the database: " + dbName);
 				sConnection.setAutoCommit(true);
 			}
 		} catch (Exception ex) {
 			throw new FibuRuntimeException(ex + ex.getMessage() +
-					"\n Solution: Check config file, Is MySql running? Check Verwaltung > Dienste > MySql57");
+					"\n Solution: Check config file, Is MySql running? Check Verwaltung > Dienste > MariaDB");
 		}
 		return sConnection;
 	}

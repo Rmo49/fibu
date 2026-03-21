@@ -26,7 +26,7 @@ public class DatumFormat extends SimpleDateFormat {
     }
 
     /**
-     * 
+     *
      * @return
      */
     public static DatumFormat getDatumInstance() {

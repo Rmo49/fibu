@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import com.rmo.fibu.exception.FibuException;
+import com.rmo.fibu.util.ParserBank;
 import com.rmo.fibu.util.Trace;
 
 /**
@@ -17,7 +18,7 @@ import com.rmo.fibu.util.Trace;
  * @author Ruedi
  *
  */
-public class CsvBankData extends DataBase {
+public class ParserBankData extends DataObject {
 
 	private final static String TABLE_NAME = "pdfcompany";
 
@@ -94,7 +95,7 @@ public class CsvBankData extends DataBase {
 	/**
 	 * Model constructor comment.
 	 */
-	public CsvBankData() throws Exception {
+	public ParserBankData() throws Exception {
 		super();
 	}
 
@@ -124,7 +125,7 @@ public class CsvBankData extends DataBase {
 				stmt.close();
 			}
 		} catch (SQLException e) {
-			Trace.println(3, "CsvBankData.checkTableVersion: " + e.getMessage());
+			Trace.println(3, "ParserBankData.checkTableVersion: " + e.getMessage());
 		}
 	}
 
@@ -144,7 +145,7 @@ public class CsvBankData extends DataBase {
 				lResult.close();
 			}
 		} catch (SQLException e) {
-			Trace.println(1, "error in: CsvBankData.getMaxRows: " + e.getMessage());
+			Trace.println(1, "error in: ParserBankData.getMaxRows: " + e.getMessage());
 			mMaxRows = 0;
 		}
 		return mMaxRows;
@@ -155,7 +156,7 @@ public class CsvBankData extends DataBase {
 	 * Ein Eintrag für eine bank speichern, falls nicht vorhanden ist, wird
 	 * ein neues Tupel angelegt.
 	 */
-	public void addData(CsvBank pCompany) throws FibuException {
+	public void addData(ParserBank pCompany) throws FibuException {
 		try {
 			if (findRow(pCompany.getBankName())) {
 				updateRow(pCompany);
@@ -164,7 +165,7 @@ public class CsvBankData extends DataBase {
 				addRow(pCompany);
 			}
 	} catch (java.sql.SQLException e) {
-			throw new FibuException("PdfKeyword.add() \n Message: " + e.getMessage());
+			throw new FibuException("PdfKeyword.add() \n Message: " + e.getCause());
 		}
 	}
 
@@ -172,8 +173,8 @@ public class CsvBankData extends DataBase {
 	/**
 	 * Aendert die Attribute der gewählten Zeile.
 	 */
-	public void updateAt(int row, CsvBank pCompany) throws FibuException {
-		Trace.println(7, "CsvBankData.updateAt(" + row +")");
+	public void updateAt(int row, ParserBank pCompany) throws FibuException {
+		Trace.println(7, "ParserBankData.updateAt(" + row +")");
 
 		try {
 			setupReadSetAll();
@@ -196,11 +197,11 @@ public class CsvBankData extends DataBase {
 	}
 
 	/**
-	 * Die CsvBank mit dem suchWort wird zurückgegeben. Wenn nicht gefunden wird
+	 * Die ParserBank mit dem suchWort wird zurückgegeben. Wenn nicht gefunden wird
 	 * FibuException geworfen.
 	 */
-	public CsvBank readData(String companyName) throws FibuException {
-		CsvBank lCompany = new CsvBank();
+	public ParserBank readData(String companyName) throws FibuException {
+		ParserBank lCompany = new ParserBank();
 		lCompany.setBankName(companyName);
 		try {
 			if (findRow(companyName)) {
@@ -216,10 +217,10 @@ public class CsvBankData extends DataBase {
 	}
 
 	/**
-	 * Die CsvBank mit dem suchWort wird zurückgegeben. Wenn nicht gefunden wird
+	 * Die ParserBank mit dem suchWort wird zurückgegeben. Wenn nicht gefunden wird
 	 * FibuException geworfen.
 	 */
-	public CsvBank readData(int companyId) throws FibuException {
+	public ParserBank readData(int companyId) throws FibuException {
 		try {
 			if (findRow(companyId)) {
 				mReadSetName.refreshRow();
@@ -235,15 +236,15 @@ public class CsvBankData extends DataBase {
 
 
 	/**
-	 * Die CsvBank an der Position zurückgeben.
+	 * Die ParserBank an der Position zurückgeben.
 	 *  Wenn nicht gefunden wird FibuException geworfen.
 	 *
 	 * @param row, erste row = 1
 	 * @return
 	 * @throws FibuException
 	 */
-	public CsvBank readAt(int row) throws FibuException {
-		Trace.println(7, "CsvBankData.readAt(" + row +")");
+	public ParserBank readAt(int row) throws FibuException {
+		Trace.println(7, "ParserBankData.readAt(" + row +")");
 		mReadSetAll = null;	// zurücksetzen, da nicht von Anfang liest
 
 		try {
@@ -252,7 +253,7 @@ public class CsvBankData extends DataBase {
 //				mReadSetName.refreshRow();
 				return copyCompanyValues(mReadSetAll);
 			} else {
-				throw new FibuException("CsvBankData: Zeile nicht gefunden");
+				throw new FibuException("ParserBankData: Zeile nicht gefunden");
 			}
 		} catch (java.sql.SQLException e) {
 			// @todo rmo: SQL-Exception noch untersuchen?
@@ -263,7 +264,7 @@ public class CsvBankData extends DataBase {
 	/**
 	 * Ein Tupel löschen
 	 */
-	public void deleteRow(CsvBank pCompany) throws SQLException {
+	public void deleteRow(ParserBank pCompany) throws SQLException {
 		mReadSetName =	getReadSetName(pCompany.getBankName());
 		if (findRow(pCompany.getBankName())) {
 			mReadSetName.deleteRow();
@@ -320,8 +321,8 @@ public class CsvBankData extends DataBase {
 	/**
 	 * Die Wert vom ReadSet in das Objekt kopieren
 	 */
-	private CsvBank copyCompanyValues(ResultSet readSet) throws SQLException {
-		CsvBank lCompany = new CsvBank();
+	private ParserBank copyCompanyValues(ResultSet readSet) throws SQLException {
+		ParserBank lCompany = new ParserBank();
 //		mReadSetAll = null;	// zurücksetzen, da nicht von Anfang liest
 //		setupReadSetAll();
 //
@@ -341,7 +342,7 @@ public class CsvBankData extends DataBase {
 	 * Eine neue Zeile (Row) in die Tabelle eintragen. Kopiert die Attribute
 	 * Objekt PdfKeyword in den ResultSet. Der SQL-String wird zusammengestellt.
 	 */
-	private void addRow(CsvBank pCompany) throws SQLException {
+	private void addRow(ParserBank pCompany) throws SQLException {
 		Statement stmt = getConnection().createStatement();
 		StringBuffer lQuery = new StringBuffer("INSERT INTO PdfCompany VALUES (");
 		if (pCompany.getBankID() == 0) {
@@ -373,7 +374,7 @@ public class CsvBankData extends DataBase {
 	/**
 	 * Aendert die Attribute der bank
 	 */
-	private void updateRow(CsvBank pCompany) throws SQLException {
+	private void updateRow(ParserBank pCompany) throws SQLException {
 		StringBuffer sql = new StringBuffer(200);
 		sql.append("UPDATE PdfCompany SET CompanyName = ?, KontoNrDefault = ?, DirPath = ?, TypeOfDoc = ?,  "
 				+ "WordBefore = ?, SpaltenArray = ? WHERE CompanyID = ");
@@ -472,12 +473,12 @@ public class CsvBankData extends DataBase {
 	// ----- Iterator ---------------------------------------------
 
 	/** Gibt einen Iterator zurück */
-	public Iterator<CsvBank> getIterator() {
+	public Iterator<ParserBank> getIterator() {
 		return new CsvCompanyIterator();
 	}
 
 	/** Iterator über alle Keywords */
-	private class CsvCompanyIterator implements Iterator<CsvBank> {
+	private class CsvCompanyIterator implements Iterator<ParserBank> {
 		private Statement mReadStmt;
 		private ResultSet mReadSet;
 
@@ -519,9 +520,9 @@ public class CsvBankData extends DataBase {
 		 * mReadSet muss mit hasNext auf diesen zeigen.
 		 */
 		@Override
-		public CsvBank next() throws NoSuchElementException {
+		public ParserBank next() throws NoSuchElementException {
 			try {
-				CsvBank lCompany = new CsvBank();
+				ParserBank lCompany = new ParserBank();
 				lCompany.setBankID(mReadSet.getInt(1));
 				lCompany.setBankName(mReadSet.getString(2));
 				lCompany.setKontoNrDefault(mReadSet.getString(3));

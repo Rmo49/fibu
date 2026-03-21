@@ -18,7 +18,7 @@ import com.rmo.fibu.util.Trace;
  * @author Ruedi
  *
  */
-public class CsvKeyKontoData extends DataBase {
+public class ParserKeywordData extends DataObject {
 
 	private final static String TABLE_NAME = "pdfkeyword";
 
@@ -75,7 +75,7 @@ public class CsvKeyKontoData extends DataBase {
 	/**
 	 * Model constructor comment.
 	 */
-	public CsvKeyKontoData() throws Exception {
+	public ParserKeywordData() throws Exception {
 		super();
 		init();
 	}
@@ -103,7 +103,7 @@ public class CsvKeyKontoData extends DataBase {
 				}
 			}
 		} catch (SQLException e) {
-			Trace.println(1, "error in: CsvBankData.checkTableVersion: " + e.getMessage());
+			Trace.println(1, "error in: ParserBankData.checkTableVersion: " + e.getMessage());
 		}
 	}
 
@@ -121,11 +121,11 @@ public class CsvKeyKontoData extends DataBase {
 	/**
 	 * Einen leeren Eintrag speichern, ein neues Tupel wird angelegt.
 	 */
-	public void addEmptyRow(CsvKeyKonto pKeyword) throws FibuException {
+	public void addEmptyRow(ParserKeyWord pKeyword) throws FibuException {
 		try {
 			addRow(pKeyword);
 		} catch (java.sql.SQLException e) {
-			throw new FibuException("CsvKeyKontoData.add() \n Message: " + e.getMessage());
+			throw new FibuException("ParserKeywordData.add() \n Message: " + e.getMessage());
 		}
 	}
 
@@ -133,7 +133,7 @@ public class CsvKeyKontoData extends DataBase {
 	 * Ein Eintrag für eine Keyword speichern, falls nicht vorhanden ist, wird ein
 	 * neues Tupel angelegt.
 	 */
-	public void add(CsvKeyKonto pKeyword) throws SQLException {
+	public void add(ParserKeyWord pKeyword) throws SQLException {
 		if (findRow(pKeyword)) {
 			updateRow(pKeyword);
 		} else {
@@ -154,12 +154,15 @@ public class CsvKeyKontoData extends DataBase {
 
 	/**
 	 * Das Keywort an der Stelle position (0..x) zurückgeben.
-	 *
+	 * 
+	 * @param companyId
+	 * @param position
 	 * @return Keywort an der position, null wenn nicht vorhanden
+	 * @throws FibuException
 	 */
-	public CsvKeyKonto readAt(int companyId, int position) throws FibuException {
-		Trace.println(7, "CsvKeyKontoData.readAt()");
-		CsvKeyKonto lKeyword = new CsvKeyKonto();
+	public ParserKeyWord readAt(int companyId, int position) throws FibuException {
+		Trace.println(7, "ParserKeywordData.readAt()");
+		ParserKeyWord lKeyword = new ParserKeyWord();
 		lKeyword.setBankId(companyId);
 		try {
 			setupReadSet(companyId);
@@ -189,7 +192,6 @@ public class CsvKeyKontoData extends DataBase {
 					lKeyword.setSh(mResultSet.getString(5));
 					lKeyword.setTextNeu(mResultSet.getString(6));
 				}
-
 				return lKeyword;
 			} else {
 				throw new FibuException("Keyword an Position: " + position + " nicht gefunden");
@@ -202,8 +204,8 @@ public class CsvKeyKontoData extends DataBase {
 	/**
 	 * Das Tupel an der Position (0..x) ändern.
 	 */
-	public void updateAt(int position, CsvKeyKonto pKeyword) throws FibuException {
-		Trace.println(7, "CsvKeyKontoData.updateAt()");
+	public void updateAt(int position, ParserKeyWord pKeyword) throws FibuException {
+		Trace.println(7, "ParserKeywordData.updateAt()");
 		try {
 			setupReadSet(pKeyword.getBankId());
 			if (mResultSet.absolute(position + 1)) {
@@ -232,8 +234,8 @@ public class CsvKeyKontoData extends DataBase {
 	 * Das Tupel CsvKeyword ändern, der ResultSet steht bereits auf der richtigen Position
 	 * CompanyId und Suchwort stimmen.
 	 */
-	public void updateRow(CsvKeyKonto pKeyword) throws SQLException {
-		Trace.println(7, "CsvKeyKontoData.update()");
+	public void updateRow(ParserKeyWord pKeyword) throws SQLException {
+		Trace.println(7, "ParserKeywordData.update() " + pKeyword.getSuchWort());
 
 			int i = 1;
 			if (mVersion >= 2) {
@@ -259,6 +261,18 @@ public class CsvKeyKontoData extends DataBase {
 		ps.executeUpdate();
 		ps.close();
 		mMaxRows--;
+	}
+
+	/**
+	 * Das Tupel mit der ID löschen
+	 */
+	public void deleteAllRowsOfBank(int bankID) throws SQLException {
+		String sql = "DELETE FROM PdfKeyword WHERE CompanyID = ?";
+		PreparedStatement ps = getConnection().prepareStatement(sql);
+		ps.setInt(1, bankID);
+		ps.executeUpdate();
+		ps.close();
+		mMaxRows = 0;
 	}
 
 	public void resetVersion() {
@@ -306,7 +320,7 @@ public class CsvKeyKontoData extends DataBase {
 				ResultSetMetaData rsmd = rs.getMetaData();
 				mAnzahlCols = rsmd.getColumnCount();
 			} catch (SQLException e) {
-				Trace.println(1, "error in: CsvKeyKontoData.getAnzahlCols: " + e.getMessage());
+				Trace.println(1, "error in: ParserKeywordData.getAnzahlCols: " + e.getMessage());
 				mAnzahlCols = 0;
 			}
 		}
@@ -320,7 +334,7 @@ public class CsvKeyKontoData extends DataBase {
 	 * @return
 	 * @throws SQLException
 	 */
-	private boolean findRow(CsvKeyKonto pKeyword) throws SQLException {
+	private boolean findRow(ParserKeyWord pKeyword) throws SQLException {
 		setupReadSet(pKeyword.getBankId());
 		mResultSet.beforeFirst();
 		while (mResultSet.next()) {
@@ -351,7 +365,7 @@ public class CsvKeyKontoData extends DataBase {
 	 * Eine neue Zeile (Row) in die Tabelle eintragen. Kopiert die Attribute Objekt
 	 * PdfKeyword in den ResultSet. Der SQL-String wird zusammengestellt.
 	 */
-	private int addRow(CsvKeyKonto pKeyword) throws SQLException {
+	private int addRow(ParserKeyWord pKeyword) throws SQLException {
 		int id = 0;
 		Statement stmt = getConnection().createStatement();
 		StringBuffer lQuery = new StringBuffer(100);
@@ -410,12 +424,12 @@ public class CsvKeyKontoData extends DataBase {
 	// ----- Iterator ---------------------------------------------
 
 	/** Gibt einen Iterator zurück */
-	public Iterator<CsvKeyKonto> getIterator(int companyId) {
+	public Iterator<ParserKeyWord> getIterator(int companyId) {
 		return new CsvKeywordIterator(companyId);
 	}
 
 	/** Iterator über alle Keywords */
-	private class CsvKeywordIterator implements Iterator<CsvKeyKonto> {
+	private class CsvKeywordIterator implements Iterator<ParserKeyWord> {
 		private Statement mReadStmt;
 		private ResultSet mReadSet;
 
@@ -451,9 +465,9 @@ public class CsvKeyKontoData extends DataBase {
 		}
 
 		@Override
-		public CsvKeyKonto next() throws NoSuchElementException {
+		public ParserKeyWord next() throws NoSuchElementException {
 			try {
-				CsvKeyKonto lPdfKeyword = new CsvKeyKonto();
+				ParserKeyWord lPdfKeyword = new ParserKeyWord();
 				copyToKeyword(mReadSet, lPdfKeyword);
 				return lPdfKeyword;
 			} catch (SQLException ex) {
@@ -470,7 +484,7 @@ public class CsvKeyKontoData extends DataBase {
 	/**
 	 * Kopiert die Attribute vom ResultSet in das Objekt Keyword
 	 */
-	private void copyToKeyword(ResultSet pResult, CsvKeyKonto pKeyword) throws SQLException {
+	private void copyToKeyword(ResultSet pResult, ParserKeyWord pKeyword) throws SQLException {
 		int i = 1;
 		if (mVersion >= 2) {
 			pKeyword.setId(pResult.getInt(i));

@@ -1,80 +1,79 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.rmo</groupId>
 	<artifactId>fibu</artifactId>
 	<packaging>jar</packaging>
-	
+
 	<name>fibu</name>
 	<url>http://maven.apache.org</url>
 
 	<properties>
-	  <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
 
-	
+
 	<repositories>
-	    <repository>
-	    <id>com.e-iceblue</id>
-		<name>e-iceblue</name>
-		<url>https://repo.e-iceblue.com/nexus/content/groups/public/</url>
+		<repository>
+			<id>com.e-iceblue</id>
+			<name>e-iceblue</name>
+			<url>https://repo.e-iceblue.com/nexus/content/groups/public/</url>
 		</repository>
 	</repositories>
-	
+
 	<build>
 		<plugins>
 			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-compiler-plugin</artifactId>
-			    <version>3.7.0</version>
-			    <configuration>
-			        <source>1.8</source>
-			        <target>1.8</target>
-			    </configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
+				<configuration>
+					<release>25</release>
+				</configuration>
 			</plugin>
-			
+
 			<plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-assembly-plugin</artifactId>
-			    <executions>
-			        <execution>
-			            <phase>package</phase>
-			            <goals>
-			                <goal>single</goal>
-			            </goals>
-			            <configuration>
-			                <archive>
-				                <manifest>
-				                    <mainClass>com.rmo.fibu.FibuApp</mainClass>
-				                </manifest>
-			                </archive>
-			                <descriptorRefs>
-			                    <descriptorRef>jar-with-dependencies</descriptorRef>
-			                </descriptorRefs>
-			            </configuration>
-			        </execution>
-			    </executions>
-			</plugin>			
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<archive>
+								<manifest>
+									<mainClass>com.rmo.fibu.FibuApp</mainClass>
+								</manifest>
+							</archive>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
-			  		<archive>
-			    		<manifest>
+					<archive>
+						<manifest>
 							<mainClass>com.rmo.fibu.view.FibuView</mainClass>
-			    		</manifest>
-			  		</archive>
+						</manifest>
+					</archive>
 				</configuration>
 			</plugin>
-		</plugins>	
+		</plugins>
 	</build>
 
 	<profiles>
 		<profile>
-		<!-- "Profile Build" contains a subset of "Project Build"s elements -->
+			<!-- "Profile Build" contains a subset of "Project Build"s elements -->
 			<build>
 				<defaultGoal>install</defaultGoal>
 				<directory>${basedir}/target</directory>
@@ -87,52 +86,52 @@
 	</profiles>
 
 	<dependencies>
-	   <dependency>
-	      <groupId>junit</groupId>
-	      <artifactId>junit</artifactId>
-	      <version>4.13.2</version>
-	      <scope>test</scope>
-	    </dependency>
 		<dependency>
-		    <groupId>org.apache.poi</groupId>
-		    <artifactId>poi</artifactId>
-		    <version>5.3.0</version>
-		</dependency>     
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>6.0.3</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>5.4.0</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
 		<dependency>
-		    <groupId>com.opencsv</groupId>
-		    <artifactId>opencsv</artifactId>
-		    <version>5.9</version>
-		</dependency>	
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>5.9</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
 		<dependency>
-		    <groupId>mysql</groupId>
-		    <artifactId>mysql-connector-java</artifactId>
-		    <version>8.0.33</version>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>8.0.33</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
 		<dependency>
-		    <groupId>commons-logging</groupId>
-		    <artifactId>commons-logging</artifactId>
-		    <version>1.2</version>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.2</version>
 		</dependency>
-    	 <dependency>
-	        <groupId>com.github.cliftonlabs</groupId>
-	        <artifactId>json-simple</artifactId>
-	        <version>3.1.0</version>
-    	</dependency>
-    	<dependency>
-		    <groupId>org.json</groupId>
-		    <artifactId>json</artifactId>
-		    <version>20240303</version>
+		<dependency>
+			<groupId>com.github.cliftonlabs</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>4.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20251224</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox
 			https://pdfbox.apache.org/3.0/migration.html
 			hat eine Version 3, aber viel Aenderungen  -->
 		<dependency>
-		    <groupId>org.apache.pdfbox</groupId>
-		    <artifactId>pdfbox</artifactId>
-		    <version>2.0.31</version>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>3.0.7</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.slf4j/slf4j-api -->
 		<!-- dependency>
@@ -146,7 +145,7 @@
 		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-base -->
 		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
 		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-swing -->
-		
+
 	</dependencies>
-	<version>7-16</version>
+	<version>8-2</version>
 </project>

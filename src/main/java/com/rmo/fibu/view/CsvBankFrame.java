@@ -20,11 +20,13 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
 import com.rmo.fibu.exception.FibuException;
-import com.rmo.fibu.model.CsvBank;
-import com.rmo.fibu.model.CsvBankData;
+import com.rmo.fibu.model.ParserBankData;
+import com.rmo.fibu.model.ParserKeywordData;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.KontoNrVector;
 import com.rmo.fibu.util.Config;
+import com.rmo.fibu.util.ParserBank;
+import com.rmo.fibu.util.ParserBase;
 import com.rmo.fibu.util.Trace;
 
 /**
@@ -47,7 +49,7 @@ public class CsvBankFrame extends JFrame {
 	/** Das interne Model zur Tabelle */
 	private CsvBankModel mTableModel;
 	/** Die Daten in der DB */
-	private CsvBankData mBankData = null;
+	private ParserBankData mBankData = null;
 
 	/**
 	 * Wird gestartet von Buchungen für Einstellungen.
@@ -66,7 +68,7 @@ public class CsvBankFrame extends JFrame {
 	private void init() {
 		Trace.println(1, "CsvBankFrame.init()");
 		// Verbindung zur DB
-		mBankData = (CsvBankData) DataBeanContext.getContext().getDataBean(CsvBankData.class);
+		mBankData = (ParserBankData) DataBeanContext.getDataBean(ParserBankData.class);
 //		datenEinlesen();
 		initView();
 		this.setVisible(true);
@@ -98,6 +100,7 @@ public class CsvBankFrame extends JFrame {
 
 		JScrollPane lScrollPane = new JScrollPane(mTableView);
 		setColWidth();
+		setColBank();
 		setColKontoNummern();
 		setColDocType();
 		return lScrollPane;
@@ -121,7 +124,19 @@ public class CsvBankFrame extends JFrame {
 	}
 
 	/**
-	 * Setzt die Kontonummern Combobox
+	 * Setzt die Kontonummern Combobox, in der Column 2
+	 */
+	private void setColBank() {
+		JComboBox<String> comboBoxBank = new JComboBox<>(ParserBase.companyNameList);
+		comboBoxBank.setFont(Config.fontText);
+		TableColumn bankColumn = mTableView.getColumnModel().getColumn(1);
+		bankColumn.setCellEditor(new DefaultCellEditor(comboBoxBank));
+	}
+
+
+
+	/**
+	 * Setzt die Kontonummern Combobox, in der Column 2
 	 */
 	private void setColKontoNummern() {
 		JComboBox<String> comboBoxKtonr = new JComboBox<>();
@@ -136,7 +151,7 @@ public class CsvBankFrame extends JFrame {
 	 */
 	private void setColDocType() {
 		JComboBox<String> comboBoxDocType = new JComboBox<>();
-		comboBoxDocType.setModel(new DefaultComboBoxModel<>(CsvBank.docTypes));
+		comboBoxDocType.setModel(new DefaultComboBoxModel<>(ParserBase.docTypes));
 		comboBoxDocType.setFont(Config.fontText);
 		TableColumn docColumn = mTableView.getColumnModel().getColumn(4);
 		docColumn.setCellEditor(new DefaultCellEditor(comboBoxDocType));
@@ -202,7 +217,7 @@ public class CsvBankFrame extends JFrame {
 	 * Einen Eintrag in der DB dazufügen
 	 */
 	private void addAction() {
-		CsvBank lBank = new CsvBank();
+		ParserBank lBank = new ParserBank();
 		lBank.setBankID(0);
 		lBank.setBankName(" ");
 		lBank.setKontoNrDefault(" ");
@@ -224,7 +239,7 @@ public class CsvBankFrame extends JFrame {
 		// iterate über die Liste
 		int rowsMax = mTableModel.getRowCount();
 		for (int row = 0; row < rowsMax; row++) {
-			CsvBank lBank = mTableModel.getValueOfRow(row);
+			ParserBank lBank = mTableModel.getValueOfRow(row);
 			try {
 				mBankData.addData(lBank);
 				mTableModel.fireTableDataChanged();
@@ -248,10 +263,14 @@ public class CsvBankFrame extends JFrame {
 			return;
 		}
 		try {
-			CsvBank lBank = mTableModel.readAt(selRow);
-			if (lBank.getDocType() == CsvBank.docTypePdf) {
+			ParserBank lBank = mTableModel.readAt(selRow);
+			if (lBank.getDocType() == ParserBase.docTypePdf) {
 				PdfSetupFrame csvSetupFrame = new PdfSetupFrame(lBank);
 				csvSetupFrame.setVisible(true);
+			}
+			else {
+				JOptionPane.showMessageDialog(this, lBank.getBankName() + " hat kein PDF implementiert",
+						"PDF setup", JOptionPane.ERROR_MESSAGE);				
 			}
 		} catch (Exception ex) {
 			JOptionPane.showMessageDialog(this, ex.getMessage(), "PDF setup", JOptionPane.ERROR_MESSAGE);
@@ -265,14 +284,17 @@ public class CsvBankFrame extends JFrame {
 		int rowNr = mTableView.getSelectedRow();
 		if (rowNr >= 0) {
 			try {
-				CsvBank lBank = mTableModel.readAt(rowNr);
+				ParserBank lBank = mTableModel.readAt(rowNr);
 				int answer = JOptionPane.showConfirmDialog(this, lBank.getBankName() + " wirklich löschen?",
 						"Eintrag löschen", JOptionPane.YES_NO_OPTION);
 				if (answer == JOptionPane.NO_OPTION) {
 					return;
 				}
-				// hier YES
+				// hier nach YES, von der Bank-Liste löschen
 				mBankData.deleteRow(lBank);
+				// alle Einträge für Such-Worte löschen
+				ParserKeywordData keywordData = (ParserKeywordData) DataBeanContext.getDataBean(ParserKeywordData.class);
+				keywordData.deleteAllRowsOfBank(lBank.getBankID());
 				mTableModel.fireTableDataChanged();
 			} catch (Exception ex) {
 				JOptionPane.showMessageDialog(this, ex.getMessage(), "Fehler beim löschen", JOptionPane.ERROR_MESSAGE);
@@ -347,7 +369,7 @@ public class CsvBankFrame extends JFrame {
 		 */
 		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-			CsvBank lBank = null;
+			ParserBank lBank = null;
 			try {
 				lBank = mBankData.readAt(rowIndex);
 			} catch (FibuException ex) {
@@ -381,13 +403,13 @@ public class CsvBankFrame extends JFrame {
 		 *
 		 * @return Bank an der position, null wenn nicht vorhanden
 		 */
-		public CsvBank readAt(int row) throws FibuException {
-			Trace.println(7, "CsvBank.readAt()");
+		public ParserBank readAt(int row) throws FibuException {
+			Trace.println(7, "ParserBank.readAt()");
 			try {
-				CsvBank lBank = mBankData.readAt(row);
+				ParserBank lBank = mBankData.readAt(row);
 				return lBank;
 			} catch (FibuException ex) {
-				Trace.println(3, "CsvBank.readAt() " + ex.getMessage());
+				Trace.println(3, "ParserBank.readAt() " + ex.getMessage());
 			}
 			return null;
 		}
@@ -399,7 +421,7 @@ public class CsvBankFrame extends JFrame {
 		public Object getValueAt(int row, int col) {
 			Trace.println(7, "CsvKeywordModel.getValueAt(" + row + ',' + col + ')');
 			try {
-				CsvBank lBank = mBankData.readAt(row);
+				ParserBank lBank = mBankData.readAt(row);
 				switch (col) {
 				case 0:
 					return lBank.getBankID();
@@ -425,9 +447,9 @@ public class CsvBankFrame extends JFrame {
 		 * @param row
 		 * @return
 		 */
-		public CsvBank getValueOfRow(int row) {
+		public ParserBank getValueOfRow(int row) {
 			Trace.println(7, "CsvKeywordModel.getValueOfRow(" + row + ')');
-			CsvBank lBank = null;
+			ParserBank lBank = null;
 			try {
 				lBank = mBankData.readAt(row);
 			} catch (FibuException ex) {

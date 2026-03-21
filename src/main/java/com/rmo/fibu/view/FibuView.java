@@ -28,6 +28,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.Spring;
@@ -40,7 +41,6 @@ import javax.swing.SwingConstants;
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.FibuRuntimeException;
 import com.rmo.fibu.model.BuchungData;
-import com.rmo.fibu.model.CsvBank;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.DbConnection;
 import com.rmo.fibu.model.FibuData;
@@ -48,6 +48,7 @@ import com.rmo.fibu.model.FibuDataBase;
 import com.rmo.fibu.model.JsonFile;
 import com.rmo.fibu.util.Config;
 import com.rmo.fibu.util.DatumFormat;
+import com.rmo.fibu.util.ParserBank;
 import com.rmo.fibu.util.Trace;
 
 /**
@@ -108,6 +109,7 @@ public class FibuView extends JFrame
 	JMenuItem mnuBestehend = new JMenuItem();
 	JMenuItem mnuConfig = new JMenuItem();
 	JMenuItem mnuFibu2 = new JMenuItem();
+	JMenuItem mnuSetting = new JMenuItem();
 	JMenuItem mnuDelete = new JMenuItem();
 	JMenuItem mnuBeenden = new JMenuItem();
 	JMenuItem mnuJournal = new JMenuItem();
@@ -213,6 +215,7 @@ public class FibuView extends JFrame
 				closeFibuAction(e);
 			}
 		});
+
 		btnTest.setEnabled(false);
 		btnTest.setFont(Config.fontTextBold);
 		btnTest.setToolTipText("");
@@ -229,7 +232,7 @@ public class FibuView extends JFrame
 		lPanel.add(btnBuchung, null);
 		lPanel.add(btnKontoblatt, null);
 		lPanel.add(btnKontoplan, null);
-		lPanel.add(btnTest, null);
+//		lPanel.add(btnTest, null);
 		return lPanel;
 	}
 
@@ -411,6 +414,15 @@ public class FibuView extends JFrame
 			}
 		});
 
+		mnuSetting.setFont(Config.fontTextBold);
+		mnuSetting.setText("Einstellungen");
+		mnuSetting.addActionListener(new java.awt.event.ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mnuSettingAction(e);
+			}
+		});
+
 		mnuBeenden.setFont(Config.fontTextBold);
 		mnuBeenden.setText("Program beenden");
 		mnuBeenden.addActionListener(new java.awt.event.ActionListener() {
@@ -442,6 +454,9 @@ public class FibuView extends JFrame
 		mnuDatei.add(mnuNeu);
 		mnuDatei.add(mnuBestehend);
 		mnuDatei.add(mnuFibu2);
+		mnuDatei.addSeparator();
+		mnuDatei.add(mnuSetting);
+		mnuDatei.addSeparator();
 		mnuDatei.add(mnuDelete);
 		mnuDatei.add(mnuBeenden);
 		menuBar.add(mnuAuswertung);
@@ -493,7 +508,7 @@ public class FibuView extends JFrame
 	}
 
 	void testAction(ActionEvent e) {
-		CsvBank bank = new CsvBank();
+		ParserBank bank = new ParserBank();
 		bank.setBankName("Cumulus");
 		PdfSetupFrame setup = new PdfSetupFrame(bank);
 		setup.leseBuchungsZeileTest();
@@ -783,6 +798,30 @@ public class FibuView extends JFrame
 	/**
 	 * Bestehende Fibu löschen.
 	 */
+	private void mnuSettingAction(ActionEvent e) {
+        JFrame frame = new JFrame("Einstellungen");
+        JTextArea textArea = new JTextArea();
+        textArea.append("Alle Einstellungen können in der Config-Datei geändert werden \n");
+        textArea.append("mit einem Texteditor. Vorher die Fibu beenden. \n");
+        textArea.append("Config-File (alle Steuerdaten) : " + Config.sConfigFile.getAbsolutePath() + "\n");
+        textArea.append("\n");
+        textArea.append("Installierte java.version: " + System.getProperty("java.version") + "\n");
+        textArea.append("java.runtime.name: " + System.getProperty("java.runtime.name")+ "\n");
+        textArea.append("Trace Pfad: " + Trace.getTracePath() + "\n");
+        textArea.append("Trace-Level: " + Config.traceLevel +  "\n");
+        textArea.append("Ausgabe der Excel-Files in Default dir: '" + Config.sDefaultDir + "' \n");
+        textArea.append("DB Url: " + Config.dbUrl + "\n");
+        textArea.append("DB User: " + Config.userName + "\n");
+
+        frame.add(new JScrollPane(textArea)); // Mit Scrollbalken
+        frame.setSize(400, 300);
+        frame.setVisible(true);
+	}
+
+
+	/**
+	 * Bestehende Fibu löschen.
+	 */
 	private void mnuDeleteAction(ActionEvent e) {
 		// prüfen, ob Buchhaltung offen
 		if (DbConnection.isFibuOpen()) {
@@ -799,7 +838,7 @@ public class FibuView extends JFrame
 		// prüfen, ob Buchungen vorhanden
 		try {
 			DbConnection.open(dbName);
-			BuchungData buchungen = (BuchungData) DataBeanContext.getContext().getDataObject(BuchungData.class);
+			BuchungData buchungen = (BuchungData) DataBeanContext.getDataBean(BuchungData.class);
 			if (buchungen.getRowCountTable() > 0) {
 				int answer = JOptionPane.showConfirmDialog(null,
 						"Fibu: " + dbName + " Buchungen vorhanden, trotzdem löschen?");

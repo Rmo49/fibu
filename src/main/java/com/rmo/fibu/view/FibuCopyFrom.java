@@ -26,10 +26,9 @@ import javax.swing.WindowConstants;
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.FibuRuntimeException;
 import com.rmo.fibu.exception.KontoNotFoundException;
-import com.rmo.fibu.model.CsvBank;
-import com.rmo.fibu.model.CsvBankData;
-import com.rmo.fibu.model.CsvKeyKonto;
-import com.rmo.fibu.model.CsvKeyKontoData;
+import com.rmo.fibu.model.ParserBankData;
+import com.rmo.fibu.model.ParserKeyWord;
+import com.rmo.fibu.model.ParserKeywordData;
 import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.DbConnection;
 import com.rmo.fibu.model.FibuData;
@@ -43,6 +42,7 @@ import com.rmo.fibu.model.from.FibuDataBaseFrom;
 import com.rmo.fibu.model.from.FibuDataFrom;
 import com.rmo.fibu.model.from.KontoDataFrom;
 import com.rmo.fibu.util.Config;
+import com.rmo.fibu.util.ParserBank;
 import com.rmo.fibu.util.Trace;
 
 /**
@@ -232,7 +232,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 	 */
 	private void copyFibuTitel() {
 		FibuDataFrom fibuDataFrom = (FibuDataFrom) DataBeanContextFrom.getContext().getDataBean(FibuDataFrom.class);
-		FibuData fibuData = (FibuData) DataBeanContext.getContext().getDataBean(FibuData.class);
+		FibuData fibuData = (FibuData) DataBeanContext.getDataBean(FibuData.class);
 		try {
 			String fibuTitel = fibuDataFrom.readFibuTitel();
 			fibuData.writeFibuName(fibuTitel);
@@ -248,7 +248,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 	 * Kopiert alle Konto daten, wenn nicht gefunden wird neues Konto angelegt.
 	 */
 	private void copyKonto() {
-		KontoData kontoData = (KontoData) DataBeanContext.getContext().getDataBean(KontoData.class);
+		KontoData kontoData = (KontoData) DataBeanContext.getDataBean(KontoData.class);
 
 		if (delKonto.isSelected()) {
 			// alle Konti löschen, falls noch keine Buchung darauf
@@ -334,8 +334,7 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 	 */
 	private void copyCsvBank() {
 		// zuerst alle Daten löschen
-		CsvBankData mReadSetAll = (CsvBankData) DataBeanContext.getContext()
-				.getDataBean(CsvBankData.class);
+		ParserBankData mReadSetAll = (ParserBankData) DataBeanContext.getDataBean(ParserBankData.class);
 		try {
 			mReadSetAll.deleteAll();
 		}
@@ -345,12 +344,11 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 
 		CsvBankDataFrom mPdfBankDataFrom = (CsvBankDataFrom) DataBeanContextFrom.getContext()
 				.getDataBean(CsvBankDataFrom.class);
-		Iterator<CsvBank> iterFrom = mPdfBankDataFrom.getIterator();
-		CsvBankData mPdfBankData = (CsvBankData) DataBeanContext.getContext()
-				.getDataBean(CsvBankData.class);
-		CsvBank lPdfBank = new CsvBank();
+		Iterator<ParserBank> iterFrom = mPdfBankDataFrom.getIterator();
+		ParserBankData mPdfBankData = (ParserBankData) DataBeanContext.getDataBean(ParserBankData.class);
+		ParserBank lPdfBank = new ParserBank();
 		while (iterFrom.hasNext()) {
-			CsvBank lPdfBankFrom = iterFrom.next();
+			ParserBank lPdfBankFrom = iterFrom.next();
 			lPdfBank.setBankID(lPdfBankFrom.getBankID());
 			lPdfBank.setBankName(lPdfBankFrom.getBankName());
 			lPdfBank.setDirPath(lPdfBankFrom.getDirPath());
@@ -376,12 +374,11 @@ public class FibuCopyFrom extends JFrame implements ComponentListener {
 	private void copyCvsKeywords() {
 		CsvKeywordDataFrom mPdfKeywordDataFrom = (CsvKeywordDataFrom) DataBeanContextFrom.getContext()
 				.getDataBean(CsvKeywordDataFrom.class);
-		Iterator<CsvKeyKonto> iterFrom = mPdfKeywordDataFrom.getIterator();
-		CsvKeyKontoData mCsvKeywordData = (CsvKeyKontoData) DataBeanContext.getContext()
-				.getDataBean(CsvKeyKontoData.class);
-		CsvKeyKonto lCvsKeyword = new CsvKeyKonto();
+		Iterator<ParserKeyWord> iterFrom = mPdfKeywordDataFrom.getIterator();
+		ParserKeywordData mCsvKeywordData = (ParserKeywordData) DataBeanContext.getDataBean(ParserKeywordData.class);
+		ParserKeyWord lCvsKeyword = new ParserKeyWord();
 		while (iterFrom.hasNext()) {
-			CsvKeyKonto lCvsKeywordFrom = iterFrom.next();
+			ParserKeyWord lCvsKeywordFrom = iterFrom.next();
 			lCvsKeyword.setBankId(lCvsKeywordFrom.getBankId());
 			lCvsKeyword.setKontoNr(lCvsKeywordFrom.getKontoNr());
 			lCvsKeyword.setSh(lCvsKeywordFrom.getSh());

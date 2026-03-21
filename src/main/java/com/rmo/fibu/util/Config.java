@@ -32,7 +32,7 @@ public class Config {
 	/** Config-Filename und File */
 	private static final String sConfigFileName = "FibuConfig.txt";
 	public static final String sJsonExtension = ".json";
-	private static File sConfigFile;
+	public static File sConfigFile;
 	/** Die Properties, gespeichert in der Config-Datei */
 	private static PropertiesFibu mProperties;
 	private static Vector<Object> mPropertyList;
@@ -346,7 +346,7 @@ public class Config {
 			mPropertyList.add(properityKeys.nextElement());
 		}
 
-		Collections.sort(mPropertyList, new Comparator<Object>() {
+		Collections.sort(mPropertyList, new Comparator<>() {
 			@Override
 			public int compare(Object o1, Object o2) {
 				return o1.toString().compareTo(o2.toString());
@@ -689,6 +689,9 @@ public class Config {
 	}
 
 	public static void addFibuToList(String fibuName) {
+		if (sFibuNames == null) {
+			sFibuNames = new DefaultListModel<>();
+		}
 		sFibuNames.addElement(fibuName);
 	}
 
@@ -699,6 +702,9 @@ public class Config {
 	 */
 	public static void deleteFibuFromList(String fibuName) {
 		String element = null;
+		if (sFibuNames == null) {
+			return;	// wenn keine Liste, dann auch nichts löschen
+		}
 		for (int index = 0; index < sFibuNames.getSize(); index++) {
 			element = sFibuNames.getElementAt(index);
 			if (element != null && element.compareTo(fibuName) == 0) {

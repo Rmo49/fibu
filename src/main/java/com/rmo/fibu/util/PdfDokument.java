@@ -14,13 +14,13 @@ import java.util.List;
 public class PdfDokument {
 
 	// alle Worte des PDF-Dokuments
-	private List<PdfWordLocation> allWords;
+	private List<PdfWord> allWords;
 	// der Iterator über alle Worte des Dokumentes, wird von mehreren Methoden verwendet
-	private Iterator<PdfWordLocation> iterAllWords = null;
+	private Iterator<PdfWord> iterAllWords = null;
 	// die zuletzt gelesene Zeile
 	private int lastY = 0;
 	// das zuletzt gelesene Wort
-	private PdfWordLocation pdfWordLast;
+	private PdfWord pdfWordLast;
 	// eine Zeile der "Tabelle" nach spalten
 //	private static List <String> pdfZeile = new ArrayList<String>();
 
@@ -31,8 +31,24 @@ public class PdfDokument {
 	 * Im Konstruktor wird das PDF-Dokument übergeben.
 	 * @param pdfWords
 	 */
-	public PdfDokument(List<PdfWordLocation> pdfWords) {
+	public PdfDokument(List<PdfWord> pdfWords) {
 		this.allWords = pdfWords;
+	}
+
+	/**
+	 * Initialisiert den Iterator, setzt diesen auf die Position des Wortes
+	 * @param iter
+	 * @param suchWort
+	 * @return yPos des Wortes, oder -1 wenn nicht gefunden
+	 */
+	public List<String> getFirstLine() {
+		iterAllWords = allWords.iterator();
+		// das erste Wort einlesen
+		if (iterAllWords.hasNext()) {
+			pdfWordLast = iterAllWords.next();
+			lastY = pdfWordLast.posY;
+		}
+		return nextLine();
 	}
 
 
@@ -42,7 +58,7 @@ public class PdfDokument {
 	 * @param suchWort
 	 * @return yPos des Wortes, oder -1 wenn nicht gefunden
 	 */
-	public void gotoStart(String suchWort) {
+	public void gotoSuchWort(String suchWort) {
 		iterAllWords = allWords.iterator();
 		while (iterAllWords.hasNext()) {
 			pdfWordLast = iterAllWords.next();
@@ -59,15 +75,19 @@ public class PdfDokument {
 	 * @param iter
 	 * @return
 	 */
-	public void gotoNextLine() {
+	public boolean gotoNextLine() {
+		if (! iterAllWords.hasNext()) {
+			return false;
+		}
 		while (iterAllWords.hasNext()) {
 			pdfWordLast = iterAllWords.next();
 			if (pdfWordLast.posY > lastY) {
 				lastY = pdfWordLast.posY;
-				return;
+				return true;
 			}
 		}
 		lastY = -1;
+		return true;
 	}
 
 
@@ -113,13 +133,12 @@ public class PdfDokument {
 
 
 
-
 	/**
 	 * Die Zeile nach diesem Wort lesen
 	 * @param nachDiesemWort, nach diesem Wort lesen
 	 */
 	public List<String> getFirstRow(String nachDiesemWort) {
-		gotoStart(nachDiesemWort);
+		gotoSuchWort(nachDiesemWort);
 		gotoNextLine();
 		return nextLine();
 	}

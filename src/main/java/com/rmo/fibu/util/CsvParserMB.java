@@ -1,9 +1,11 @@
-package com.rmo.fibu.model;
+package com.rmo.fibu.util;
 
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import com.rmo.fibu.model.BuchungCsv;
 
 /**
  * Parser für Migrosbank

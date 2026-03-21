@@ -7,7 +7,7 @@ import java.sql.Statement;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import com.rmo.fibu.model.CsvBank;
+import com.rmo.fibu.util.ParserBank;
 import com.rmo.fibu.util.Trace;
 
 /**
@@ -16,7 +16,7 @@ import com.rmo.fibu.util.Trace;
  * @author Ruedi
  *
  */
-public class CsvBankDataFrom extends DataBaseFrom {
+public class CsvBankDataFrom extends DataObjectFrom {
 
 	private final static String TABLE_NAME = "pdfcompany";
 
@@ -45,7 +45,7 @@ public class CsvBankDataFrom extends DataBaseFrom {
 				colsAnzahl = getNumberOfCols();
 			}
 		} catch (SQLException e) {
-			Trace.println(3, "CsvBankData.checkTableVersion: " + e.getMessage());
+			Trace.println(3, "ParserBankData.checkTableVersion: " + e.getMessage());
 		}
 	}
 
@@ -69,7 +69,7 @@ public class CsvBankDataFrom extends DataBaseFrom {
 	 * @param lBank
 	 * @throws SQLException
 	 */
-	private void copyToPdfBank(ResultSet mReadSet, CsvBank lBank) throws SQLException {
+	private void copyToPdfBank(ResultSet mReadSet, ParserBank lBank) throws SQLException {
 		lBank.setBankID(mReadSet.getInt(1));
 		lBank.setBankName(mReadSet.getString(2));
 		lBank.setKontoNrDefault(mReadSet.getString(3));
@@ -87,12 +87,12 @@ public class CsvBankDataFrom extends DataBaseFrom {
 	// ----- Iterator ---------------------------------------------
 
 	/** Gibt einen Iterator zurück */
-	public Iterator<CsvBank> getIterator() {
+	public Iterator<ParserBank> getIterator() {
 		return new PdfIterator();
 	}
 
 	/** Iterator über alle Konti */
-	private class PdfIterator implements Iterator<CsvBank> {
+	private class PdfIterator implements Iterator<ParserBank> {
 		private Statement mReadStmt;
 		private ResultSet mReadSet;
 
@@ -122,9 +122,9 @@ public class CsvBankDataFrom extends DataBaseFrom {
 		}
 
 		@Override
-		public CsvBank next() throws NoSuchElementException {
+		public ParserBank next() throws NoSuchElementException {
 			try {
-				CsvBank lPdfCompay = new CsvBank();
+				ParserBank lPdfCompay = new ParserBank();
 				copyToPdfBank(mReadSet, lPdfCompay);
 				return lPdfCompay;
 			} catch (SQLException ex) {

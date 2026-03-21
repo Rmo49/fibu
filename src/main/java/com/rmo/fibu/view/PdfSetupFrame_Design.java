@@ -11,11 +11,15 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.border.BevelBorder;
 import javax.swing.table.AbstractTableModel;
 
 import com.rmo.fibu.util.Config;
 
+/**
+ * Scheint eine Testklasse zu sein.
+ */
 public class PdfSetupFrame_Design extends JFrame {
 
 	private static final long serialVersionUID = -8382082396350983484L;
@@ -50,7 +54,7 @@ public class PdfSetupFrame_Design extends JFrame {
 	 */
 	public PdfSetupFrame_Design() {
 		setTitle("CsvSetup");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setBounds(100, 100, 600, 388);
 		contentPane = new JPanel();
 		contentPane.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
@@ -58,7 +62,7 @@ public class PdfSetupFrame_Design extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		JLabel lblNewLabel = new JLabel("Zeile vor Buchungen");
+		JLabel lblNewLabel = new JLabel("Zeile vor erster Buchungen");
 		lblNewLabel.setBounds(22, 42, 120, 14);
 		contentPane.add(lblNewLabel);
 
