@@ -75,7 +75,7 @@ public class FibuView extends JFrame
 
 	// --- Die anderen Windows
 	private BuchungView mBuchung = null;
-	private CsvReaderBuchungFrame mCsvBuchung = null;
+	private ParserBuchungFrame mCsvBuchung = null;
 	private FibuCopyFrom mOtherFibu = null;
 	private KontoView mKontoView = null;
 	private KontoplanView mKontoplan = null;
@@ -624,7 +624,7 @@ public class FibuView extends JFrame
 		Trace.println(2, "FibuView.checkPendingBookings()");
 		if (JsonFile.exist()) {
 			Trace.println(3, "File gefunden");
-			mCsvBuchung = new CsvReaderBuchungFrame("");
+			mCsvBuchung = new ParserBuchungFrame("");
 			mCsvBuchung.setVisible(true);
 		} else {
 			Trace.println(3, "kein File gefunden");
@@ -811,7 +811,7 @@ public class FibuView extends JFrame
         textArea.append("Trace-Level: " + Config.traceLevel +  "\n");
         textArea.append("Ausgabe der Excel-Files in Default dir: '" + Config.sDefaultDir + "' \n");
         textArea.append("DB Url: " + Config.dbUrl + "\n");
-        textArea.append("DB User: " + Config.userName + "\n");
+        textArea.append("DB User: " + Config.dbUserName + "\n");
 
         frame.add(new JScrollPane(textArea)); // Mit Scrollbalken
         frame.setSize(400, 300);

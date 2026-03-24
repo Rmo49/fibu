@@ -36,18 +36,18 @@ public class DbConnectionFrom {
 			if (sConnection == null || sConnection.isClosed()) {
 				Class.forName(sJdbcDriver).getDeclaredConstructor().newInstance();
 				if (dbName == null) {
-					sConnection = DriverManager.getConnection(Config.dbUrl, Config.userName, Config.password);
+					sConnection = DriverManager.getConnection(Config.dbUrl, Config.dbUserName, Config.dbPassword);
 					Config.setDbName(dbName);
 				} else {
 					sConnection = DriverManager.getConnection(Config.dbUrl + dbName,
-							Config.userName, Config.password);
+							Config.dbUserName, Config.dbPassword);
 				}
 				Trace.println(1, "Connected to the database");
 				sConnection.setAutoCommit(true);
 			}
 		} catch (Exception ex) {
 			throw new FibuRuntimeException(ex + ex.getMessage() +
-					"\n Solution: Check config file, Is MySql running? Check: Dienste > MariaDB");
+					"\n Solution: Check FibuConfig.txt file, Is MySql running? Check: Dienste > MariaDB");
 		}
 		return sConnection;
 	}

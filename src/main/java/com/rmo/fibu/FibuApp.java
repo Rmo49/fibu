@@ -3,6 +3,7 @@ package com.rmo.fibu;
 import java.awt.Color;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import com.rmo.fibu.exception.FibuException;
@@ -16,7 +17,7 @@ import com.rmo.fibu.view.FibuView;
  */
 public class FibuApp {
 
-	private static final String sVersion = "FibuLocal V8.2 (20.3.26)";
+	private static final String sVersion = "FibuLocal V8.3 (23.3.26)";
 	private static FibuView mFibu;
 
 	/********************************
@@ -56,7 +57,10 @@ public class FibuApp {
 			mFibu.setVisible(true);
 		} catch (Exception ex) {
 			Trace.println(0, "Fehler: " + ex.getMessage());
-			mFibu.showError(ex);
+			JOptionPane.showMessageDialog(mFibu, "Exception: " + ex.getMessage(), "Fehler beim Start", JOptionPane.ERROR_MESSAGE);
+			if (mFibu != null) {
+				mFibu.showError(ex);
+			}
 		}
 	}
 

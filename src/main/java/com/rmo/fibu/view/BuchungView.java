@@ -42,9 +42,9 @@ public class BuchungView extends JFrame implements BuchungEingabeInterface {
 	/** Tabelle für die Anzeige der Buchungen, enthält alle Buchungen */
 	private BuchungenFrame				mBuchungenFrame;
 	/** Die view um Buchungen einzulesen */
-	private CsvReaderKeywordFrame		mCsvFrame;
+	private ParserSelectFileFrame		mParserSelectFileFrame;
 	/** Csv Setup, Einstellungen der Banks */
-	private CsvBankFrame				mCsvSetup;
+	private ParserBankFrame				mCsvSetup;
 	/** das Pane der Buchungen im Center */
 	private JDesktopPane 				mPaneCenter = null;
 	/** Das Model zu dieser View */
@@ -73,15 +73,15 @@ public class BuchungView extends JFrame implements BuchungEingabeInterface {
 	/**
 	 * Das CsvReaderFrame löschen, damit beim nächsten mal wieder neu gelesen wird.
 	 */
-	public void resetCsvReaderFrame() {
-		mCsvFrame = null;
+	public void resetParserKeywordFrame() {
+		mParserSelectFileFrame = null;
 	}
 
 
 	/**
 	 * Das CsvReaderFrame löschen, damit beim nächsten mal wieder neu gelesen wird.
 	 */
-	public void resetCsvSetupFrame() {
+	public void resetParserBankFrame() {
 		mCsvSetup = null;
 	}
 
@@ -268,9 +268,9 @@ public class BuchungView extends JFrame implements BuchungEingabeInterface {
 			mCsvSetup.setVisible(isVisible);
 			mCsvSetup = null;
 		}
-		if (mCsvFrame != null) {
-			mCsvFrame.setVisible(isVisible);
-			mCsvFrame = null;
+		if (mParserSelectFileFrame != null) {
+			mParserSelectFileFrame.setVisible(isVisible);
+			mParserSelectFileFrame = null;
 		}
 		super.setVisible(false);
 	}
@@ -364,24 +364,24 @@ public class BuchungView extends JFrame implements BuchungEingabeInterface {
 	 */
 	public void csvSetup() {
 		if (mCsvSetup == null) {
-			mCsvSetup = new CsvBankFrame(this);
+			mCsvSetup = new ParserBankFrame(this);
 		}
 		mCsvSetup.setVisible(true);
 	}
 
 	/**
-	 * Aufruf der View für CSV einlesen, mit der bankId
+	 * Aufruf der View für Parser daten einlesen, mit der bankId
 	 * @param pCompany
 	 */
-	public void csvAction (ParserBank bank) {
-		if (mCsvFrame == null) {
-			mCsvFrame = new CsvReaderKeywordFrame(bank, this);
+	public void parserAction (ParserBank bank) {
+		if (mParserSelectFileFrame == null) {
+			mParserSelectFileFrame = new ParserSelectFileFrame(bank, this);
 		}
-		if (mCsvFrame.init()) {
-			mCsvFrame.setVisible(true);
+		if (mParserSelectFileFrame.init()) {
+			mParserSelectFileFrame.setVisible(true);
 		}
 		else {
-			mCsvFrame.setVisible(false);
+			mParserSelectFileFrame.setVisible(false);
 		}
 	}
 

@@ -90,12 +90,6 @@ public class BilanzPrinterTest implements BasePrinterModel {
 		return 1;
 	}
 
-	// TODO wahrscheinlich löschen
-	/** Die Kopfzeile, wir linksböndig angezeigt, Seitenzahl rechts */
-//	public String getHeader(int nr) {
-//		return "Kopfzeile Test";
-//	}
-
 	/** Die max. Anzahl Spalten */
 	@Override
 	public int getColCount() {

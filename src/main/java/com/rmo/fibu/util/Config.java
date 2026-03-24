@@ -30,82 +30,82 @@ public class Config {
 	/** für Singelton */
 //	private static Config sConfig = null;
 	/** Config-Filename und File */
-	private static final String sConfigFileName = "FibuConfig.txt";
+	private static String sConfigFileName = "FibuConfig.txt";
 	public static final String sJsonExtension = ".json";
 	public static File sConfigFile;
 	/** Die Properties, gespeichert in der Config-Datei */
 	private static PropertiesFibu mProperties;
 	private static Vector<Object> mPropertyList;
 
-	private static final String sDefaultDirToken = "fibu.default.dir";
-	public static String sDefaultDir = "form: F:/Doku/Ruedi/Java/Fibu";
-	private static final String sCsvFileNameToken = "fibu.csv.filename";
-	public static String sCsvFileName = "form: F:/doc/Postfinance151001.pdf";
+	private static final String sDefaultDirKey = "fibu.default.dir";
+	public static String sDefaultDir = "D:/Daten/Fibu";
+	private static final String sParserFileNameKey = "fibu.parser.filename";
+	public static String sParserFileName = "F:/doc/Postfinance151001.pdf";
 
 	// Alle Namen der bisher geöffneten Fibus, wird von Config eingelesen
-	private static final String sFibuNamesToken = "fibu.list";
+	private static final String sFibuNamesKey = "fibu.list";
 	private static DefaultListModel<String> sFibuNames;
 
 	public static boolean sConfigError = false;
 
 	public static int traceLevel = 3;
-	private static final String traceLevelToken = "fibu.trace.level";
+	private static final String traceLevelKey = "fibu.trace.level";
 	public static boolean traceTimestamp;
-	private static final String traceTimestampToken = "fibu.trace.timestamp";
+	private static final String traceTimestampKey = "fibu.trace.timestamp";
 
 	// ----- Printer ----------------------------------------------------------
-	private static final String printerRandObenToken = "printer.rand.oben";
+	private static final String printerRandObenKey = "printer.rand.oben";
 	public static float printerRandOben = 42.55F; // Rand Oben in Pixels
-	private static final String printerRandLinksToken = "printer.rand.links";
+	private static final String printerRandLinksKey = "printer.rand.links";
 	public static float printerRandLinks = 56.7F;
-	private static final String printerPageWidthToken = "printer.page.width";
+	private static final String printerPageWidthKey = "printer.page.width";
 	public static double printerPageWidth =  (8.27 * 72); //(1 Zoll = 72 Punkte) 210 mm;
-	private static final String printerPageHeightToken = "printer.page.height";
+	private static final String printerPageHeightKey = "printer.page.height";
 	public static double printerPageHeight = 11.69 * 72; // 297 mm;
-	private static final String printerColAbstandToken = "printer.abstand.col";
+	private static final String printerColAbstandKey = "printer.abstand.col";
 	public static float printerColAbstand = 1F; // Abstand zwischen Spalten
-	private static final String printerRowAbstandToken = "printer.abstand.row";
+	private static final String printerRowAbstandKey = "printer.abstand.row";
 	public static float printerRowAbstand = 2F; // Abstand nach Row
-	private static final String printerHeaderAbstandToken = "printer.abstand.header";
+	private static final String printerHeaderAbstandKey = "printer.abstand.header";
 	public static float printerHeaderAbstand = 5F; // Abstand nach Kopfzeile
-	private static final String printerSummeAbstandToken = "printer.abstand.summe";
+	private static final String printerSummeAbstandKey = "printer.abstand.summe";
 	public static float printerSummeAbstand = 3F; // Abstand zu Summe
 	// KontoListe
-	private static final String printerKtoCol1Token = "printer.kto.col1";
+	private static final String printerKtoCol1Key = "printer.kto.col1";
 	public static int printerKtoCol1 = 16; // Breite der Spalte
-	private static final String printerKtoCol2Token = "printer.kto.col2";
+	private static final String printerKtoCol2Key = "printer.kto.col2";
 	public static int printerKtoCol2 = 10; // Breite der Spalte
-	private static final String printerKtoCol3Token = "printer.kto.col3";
+	private static final String printerKtoCol3Key = "printer.kto.col3";
 	public static int printerKtoCol3 = 50; // Breite der Spalte
-	private static final String printerKtoCol4Token = "printer.kto.col4";
+	private static final String printerKtoCol4Key = "printer.kto.col4";
 	public static int printerKtoCol4 = 10; // Breite der Spalte
-	private static final String printerKtoCol5Token = "printer.kto.col5";
+	private static final String printerKtoCol5Key = "printer.kto.col5";
 	public static int printerKtoCol5 = 20; // Breite der Spalte
-	private static final String printerKtoCol6Token = "printer.kto.col6";
+	private static final String printerKtoCol6Key = "printer.kto.col6";
 	public static int printerKtoCol6 = 20; // Breite der Spalte
-	private static final String printerKtoCol7Token = "printer.kto.col7";
+	private static final String printerKtoCol7Key = "printer.kto.col7";
 	public static int printerKtoCol7 = 20; // Breite der Spalte
 	// bilanz
-	private static final String printerBilanzCol1Token = "printer.bilanz.col1";
+	private static final String printerBilanzCol1Key = "printer.bilanz.col1";
 	public static int printerBilanzCol1 = 7; // Breite der Spalte
-	private static final String printerBilanzCol2Token = "printer.bilanz.col2";
+	private static final String printerBilanzCol2Key = "printer.bilanz.col2";
 	public static int printerBilanzCol2 = 50; // Breite der Spalte
-	private static final String printerBilanzCol3Token = "printer.bilanz.col3";
+	private static final String printerBilanzCol3Key = "printer.bilanz.col3";
 	public static int printerBilanzCol3 = 12; // Breite der Spalte
-	private static final String printerBilanzCol4Token = "printer.bilanz.col4";
+	private static final String printerBilanzCol4Key = "printer.bilanz.col4";
 	public static int printerBilanzCol4 = 12; // Breite der Spalte
 	// Journal
-	private static final String printerJournalCol1Token = "printer.journal.col1";
+	private static final String printerJournalCol1Key = "printer.journal.col1";
 	public static int printerJournalCol1 = 10; // Breite der Spalte
-	private static final String printerJournalCol2Token = "printer.journal.col2";
+	private static final String printerJournalCol2Key = "printer.journal.col2";
 	public static int printerJournalCol2 = 8; // Breite der Spalte
-	private static final String printerJournalCol3Token = "printer.journal.col3";
+	private static final String printerJournalCol3Key = "printer.journal.col3";
 	public static int printerJournalCol3 = 50; // Breite der Spalte
-	private static final String printerJournalCol4Token = "printer.journal.col4";
+	private static final String printerJournalCol4Key = "printer.journal.col4";
 	public static int printerJournalCol4 = 10; // Breite der Spalte
-	private static final String printerJournalCol5Token = "printer.journal.col5";
+	private static final String printerJournalCol5Key = "printer.journal.col5";
 	public static int printerJournalCol5 = 10; // Breite der Spalte
-	private static final String printerJournalCol6Token = "printer.journal.col6";
+	private static final String printerJournalCol6Key = "printer.journal.col6";
 	public static int printerJournalCol6 = 20; // Breite der Spalte
 
 	// --- java.awt.Font
@@ -152,42 +152,47 @@ public class Config {
 	public static Point winBilanzenLoc;
 	public static Dimension winBilanzenDim;
 
-	private static final String sWinCsvSetup = "window.CsvSetup";
-	public static Point winCsvSetupLoc;
-	public static Dimension winCsvSetupDim;
 
 	private static final String sWinPdfSetup = "window.PdfSetup";
 	public static Point winPdfSetupLoc;
 	public static Dimension winPdfSetupDim;
 
-	private static final String sWinCsvReaderKeyword = "window.CsvReaderKeyword";
-	public static Point winCsvReaderKeywordLoc;
-	public static Dimension winCsvReaderKeywordDim;
+	private static final String sWinParserBank = "window.ParserBank";
+	public static Point winParserBankLoc;
+	public static Dimension winParserBankDim;
 
-	private static final String sWinCsvReaderBuchung = "window.CsvReaderBuchung";
-	public static Point winCsvReaderBuchungLoc;
-	public static Dimension winCsvReaderBuchungDim;
-	public static final String sCsvTextLenToken = "fibu.csv.buchungText.length";
-	public static int sCsvTextLen = 30;
+	private static final String sWinParserSelectFile = "window.ParserSelectFile";
+	public static Point winParserSelectFileLoc;
+	public static Dimension winParserSelectFileDim;
+
+	private static final String sWinParserKeyword = "window.ParserKeyword";
+	public static Point winParserKeywordLoc;
+	public static Dimension winParserKeywordDim;
+
+	private static final String sWinParserBuchung = "window.ParserBuchung";
+	public static Point winParserBuchungLoc;
+	public static Dimension winParserBuchungDim;
+	public static final String sParserTextLenKey = "fibu.parser.buchungText.length";
+	public static int sParserTextLen = 30;
 
 	// --- die Grösse des Textes
-	public static final String WindowTextSizeToken = "window.size.text";
+	public static final String windowTextSizeKey = "window.size.text";
 	public static int windowTextSize = 12;
 	public static double windowTextMultiplikator;
 
 	// --- language settings
-	private static final String languageToken = "language.language";
+	private static final String languageKey = "language.language";
 	public static String  languageLanguage = "de";
-	private static final String countryToken = "language.country";
+	private static final String countryKey = "language.country";
 	public static String  languageCountry = "CH";
 
 	// --- database
 	private static String mDBname;
-	public static final String userNameToken = "db.username";
-	public static String userName = "root";
-	public static final String passwordToken = "db.password";
-	public static String password = "RudMar49";
-	public static final String dbUrlToken = "db.url";
+	public static final String dbUserNameKey = "db.username";
+	public static String dbUserName = "root";
+	public static final String dbPasswordKey = "db.password";
+	public static String dbPassword = "xxx";
+	public static final String dbUrlKey = "db.url";
 	public static String dbUrl = "jdbc:mysql://localhost:3306/";
 
 	// ----- Steuerung für Kontorahmen, nicht in Config-file
@@ -204,6 +209,12 @@ public class Config {
 		mDBname = "FibuLeer";
 	}
 
+	/**
+	 * Den Namen des Configfiles setzen, meist für Testzwecke
+	 */
+	public static void setConfigFileName(String fileName) {
+		sConfigFileName = fileName;
+	}
 
 	/** Alle Properties einlesen */
 	public static void readPropertyFile() throws FibuException {
@@ -221,51 +232,55 @@ public class Config {
 		}
 	}
 
+	/**
+	 * Alle Werte setzen, 
+	 * @throws FibuException
+	 */
 	public static void setAllProperties() throws FibuException {
 		Trace.println(2, "Config.setAllProperties()");
 		// --- alle Property werte setzen
-		traceLevel = readNumber(traceLevelToken, traceLevel);
+		traceLevel = readNumber(traceLevelKey, traceLevel);
 
-		traceTimestamp = readBoolean(traceTimestampToken, traceTimestamp);
-		sDefaultDir = mProperties.getProperty(sDefaultDirToken, sDefaultDir);
-		sCsvFileName = mProperties.getProperty(sCsvFileNameToken, sCsvFileName);
-		sCsvTextLen = readNumber(sCsvTextLenToken, sCsvTextLen);
+		traceTimestamp = readBoolean(traceTimestampKey, traceTimestamp);
+		sDefaultDir = mProperties.getProperty(sDefaultDirKey, sDefaultDir);
+		sParserFileName = mProperties.getProperty(sParserFileNameKey, sParserFileName);
+		sParserTextLen = readNumber(sParserTextLenKey, sParserTextLen);
 
-		sFibuNames = readList(mProperties.getProperty(sFibuNamesToken), ",");
+		sFibuNames = readList(mProperties.getProperty(sFibuNamesKey), ",");
 		if (sFibuNames == null) {
 			sFibuNames = new DefaultListModel<>();
 			sFibuNames.addElement("FibuLeer");
-			mProperties.setProperty(sFibuNamesToken, "FibuLeer,");
+			mProperties.setProperty(sFibuNamesKey, "FibuLeer,");
 		}
 
-		printerRandLinks = readNumber(printerRandLinksToken, printerRandLinks);
-		printerRandOben = readNumber(printerRandObenToken, printerRandOben);
-		printerPageWidth= readNumber(printerPageWidthToken, printerPageWidth);
-		printerPageHeight = readNumber(printerPageHeightToken, printerPageHeight);
-		printerColAbstand= readNumber(printerColAbstandToken, printerColAbstand);
-		printerRowAbstand = readNumber(printerRowAbstandToken, printerRowAbstand);
-		printerHeaderAbstand = readNumber(printerHeaderAbstandToken, printerHeaderAbstand);
-		printerSummeAbstand = readNumber(printerSummeAbstandToken, printerSummeAbstand);
+		printerRandLinks = readNumber(printerRandLinksKey, printerRandLinks);
+		printerRandOben = readNumber(printerRandObenKey, printerRandOben);
+		printerPageWidth= readNumber(printerPageWidthKey, printerPageWidth);
+		printerPageHeight = readNumber(printerPageHeightKey, printerPageHeight);
+		printerColAbstand= readNumber(printerColAbstandKey, printerColAbstand);
+		printerRowAbstand = readNumber(printerRowAbstandKey, printerRowAbstand);
+		printerHeaderAbstand = readNumber(printerHeaderAbstandKey, printerHeaderAbstand);
+		printerSummeAbstand = readNumber(printerSummeAbstandKey, printerSummeAbstand);
 		// KontoListe ausgeben
-		printerKtoCol1 = readNumber(printerKtoCol1Token, printerKtoCol1);
-		printerKtoCol2 = readNumber(printerKtoCol2Token, printerKtoCol2);
-		printerKtoCol3 = readNumber(printerKtoCol3Token, printerKtoCol3);
-		printerKtoCol4 = readNumber(printerKtoCol4Token, printerKtoCol4);
-		printerKtoCol5 = readNumber(printerKtoCol5Token, printerKtoCol5);
-		printerKtoCol6 = readNumber(printerKtoCol6Token, printerKtoCol6);
-		printerKtoCol7 = readNumber(printerKtoCol7Token, printerKtoCol7);
+		printerKtoCol1 = readNumber(printerKtoCol1Key, printerKtoCol1);
+		printerKtoCol2 = readNumber(printerKtoCol2Key, printerKtoCol2);
+		printerKtoCol3 = readNumber(printerKtoCol3Key, printerKtoCol3);
+		printerKtoCol4 = readNumber(printerKtoCol4Key, printerKtoCol4);
+		printerKtoCol5 = readNumber(printerKtoCol5Key, printerKtoCol5);
+		printerKtoCol6 = readNumber(printerKtoCol6Key, printerKtoCol6);
+		printerKtoCol7 = readNumber(printerKtoCol7Key, printerKtoCol7);
 		// Bilanz
-		printerBilanzCol1 = readNumber(printerBilanzCol1Token, printerBilanzCol1);
-		printerBilanzCol2 = readNumber(printerBilanzCol2Token, printerBilanzCol2);
-		printerBilanzCol3 = readNumber(printerBilanzCol3Token, printerBilanzCol3);
-		printerBilanzCol4 = readNumber(printerBilanzCol4Token, printerBilanzCol4);
+		printerBilanzCol1 = readNumber(printerBilanzCol1Key, printerBilanzCol1);
+		printerBilanzCol2 = readNumber(printerBilanzCol2Key, printerBilanzCol2);
+		printerBilanzCol3 = readNumber(printerBilanzCol3Key, printerBilanzCol3);
+		printerBilanzCol4 = readNumber(printerBilanzCol4Key, printerBilanzCol4);
 		// journal
-		printerJournalCol1 = readNumber(printerJournalCol1Token, printerJournalCol1);
-		printerJournalCol2 = readNumber(printerJournalCol2Token, printerJournalCol2);
-		printerJournalCol3 = readNumber(printerJournalCol3Token, printerJournalCol3);
-		printerJournalCol4 = readNumber(printerJournalCol4Token, printerJournalCol4);
-		printerJournalCol5 = readNumber(printerJournalCol5Token, printerJournalCol5);
-		printerJournalCol6 = readNumber(printerJournalCol6Token, printerJournalCol6);
+		printerJournalCol1 = readNumber(printerJournalCol1Key, printerJournalCol1);
+		printerJournalCol2 = readNumber(printerJournalCol2Key, printerJournalCol2);
+		printerJournalCol3 = readNumber(printerJournalCol3Key, printerJournalCol3);
+		printerJournalCol4 = readNumber(printerJournalCol4Key, printerJournalCol4);
+		printerJournalCol5 = readNumber(printerJournalCol5Key, printerJournalCol5);
+		printerJournalCol6 = readNumber(printerJournalCol6Key, printerJournalCol6);
 
 		// --- Fenster einlesen
 		readWindowBuchung();
@@ -274,23 +289,24 @@ public class Config {
 		readWindowKontoplan();
 		readWindowBilanzen();
 
-		readWindowCsvSetup();
 		readWindowPdfSetup();
-		readWindowCsvReaderKeyword();
-		readWindowCsvReaderBuchung();
+		readWindowParserSelectFile();
+		readWindowParserKeyword();
+		readWindowParserBuchung();
+		readWindowParserBank();
 
 		// --- Size von Text, Menu, Buttons
-		windowTextSize = readNumber(WindowTextSizeToken, windowTextSize);
+		windowTextSize = readNumber(windowTextSizeKey, windowTextSize);
 		windowTextMultiplikator = (double) windowTextSize / (double) 12;
 
 		// --- language settings
-		languageLanguage = mProperties.getProperty(languageToken, languageLanguage);
-		languageCountry = mProperties.getProperty(countryToken, languageCountry);
+		languageLanguage = mProperties.getProperty(languageKey, languageLanguage);
+		languageCountry = mProperties.getProperty(countryKey, languageCountry);
 
 		// --- db-connetion
-		userName = mProperties.getProperty(userNameToken, userName);
-		password = mProperties.getProperty(passwordToken, password);
-		dbUrl = mProperties.getProperty(dbUrlToken, dbUrl);
+		dbUserName = mProperties.getProperty(dbUserNameKey, dbUserName);
+		dbPassword = mProperties.getProperty(dbPasswordKey, dbPassword);
+		dbUrl = mProperties.getProperty(dbUrlKey, dbUrl);
 	}
 
 	/** java.awt.Fonts initialisieren */
@@ -299,21 +315,16 @@ public class Config {
 		fontTextBold = new java.awt.Font(java.awt.Font.DIALOG, java.awt.Font.BOLD, Config.windowTextSize);
 	}
 
-	/** Alle Properites in das File schreiben */
+	/** 
+	 * Alle Properites in das File schreiben
+	 */
 	public static void saveProperties() throws FibuException {
 		Trace.println(0, "Config.writeProperties()");
-		// alles in
-		writeWindowBuchung();
-		writeWindowKontoblatt();
-		writeWindowKontoBuchung();
-		writeWindowKontoplan();
-		writeWindowBilanzen();
-		writeWindowCsvSetup();
-		writeWindowPdfSetup();
-		writeWindowCsvReaderKeyword();
-		writeWindowCsvReaderBuchung();
-		writeList(sFibuNames, ",", sFibuNamesToken);
-		mProperties.setProperty(sCsvFileNameToken, sCsvFileName);
+		// zuerst alles in mProperties schreiben
+		mProperties.clear();
+		writeFibuValues();
+		writeWindowValues();
+		writePrinterValues();
 		// sortieren
 		sortPorperties();
 		try {
@@ -336,6 +347,81 @@ public class Config {
 		}
 	}
 
+
+	/**
+	 * Alle Werte der Fibu in Properties schreiben.
+	 * @throws FibuException
+	 */
+	private static void writeFibuValues() throws FibuException {
+		mProperties.setProperty(sDefaultDirKey, sDefaultDir);
+		writeList(sFibuNames, ",", sFibuNamesKey);
+		mProperties.setProperty(sParserFileNameKey, sParserFileName);
+		writeNumber(sParserTextLenKey, sParserTextLen);
+		writeNumber(traceLevelKey,traceLevel);
+		writeBoolean(traceTimestampKey, traceTimestamp);
+		mProperties.setProperty(languageKey, languageLanguage);
+		mProperties.setProperty(countryKey, languageCountry);
+		mProperties.setProperty(dbUserNameKey, dbUserName);
+		mProperties.setProperty(dbPasswordKey, dbPassword);		
+		mProperties.setProperty(dbUrlKey, dbUrl);	
+	}
+	
+	/**
+	 * Alle Werte der Fenster in Properties schreiben
+	 * @throws FibuException
+	 */
+	private static void writeWindowValues() throws FibuException {
+		writeWindowBuchung();
+		writeWindowKontoblatt();
+		writeWindowKontoBuchung();
+		writeWindowKontoplan();
+		writeWindowBilanzen();
+		writeWindowPdfSetup();
+		writeWindowParserSelectFile();
+		writeWindowParserKeyword();
+		writeWindowParserBuchung();
+		writeWindowParserBank();
+	}
+	
+	/**
+	 * Alle Werte der Printer-Steuerung in Properties schreiben
+	 * @throws FibuException
+	 */
+	private static void writePrinterValues() throws FibuException {
+		writeNumber(printerRandLinksKey, printerRandLinks);
+	
+		writeNumber(printerRandObenKey, printerRandOben);
+		writeNumber(printerPageWidthKey, printerPageWidth);
+		writeNumber(printerPageHeightKey, printerPageHeight);
+		writeNumber(printerColAbstandKey, printerColAbstand);
+		writeNumber(printerRowAbstandKey, printerRowAbstand);
+		writeNumber(printerHeaderAbstandKey, printerHeaderAbstand);
+		writeNumber(printerSummeAbstandKey, printerSummeAbstand);
+		// KontoListe ausgeben
+		writeNumber(printerKtoCol1Key, printerKtoCol1);
+		writeNumber(printerKtoCol2Key, printerKtoCol2);
+		writeNumber(printerKtoCol3Key, printerKtoCol3);
+		writeNumber(printerKtoCol4Key, printerKtoCol4);
+		writeNumber(printerKtoCol5Key, printerKtoCol5);
+		writeNumber(printerKtoCol6Key, printerKtoCol6);
+		writeNumber(printerKtoCol7Key, printerKtoCol7);
+		// Bilanz
+		writeNumber(printerBilanzCol1Key, printerBilanzCol1);
+		writeNumber(printerBilanzCol2Key, printerBilanzCol2);
+		writeNumber(printerBilanzCol3Key, printerBilanzCol3);
+		writeNumber(printerBilanzCol4Key, printerBilanzCol4);
+		// journal
+		writeNumber(printerJournalCol1Key, printerJournalCol1);
+		writeNumber(printerJournalCol2Key, printerJournalCol2);
+		writeNumber(printerJournalCol3Key, printerJournalCol3);
+		writeNumber(printerJournalCol4Key, printerJournalCol4);
+		writeNumber(printerJournalCol5Key, printerJournalCol5);
+		writeNumber(printerJournalCol6Key, printerJournalCol6);
+	}
+	
+	
+	
+	
 	/**
 	 * Alle keys der Properites sortieren
 	 */
@@ -479,22 +565,6 @@ public class Config {
 	/**
 	 * Position und Grösse des Windows
 	 */
-	private static void readWindowCsvSetup() throws FibuException {
-		winCsvSetupDim = readWindowDimension(sWinCsvSetup);
-		winCsvSetupLoc = readWindowPoint(sWinCsvSetup);
-		writeWindowCsvSetup();
-	}
-
-	/**
-	 * Position und Grösse des Windows in das Property schreiben
-	 */
-	private static void writeWindowCsvSetup() throws FibuException {
-		writeWindowConfig(sWinCsvSetup, winCsvSetupLoc, winCsvSetupDim);
-	}
-
-	/**
-	 * Position und Grösse des Windows
-	 */
 	private static void readWindowPdfSetup() throws FibuException {
 		winPdfSetupDim = readWindowDimension(sWinPdfSetup);
 		winPdfSetupLoc = readWindowPoint(sWinPdfSetup);
@@ -509,35 +579,67 @@ public class Config {
 	}
 
 	/**
-	 * Position und Grösse des Windows
+	 * Position und Grösse des Windows lesen
 	 */
-	private static void readWindowCsvReaderKeyword() throws FibuException {
-		winCsvReaderKeywordDim = readWindowDimension(sWinCsvReaderKeyword);
-		winCsvReaderKeywordLoc = readWindowPoint(sWinCsvReaderKeyword);
-		writeWindowCsvReaderKeyword();
+	private static void readWindowParserSelectFile() throws FibuException {
+		winParserSelectFileDim = readWindowDimension(sWinParserSelectFile);
+		winParserSelectFileLoc = readWindowPoint(sWinParserSelectFile);
+		writeWindowParserSelectFile();
 	}
 
 	/**
 	 * Position und Grösse des Windows in das Property schreiben
 	 */
-	private static void writeWindowCsvReaderKeyword() throws FibuException {
-		writeWindowConfig(sWinCsvReaderKeyword, winCsvReaderKeywordLoc, winCsvReaderKeywordDim);
+	private static void writeWindowParserSelectFile() throws FibuException {
+		writeWindowConfig(sWinParserSelectFile, winParserSelectFileLoc, winParserSelectFileDim);
 	}
 
 	/**
-	 * Position und Grösse des Windows
+	 * Position und Grösse des Windows lesen
 	 */
-	private static void readWindowCsvReaderBuchung() throws FibuException {
-		winCsvReaderBuchungDim = readWindowDimension(sWinCsvReaderBuchung);
-		winCsvReaderBuchungLoc = readWindowPoint(sWinCsvReaderBuchung);
-		writeWindowCsvReaderBuchung();
+	private static void readWindowParserKeyword() throws FibuException {
+		winParserKeywordDim = readWindowDimension(sWinParserKeyword);
+		winParserKeywordLoc = readWindowPoint(sWinParserKeyword);
+		writeWindowParserKeyword();
 	}
 
 	/**
 	 * Position und Grösse des Windows in das Property schreiben
 	 */
-	private static void writeWindowCsvReaderBuchung() throws FibuException {
-		writeWindowConfig(sWinCsvReaderBuchung, winCsvReaderBuchungLoc, winCsvReaderBuchungDim);
+	private static void writeWindowParserKeyword() throws FibuException {
+		writeWindowConfig(sWinParserKeyword, winParserKeywordLoc, winParserKeywordDim);
+	}
+
+	/**
+	 * Position und Grösse des Windows
+	 */
+	private static void readWindowParserBuchung() throws FibuException {
+		winParserBuchungDim = readWindowDimension(sWinParserBuchung);
+		winParserBuchungLoc = readWindowPoint(sWinParserBuchung);
+		writeWindowParserBuchung();
+	}
+
+	/**
+	 * Position und Grösse des Windows in das Property schreiben
+	 */
+	private static void writeWindowParserBuchung() throws FibuException {
+		writeWindowConfig(sWinParserBuchung, winParserBuchungLoc, winParserBuchungDim);
+	}
+
+	/**
+	 * Position und Grösse des Windows
+	 */
+	private static void readWindowParserBank() throws FibuException {
+		winParserBankDim = readWindowDimension(sWinParserBank);
+		winParserBankLoc = readWindowPoint(sWinParserBank);
+		writeWindowParserBuchung();
+	}
+
+	/**
+	 * Position und Grösse des Windows in das Property schreiben
+	 */
+	private static void writeWindowParserBank() throws FibuException {
+		writeWindowConfig(sWinParserBank, winParserBankLoc, winParserBankDim);
 	}
 
 	/**
@@ -578,10 +680,10 @@ public class Config {
 	 * @param point
 	 */
 	private static void writeWindowConfig(String winName, Point point, Dimension dim) {
-		writeInt(winName + ".x", (int) point.getX());
-		writeInt(winName + ".y", (int) point.getY());
-		writeInt(winName + ".width", (int) dim.getWidth());
-		writeInt(winName + ".height", (int) dim.getHeight());
+		writeNumber(winName + ".x", (int) point.getX());
+		writeNumber(winName + ".y", (int) point.getY());
+		writeNumber(winName + ".width", (int) dim.getWidth());
+		writeNumber(winName + ".height", (int) dim.getHeight());
 	}
 
 	/** Einen boolean-Werte von den Properties lesen */
@@ -643,11 +745,46 @@ public class Config {
 		}
 	}
 
-	/** Einen int-Werte in ein Property schreiben */
-	private static void writeInt(String property, int value) {
+	/** 
+	 * Einen int-Werte in ein Property schreiben
+	 */
+	private static void writeNumber(String property, int value) {
 		String strValue = Integer.toString(value);
 		mProperties.setProperty(property, strValue);
 	}
+	
+	/**
+	 * Einen Float-Wert in die Propety schreiben
+	 * @param property
+	 * @param value
+	 */
+	private static void writeNumber(String property, float value) {
+		String strValue = Float.toString(value);
+		mProperties.setProperty(property, strValue);
+	}
+	
+
+	/**
+	 * Einen Double-Wert in die Propety schreiben
+	 * @param property
+	 * @param value
+	 */
+	private static void writeNumber(String property, double value) {
+		String strValue = Double.toString(value);
+		mProperties.setProperty(property, strValue);
+	}
+
+	/**
+	 * Boolean in Property schreiben.
+	 * @param key
+	 * @param value
+	 */
+	private static void writeBoolean(String key, boolean value) {
+		String strValue = value ? "true" : "false";
+		mProperties.setProperty(key, strValue);
+	}
+	
+	
 
 	/**
 	 * Die Parameter der Applikation überprüfen. Wenn der FileName der Config-Datei
@@ -665,8 +802,10 @@ public class Config {
 		checkConfigFile(configFilePath);
 	}
 
-	/** prüft, ob das File vorhanden ist */
-	private static void checkConfigFile(String configFilePath) throws FibuException {
+	/**
+	 * Prüft, ob das File vorhanden ist
+	 */
+	static void checkConfigFile(String configFilePath) throws FibuException {
 		Trace.println(0, "Config-Path = '" + sConfigFileName + "'");
 		sConfigFile = new File(configFilePath);
 		if (!sConfigFile.exists()) {
@@ -725,7 +864,7 @@ public class Config {
 			int i = Integer.parseInt(pBelegNr);
 			return Integer.toString(i + 1);
 		} catch (NumberFormatException e) {
-			// @todo charakter dazuzählen
+			//TODO charakter dazuzählen
 			return pBelegNr;
 		}
 	}

@@ -91,7 +91,6 @@ public abstract class CsvParserBase extends ParserBase {
 			}
 			buchungCvs = nextBuchung();
 		}
-
 		return buchungList;
 	}
 

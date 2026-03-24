@@ -34,7 +34,7 @@ import com.rmo.fibu.util.Trace;
  * Eine Auswahl von dateien anzeigen, wenn ein File selektiert, wird das file an
  * CsvReaderTableFrame weitergegeben.
  */
-public class CsvBankFrame extends JFrame {
+public class ParserBankFrame extends JFrame {
 
 	private static final long serialVersionUID = 1310342465892805867L;
 	/** Die Breite der Columns */
@@ -52,11 +52,11 @@ public class CsvBankFrame extends JFrame {
 	private ParserBankData mBankData = null;
 
 	/**
-	 * Wird gestartet von Buchungen für Einstellungen.
+	 * Wird gestartet von Buchungen für Einstellungen der Parser-Daten einer Bank.
 	 *
 	 * @param pParent Referenz zu den Buchungen
 	 */
-	public CsvBankFrame(BuchungView pParent) {
+	public ParserBankFrame(BuchungView pParent) {
 		super("Setup für CSV und PDF einlesen");
 		mParent = pParent;
 		init();
@@ -66,7 +66,7 @@ public class CsvBankFrame extends JFrame {
 	 * Start der Initialisierung, muss von jedem Konstruktor aufgerufen werden.
 	 */
 	private void init() {
-		Trace.println(1, "CsvBankFrame.init()");
+		Trace.println(1, "ParserBankFrame.init()");
 		// Verbindung zur DB
 		mBankData = (ParserBankData) DataBeanContext.getDataBean(ParserBankData.class);
 //		datenEinlesen();
@@ -78,11 +78,11 @@ public class CsvBankFrame extends JFrame {
 	 * Initialisierung der verschiedenen Views
 	 */
 	private void initView() {
-		Trace.println(5, "CsvReaderFrame.initView()");
+		Trace.println(5, "ParserBankFrame.initView()");
 		getContentPane().add(initTable(), BorderLayout.CENTER);
 		getContentPane().add(initBottom(), BorderLayout.PAGE_END);
-		setSize(Config.winCsvSetupDim);
-		setLocation(Config.winCsvSetupLoc);
+		setSize(Config.winParserBankDim);
+		setLocation(Config.winParserBankLoc);
 	}
 
 	/**
@@ -306,9 +306,9 @@ public class CsvBankFrame extends JFrame {
 	@Override
 	public void setVisible(boolean b) {
 		if (!b) {
-			Config.winCsvSetupDim = getSize();
-			Config.winCsvSetupLoc = getLocation();
-			mParent.resetCsvSetupFrame();
+			Config.winParserBankDim = getSize();
+			Config.winParserBankLoc = getLocation();
+			mParent.resetParserBankFrame();
 		}
 		super.setVisible(b);
 	}

@@ -48,19 +48,6 @@ public class BilanzPrinterModel implements BasePrinterModel {
 		return 1;
 	}
 
-	// TODO wahrscheinlich löschen (23.1.25)
-	/**
-	 * Die Kopfzeile, wir linksbündig angezeigt. Die Seitenzahl wird automatisch
-	 * rechts generiert
-	 */
-//	public String getHeader(int nr) {
-//		if (nr == 0) {
-//			return Config.sFibuTitel;
-//		} else {
-//			return mTitel;
-//		}
-//	}
-
 
 	@Override
 	public String getTitle() {

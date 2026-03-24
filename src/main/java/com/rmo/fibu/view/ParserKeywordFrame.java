@@ -8,37 +8,29 @@ import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.util.Date;
 import java.util.Iterator;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
 import com.rmo.fibu.exception.FibuException;
-import com.rmo.fibu.exception.FibuRuntimeException;
+import com.rmo.fibu.model.DataBeanContext;
+import com.rmo.fibu.model.KontoNrVector;
 import com.rmo.fibu.model.ParserBankData;
 import com.rmo.fibu.model.ParserKeyWord;
 import com.rmo.fibu.model.ParserKeywordData;
-import com.rmo.fibu.model.DataBeanContext;
-import com.rmo.fibu.model.KontoNrVector;
 import com.rmo.fibu.util.Config;
-import com.rmo.fibu.util.DatumFormat;
 import com.rmo.fibu.util.ParserBank;
 import com.rmo.fibu.util.ParserBase;
 import com.rmo.fibu.util.Trace;
@@ -49,7 +41,7 @@ import com.rmo.fibu.util.Trace;
  * Eine Auswahl von dateien anzeigen, wenn ein File selektiert, wird das file an
  * CsvReaderTableFrame weitergegeben.
  */
-public class CsvReaderKeywordFrame extends JFrame {
+public class ParserKeywordFrame extends JFrame {
 
 	private static final long serialVersionUID = 6445113637284754031L;
 
@@ -58,7 +50,6 @@ public class CsvReaderKeywordFrame extends JFrame {
 	private static final int SUCHWORT_WIDTH = 14;
 	private static final int DEFAULT_WIDTH = 2;
 	private final Dimension ktoNrDefaultSize = new Dimension(8 * Config.windowTextSize, Config.windowTextSize + 12);
-	private final Dimension dirPathSize = new Dimension(30 * Config.windowTextSize, Config.windowTextSize + 12);
 
 	private BuchungView mParent = null;
 
@@ -69,25 +60,15 @@ public class CsvReaderKeywordFrame extends JFrame {
 
 	private JComboBox<String> mKtoNrDefault;
 	private KontoNrVector mKtoNr;
-	private JTextField mDirPath;
-	// view elemente
 
 	// view der tabelle
 	private JTable mTableView = null;
-	// die TextFelder für die Eingabe des Datums
-	private JTextField mTfDatumAb; // ab Datum
-	private JTextField mTfDatumBis; // bis Datum
-	private final Dimension mDatumSize = new Dimension(8 * Config.windowTextSize, Config.windowTextSize + 12);
-
 
 
 	/** Das Model zur Konto-Tabelle */
-	private CsvKeywordModel mKeywordModel;
+	private ParserKeywordModel mKeywordModel;
 	/** Verbindung zur DB */
 	private ParserKeywordData mKeywordData = null;
-
-	// Das Frame für die Buchungen bearbeiten
-	private CsvReaderBuchungFrame mCsvBuchungFrame = null;
 
 	/**
 	 * Wird gestartet von Buchungen mit der gewählten ID der Bank
@@ -95,17 +76,18 @@ public class CsvReaderKeywordFrame extends JFrame {
 	 * @param pBankId, ID der gewählten Bank
 	 * @param pParent     Referenz zu den Buchungen
 	 */
-	public CsvReaderKeywordFrame(ParserBank pBank, BuchungView pParent) {
-		super("Schlüsselworte für Buchungen einlsesen, V4.0");
+	public ParserKeywordFrame(ParserBank pBank, BuchungView pParent) {
+		super("Schlüsselworte für Buchungen eingeben, V4.1");
 		mBank = pBank;
 		mParent = pParent;
+		init();
 	}
 
 	/**
 	 * Start der Initialisierung, muss von jedem Konstruktor aufgerufen werden.
 	 */
 	public boolean init() {
-		Trace.println(3, "CsvReaderKeywordFrame.init()");
+		Trace.println(3, "ParserKeywordFrame.init()");
 		String err = null;
 		// wenn PDF
 		if (mBank.getDocType() == ParserBase.docTypePdf) {
@@ -133,7 +115,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 	 * Initialisierung der verschiedenen Views
 	 */
 	private void initView() {
-		Trace.println(5, "CsvReaderKeywordFrame.initView()");
+		Trace.println(5, "ParserKeywordFrame.initView()");
 		getContentPane().add(initTop(), BorderLayout.PAGE_START);
 		getContentPane().add(initTable(), BorderLayout.CENTER);
 		Container container = initBottom();
@@ -141,12 +123,12 @@ public class CsvReaderKeywordFrame extends JFrame {
 			return;
 		}
 		getContentPane().add(container, BorderLayout.PAGE_END);
-		if ( (Config.winCsvReaderKeywordDim.height < 100) || (Config.winCsvReaderKeywordDim.width < 300)) {
-			Config.winCsvReaderKeywordDim.height = 600;
-			Config.winCsvReaderKeywordDim.width = 400;
+		if ( (Config.winParserKeywordDim.height < 100) || (Config.winParserKeywordDim.width < 300)) {
+			Config.winParserKeywordDim.height = 600;
+			Config.winParserKeywordDim.width = 400;
 		}
-		setSize(Config.winCsvReaderKeywordDim);
-		setLocation(Config.winCsvReaderKeywordLoc);
+		setSize(Config.winParserKeywordDim);
+		setLocation(Config.winParserKeywordLoc);
 	}
 
 	/**
@@ -168,7 +150,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 	 * @return
 	 */
 	private Container initTable() {
-		mKeywordModel = new CsvKeywordModel(mBank.getBankID());
+		mKeywordModel = new ParserKeywordModel(mBank.getBankID(), mKeywordData);
 
 		mTableView = new JTable(mKeywordModel);
 		mTableView.getTableHeader().setFont(Config.fontText);
@@ -235,12 +217,8 @@ public class CsvReaderKeywordFrame extends JFrame {
 	 */
 	private Container initBottom() {
 		JPanel lPanel = new JPanel(new GridLayout(0, 1));
-
 		lPanel.add(initButtons1());
 		lPanel.add(initDefaultKtoNr());
-		lPanel.add(initDirectory());
-		lPanel.add(initSelectFile());
-
 		return lPanel;
 	}
 
@@ -316,65 +294,6 @@ public class CsvReaderKeywordFrame extends JFrame {
 		return flow2;
 	}
 
-	/**
-	 * Die Zeile mit dem Directory
-	 * @return
-	 */
-	private JPanel initDirectory() {
-		// Directory eingenben
-		JPanel flow3 = new JPanel(new FlowLayout());
-		JLabel label2 = new JLabel("Directory: ");
-		label2.setFont(Config.fontTextBold);
-		flow3.add(label2);
-
-		mDirPath = new JTextField();
-		mDirPath.setPreferredSize(dirPathSize);
-		mDirPath.setText(mBank.getDirPath());
-		mDirPath.setFont(Config.fontText);
-
-		flow3.add(mDirPath);
-		return flow3;
-	}
-
-	/**
-	 * Selektion der File Dautm von ... bis
-	 * @return
-	 */
-	private JPanel initSelectFile() {
-		// datei selektieren
-		JPanel flow4 = new JPanel(new FlowLayout());
-		JButton btnSelectFile = new JButton("Datei mit Buchungen selektieren");
-		btnSelectFile.setFont(Config.fontTextBold);
-
-		btnSelectFile.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				showFiles();
-			}
-		});
-		flow4.add(btnSelectFile);
-
-		// --- Ab Datum
-		JLabel labelDatum = new JLabel("von: ");
-		labelDatum.setFont(Config.fontTextBold);
-		flow4.add(labelDatum);
-		mTfDatumAb = new JTextField(Config.sDatumVon.toString());
-		mTfDatumAb.setFont(Config.fontText);
-		mTfDatumAb.setPreferredSize(mDatumSize);
-		flow4.add(mTfDatumAb);
-
-		// --- bis Datum
-		JLabel labelDatum2 = new JLabel("bis: ");
-		labelDatum2.setFont(Config.fontTextBold);
-		flow4.add(labelDatum2);
-		mTfDatumBis = new JTextField(Config.sDatumBis.toString());
-		mTfDatumBis.setFont(Config.fontText);
-		mTfDatumBis.setPreferredSize(mDatumSize);
-		flow4.add(mTfDatumBis);
-
-		return flow4;
-	}
-
 
 	/**
 	 * Einen Eintrag dazufügen
@@ -429,126 +348,43 @@ public class CsvReaderKeywordFrame extends JFrame {
 			// save bank data
 			String selecteKto = (String) mKtoNrDefault.getSelectedItem();
 			mBank.setKontoNrDefault(selecteKto);
-			mBank.setDirPath(mDirPath.getText());
 			mBankData.addData(mBank);
 		} catch (SQLException e) {
-			Trace.println(1, "Fehler in CsvKeywordPanel.saveAction: " + e.getMessage());
+			Trace.println(1, "Fehler in ParserKeywordPanel.saveAction: " + e.getMessage());
 		}
 		catch (FibuException ex) {
-			Trace.println(1, "Fehler in CsvKeywordPanel.saveAction: " + ex.getMessage());
+			Trace.println(1, "Fehler in ParserKeywordPanel.saveAction: " + ex.getMessage());
 
 		}
 	}
 
-	/**
-	 * Mögliche CSV-files anzeigen, eines selektieren
-	 */
-	private void showFiles() {
-		// prüfen, ob eintrag im Feld directory
-		if (mDirPath.getText() == null) {
-			JOptionPane.showMessageDialog(this, "Directory fehlt", "Buchungen einlesen", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		try {
-			File file = new File(mDirPath.getText());
-			if (file.isDirectory()) {
-				// save the new name
-				Config.sCsvFileName = mDirPath.getText();
-				JFileChooser chooser = new JFileChooser();
-				chooser.setCurrentDirectory(file);
-				if (mBank.getDocType() == ParserBase.docTypeCsv) {
-					chooser.setFileFilter(new FileNameExtensionFilter("CSV", "csv"));
-				}
-				else {
-					chooser.setFileFilter(new FileNameExtensionFilter("PDF", "pdf"));
-				}
-				int returnValue = chooser.showOpenDialog(this);
-				if ((returnValue == JFileChooser.APPROVE_OPTION)) {
-					file = chooser.getSelectedFile();
-					// btnEinlesen.setDisable(true);
-					mCsvBuchungFrame = new CsvReaderBuchungFrame(file, mBank, getSelectedDateAb(), getSelectedDateBis());
-					mCsvBuchungFrame.setVisible(true);
-				} else {
-					return;
-				}
-			} else {
-				JOptionPane.showMessageDialog(this, "'" + mDirPath.getText() + "' ist kein Directory",
-						"Buchungen einlesen", JOptionPane.ERROR_MESSAGE);
-
-			}
-		} catch (FibuRuntimeException ex) {
-			JOptionPane.showMessageDialog(this, ex.getMessage(), "Buchungen einlesen", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-	}
-
-	/**
-	 * Das eingegebenen Datums ab
-	 */
-	private Date getSelectedDateAb() {
-		Date datum = null;
-		if (mTfDatumAb.getText().length() == 0) {
-			mTfDatumAb.setText(Config.sDatumVon.toString());
-		}
-		DatumFormat df = DatumFormat.getDatumInstance();
-		try {
-			datum = df.parse(mTfDatumAb.getText());
-			return datum;
-		} catch (ParseException ex) {
-			JOptionPane.showMessageDialog(this, ex.getMessage(),
-					"Datum fehlerhaft", JOptionPane.ERROR_MESSAGE);
-			return null;
-		}
-	}
-
-	/**
-	 * Das eingegebenen Datums ab
-	 */
-	private Date getSelectedDateBis() {
-		Date datum = null;
-		if (mTfDatumBis.getText().length() == 0) {
-			mTfDatumBis.setText(Config.sDatumVon.toString());
-		}
-		DatumFormat df = DatumFormat.getDatumInstance();
-		try {
-			datum = df.parse(mTfDatumBis.getText());
-			return datum;
-		} catch (ParseException ex) {
-			JOptionPane.showMessageDialog(this, ex.getMessage(),
-					"Datum fehlerhaft", JOptionPane.ERROR_MESSAGE);
-			return null;
-		}
-	}
-
-
-//	public String getBankName() {
-//		return mBankName;
-//	}
 
 	/** wenn Fenster geschlossen */
 	@Override
 	public void setVisible(boolean b) {
 		if (!b) {
-			Config.winCsvReaderKeywordDim = getSize();
-			Config.winCsvReaderKeywordLoc = getLocation();
-			mParent.resetCsvReaderFrame();
-			if (mCsvBuchungFrame != null) {
-				mCsvBuchungFrame.setVisible(b);
-			}
+			Config.winParserKeywordDim = getSize();
+			Config.winParserKeywordLoc = getLocation();
+			mParent.resetParserKeywordFrame();
 		}
 		super.setVisible(b);
 	}
 
-	// ----- Model der Keyword-Tabelle ----------------------------
-	/** Schnittstelle zum Daten-Objekt KontoData */
-	private class CsvKeywordModel extends AbstractTableModel {
+// ----- Model der Keyword-Tabelle --------------------------------
+
+	/** 
+	 * Schnittstelle zum Daten-Objekt KontoData 
+	 */
+	class ParserKeywordModel extends AbstractTableModel {
 
 		private static final long serialVersionUID = -3805602970105237582L;
 
-		private int bankId = 0;
+		private int mBankId = 0;
+		private ParserKeywordData mKeywordData;
 
-		public CsvKeywordModel(int compamyId) {
-			this.bankId = compamyId;
+		public ParserKeywordModel(int compamyId, ParserKeywordData keywordData) {
+			mBankId = compamyId;
+			mKeywordData = keywordData;
 		}
 
 		@Override
@@ -562,7 +398,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 
 		@Override
 		public int getRowCount() {
-			int rows = mKeywordData.getRowCount(bankId);
+			int rows = mKeywordData.getRowCount(mBankId);
 			return rows;
 		}
 
@@ -613,7 +449,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 			ParserKeyWord lKeyword = null;
 			try {
-				lKeyword = mKeywordData.readAt(mBank.getBankID(), rowIndex);
+				lKeyword = mKeywordData.readAt(mBankId, rowIndex);
 			} catch (FibuException ex) {
 				return;
 			}
@@ -646,7 +482,7 @@ public class CsvReaderKeywordFrame extends JFrame {
 			}
 			try {
 				mKeywordData.updateAt(rowIndex, lKeyword);
-				mKeywordModel.fireTableDataChanged();
+				this.fireTableDataChanged();
 			} catch (FibuException ex) {
 				JOptionPane.showMessageDialog(null, ex.getMessage(), "Suchwort ändern", JOptionPane.ERROR_MESSAGE);
 				return;
@@ -676,9 +512,9 @@ public class CsvReaderKeywordFrame extends JFrame {
 		 */
 		@Override
 		public Object getValueAt(int row, int col) {
-			Trace.println(7, "CsvKeywordModel.getValueAt(" + row + ',' + col + ')');
+			Trace.println(7, "ParserKeywordModel.getValueAt(" + row + ',' + col + ')');
 			try {
-				ParserKeyWord lKeyword = mKeywordData.readAt(bankId, row);
+				ParserKeyWord lKeyword = mKeywordData.readAt(mBankId, row);
 				if (mKeywordData.getVersion() <= 2) {
 					switch (col) {
 					case 0:

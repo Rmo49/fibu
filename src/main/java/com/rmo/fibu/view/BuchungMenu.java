@@ -32,9 +32,9 @@ public class BuchungMenu {
 	private JMenuItem		mnuDelete;
 	private JMenuItem		mnuSelect;
 
-	private JMenu			mnuCsv;
+	private JMenu			mnuParserRead;
 
-	private JMenuItem		mnuCsvSetup;
+	private JMenuItem		mnuParserSetup;
 
 	private JPopupMenu		popMenu;
 	private JMenuItem		popCopy;
@@ -81,15 +81,15 @@ public class BuchungMenu {
 		mnuEdit.addSeparator();
 		mnuEdit.add(mnuSelect);
 
-		mnuCsv = new JMenu("Einlesen");
-		mnuCsv.setFont(Config.fontTextBold);
+		mnuParserRead = new JMenu("Einlesen");
+		mnuParserRead.setFont(Config.fontTextBold);
 
-		menuBar.add(mnuCsv);
-		insertCsvMenu(mnuCsv);
+		menuBar.add(mnuParserRead);
+		insertParserMenu(mnuParserRead);
 
-		mnuCsvSetup = new JMenuItem("Setup");
-		mnuCsvSetup.setFont(Config.fontTextBold);
-		menuBar.add(mnuCsvSetup);
+		mnuParserSetup = new JMenuItem("Setup");
+		mnuParserSetup.setFont(Config.fontTextBold);
+		menuBar.add(mnuParserSetup);
 
 		mBuchungView.setJMenuBar(menuBar);
 
@@ -110,9 +110,9 @@ public class BuchungMenu {
 
 	/**
 	 * Das CSV Menu setzen, gemäss Einträge in der DB (pdfcompany)
-	 * @param mnuCsv
+	 * @param mnuParserRead
 	 */
-	private void insertCsvMenu(JMenu mnuCsv) {
+	private void insertParserMenu(JMenu mnuParser) {
 		ParserBankData 	mBankData = null;
 		mBankData = (ParserBankData) DataBeanContext.getDataBean(ParserBankData.class);
 		Iterator<ParserBank> iter = mBankData.getIterator();
@@ -125,10 +125,10 @@ public class BuchungMenu {
 			mnuItem.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					mBuchungView.csvAction(bank);
+					mBuchungView.parserAction(bank);
 				}
 			});
-			mnuCsv.add(mnuItem);
+			mnuParser.add(mnuItem);
 		}
 	}
 
@@ -138,7 +138,6 @@ public class BuchungMenu {
 		mnuClose.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//mBuchungView.hide();
 				mBuchungView.setVisible(false);
 			}
 		});
@@ -168,7 +167,7 @@ public class BuchungMenu {
 				mBuchungView.sortActionPerformed();
 			}
 		});
-		mnuCsvSetup.addActionListener(new ActionListener() {
+		mnuParserSetup.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				mBuchungView.csvSetup();

@@ -58,13 +58,13 @@ import com.rmo.fibu.view.util.JButtonBold;
 import com.rmo.fibu.view.util.JLabelBold;
 
 /**
- * Wird über CsvReaderKeywordFrame gestartet, oder direkt von MainFrame
+ * Wird über ParserKeywordFrame gestartet, oder direkt von MainFrame
  * aufgerufen. Das ausgewählte file wird im Konstruktur übergeben. Liest
  * Buchungen von CSV ein siehe datenEinlesen, schreibt in Tabelle. Wenn
  * "Buchungstext anpassen" dann wird der Text angepasst und die Kontonummern
  * eingetragen => changeAction Wenn "Speichern" dann saveAction
  */
-public class CsvReaderBuchungFrame extends JFrame {
+public class ParserBuchungFrame extends JFrame {
 	private static final long serialVersionUID = 1201522139173678122L;
 
 	/** Die Grösse der Spalten */
@@ -118,8 +118,8 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 *
 	 * @param bankName
 	 */
-	public CsvReaderBuchungFrame(String bankName) {
-		super("CSV Buchungen noch nicht gespeichert");
+	public ParserBuchungFrame(String bankName) {
+		super("Parser Buchungen noch nicht gespeichert");
 		this.mBankName = bankName;
 		init();
 	}
@@ -127,9 +127,9 @@ public class CsvReaderBuchungFrame extends JFrame {
 	/**
 	 * Construtor needs filename with CSV-data
 	 */
-	public CsvReaderBuchungFrame(File file, ParserBank bank, Date von, Date bis) {
-		super("Eingelesene Buchungen anpassen V2.1");
-		Trace.println(3, "CsvReaderBuchungFrame(file: " + file.getAbsolutePath() + ")");
+	public ParserBuchungFrame(File file, ParserBank bank, Date von, Date bis) {
+		super("Eingelesene Buchungen anpassen V2.2");
+		Trace.println(3, "ParserBuchungFrame(file: " + file.getAbsolutePath() + ")");
 		this.mFile = file;
 		this.mBank = bank;
 		this.mBankName = bank.getBankName();
@@ -145,7 +145,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 * Start der Initialisierung, muss von jedem Konstruktor aufgerufen werden.
 	 */
 	private void init() {
-		Trace.println(4, "CsvReaderBuchungFrame.init()");
+		Trace.println(4, "ParserBuchungFrame.init()");
 //		mKeywordData = (ParserKeywordData) DataBeanContext.getDataBean(ParserKeywordData.class);
 		// wenn Bank nicht gesetzt, dann von json einlesen
 		if (mBankName.length() < 1) {
@@ -158,7 +158,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 					ParserBankData bankData = (ParserBankData) DataBeanContext.getDataBean(ParserBankData.class);
 					this.mBank = bankData.readData(mBankName);
 				} catch (FibuException ex) {
-					Trace.println(1, "CsvReaderBuchungFrame Exception: " + ex.getMessage());
+					Trace.println(1, "ParserBuchungFrame Exception: " + ex.getMessage());
 				}
 			}
 		} else {
@@ -177,16 +177,13 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 * @return the border pane
 	 */
 	private void initView() {
-		Trace.println(4, "CsvReaderBuchungFrame.initView()");
-
-//		Trace.println(5, "width: " + Config.winCsvReaderBuchungDim.width + " height: " + Config.winCsvReaderBuchungDim.height);
-//		Trace.println(5, "x: " + Config.winCsvReaderBuchungLoc.x + " y: " + Config.winCsvReaderBuchungLoc.y);
+		Trace.println(4, "ParserBuchungFrame.initView()");
 
 		getContentPane().add(initTable(), BorderLayout.CENTER);
 		getContentPane().add(initBottom(), BorderLayout.PAGE_END);
-		this.setSize(Config.winCsvReaderBuchungDim);
-		this.setMinimumSize(Config.winCsvReaderBuchungDim);
-		this.setLocation(Config.winCsvReaderBuchungLoc);
+		this.setSize(Config.winParserBuchungDim);
+		this.setMinimumSize(Config.winParserBuchungDim);
+		this.setLocation(Config.winParserBuchungLoc);
 		this.pack();
 	}
 
@@ -368,7 +365,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 * Einlesen alle Daten vom CSV file oder PDF file, Zeile um Zeile.
 	 */
 	private void csvEinlesen() {
-		Trace.println(5, "CsvReaderBuchungFrame.csvEinlesen()");
+		Trace.println(5, "ParserBuchungFrame.csvEinlesen()");
 		if (mBank.getDocType() == ParserBase.docTypeCsv) {
 			// wenn von CSV einlesen
 			CsvParserBase csvParser = null;
@@ -393,11 +390,11 @@ public class CsvReaderBuchungFrame extends JFrame {
 				return;
 			}
 			// hier werden die Daten eingelesen, Zeile um Zeile
-			Trace.println(5, "CsvReaderBuchungFrame.datenEinlesen() => start Parsing CSV");
+			Trace.println(5, "ParserBuchungFrame.datenEinlesen() => start Parsing CSV");
 			mBuchungList = csvParser.startParsing(mBank);
 		} else {
 			// wenn von PDF einlesen
-			Trace.println(5, "CsvReaderBuchungFrame.datenEinlesen() => start Parsing PDF");
+			Trace.println(5, "ParserBuchungFrame.datenEinlesen() => start Parsing PDF");
 			PdfParser pdfParser = null;
 			if (mBankName.equalsIgnoreCase(ParserBase.companyNameCumulus)) {
 				pdfParser = new PdfParserCumulus(mFile, mDateVon, mDateBis);
@@ -419,7 +416,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 			mBuchungList = pdfParser.startParsing(mBank);
 		}
 
-		Trace.println(5, "CsvReaderBuchungFrame.csvEinlesen() => end Parsing");
+		Trace.println(5, "ParserBuchungFrame.csvEinlesen() => end Parsing");
 	}
 
 	// ------- Buchungen automatisch anpasse ---------------------------------
@@ -452,7 +449,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 		if (buchungCsv == null) {
 			return;
 		}
-		Trace.println(7, "CsvReaderBuchungFrame.buchungAnpassen() " + buchungCsv.getText());
+		Trace.println(7, "ParserBuchungFrame.buchungAnpassen() " + buchungCsv.getText());
 		// Die Liste der Keyword, iterator mit der ID der Bank gelesen
 		ParserKeywordData keywordData = (ParserKeywordData) DataBeanContext.getDataBean(ParserKeywordData.class);
 		Iterator<ParserKeyWord> lIter = keywordData.getIterator(mBank.getBankID());
@@ -534,8 +531,8 @@ public class CsvReaderBuchungFrame extends JFrame {
 				pos = 0;
 			}
 		}
-		if (maxLength > pos + Config.sCsvTextLen) {
-			maxLength = pos + Config.sCsvTextLen;
+		if (maxLength > pos + Config.sParserTextLen) {
+			maxLength = pos + Config.sParserTextLen;
 		}
 		buchungCsv.setText(buchungCsv.getText().substring(pos, maxLength));
 	}
@@ -616,8 +613,8 @@ public class CsvReaderBuchungFrame extends JFrame {
 			}
 			textNew.append(buchungText.substring(pos + 1, p));
 		}
-		if (textNew.length() > Config.sCsvTextLen) {
-			textNew.delete(Config.sCsvTextLen, textNew.length());
+		if (textNew.length() > Config.sParserTextLen) {
+			textNew.delete(Config.sParserTextLen, textNew.length());
 		}
 		return textNew.toString();
 	}
@@ -628,7 +625,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	 * Die Datum von bis gemäss eingelesener Liste setzen
 	 */
 	private boolean setDatumVonListe() {
-		Trace.println(5, "CsvReaderBuchungFrame.setDatumVonListe()");
+		Trace.println(5, "ParserBuchungFrame.setDatumVonListe()");
 		boolean returnValue = true;
 		mBuchungListIter = mBuchungList.iterator();
 		String von = Config.sDatumVon.toString();
@@ -636,7 +633,8 @@ public class CsvReaderBuchungFrame extends JFrame {
 			// das erste Datum
 			von = mBuchungListIter.next().getDatum();
 		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(this, "Keine Daten vorhanden", "Buchungen einlesen",
+			// keine Daten im Iterator
+			JOptionPane.showMessageDialog(this, "Keine Daten vorhanden, prüfe auch den Datums-Range", "Buchungen einlesen",
 					JOptionPane.INFORMATION_MESSAGE);
 			returnValue = false;
 		}
@@ -648,9 +646,9 @@ public class CsvReaderBuchungFrame extends JFrame {
 			mDatumSelVon = new Datum(von);
 			mDatumSelBis = new Datum(bis);
 		} catch (ParseException ex) {
-			Trace.println(1, "CsvReaderBuchungFrame.setDatumVonListe(), Probleme beim Datum lesen");
+			Trace.println(1, "ParserBuchungFrame.setDatumVonListe(), Probleme beim Datum lesen");
 		}
-		Trace.println(5, "CsvReaderBuchungFrame.setDatumVonListe() : " + returnValue);
+		Trace.println(5, "ParserBuchungFrame.setDatumVonListe() : " + returnValue);
 		return returnValue;
 	}
 
@@ -677,7 +675,7 @@ public class CsvReaderBuchungFrame extends JFrame {
 	private void prefixInBuchung(BuchungCsv csvBuchung) {
 		if (inRange(csvBuchung)) {
 			String text = mBuchungPrefix.getText() + csvBuchung.getText();
-			text = text.length() > Config.sCsvTextLen ? text.substring(0, Config.sCsvTextLen) : text;
+			text = text.length() > Config.sParserTextLen ? text.substring(0, Config.sParserTextLen) : text;
 			csvBuchung.setText(text);
 		}
 	}
@@ -985,8 +983,8 @@ public class CsvReaderBuchungFrame extends JFrame {
 	@Override
 	public void setVisible(boolean makeVisible) {
 		if (!makeVisible) {
-			Config.winCsvReaderBuchungDim = getSize();
-			Config.winCsvReaderBuchungLoc = getLocation();
+			Config.winParserBuchungDim = getSize();
+			Config.winParserBuchungLoc = getLocation();
 		}
 		super.setVisible(makeVisible);
 	}

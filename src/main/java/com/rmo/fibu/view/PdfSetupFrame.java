@@ -370,7 +370,7 @@ public class PdfSetupFrame extends JFrame
 			File file = new File(mBank.getDirPath());
 			if (file.exists()) {
 				// save the new name
-				Config.sCsvFileName = mBank.getDirPath();
+				Config.sParserFileName = mBank.getDirPath();
 				JFileChooser chooser = new JFileChooser();
 				chooser.setCurrentDirectory(file);
 				chooser.setFileFilter(new FileNameExtensionFilter("PDF", "pdf"));

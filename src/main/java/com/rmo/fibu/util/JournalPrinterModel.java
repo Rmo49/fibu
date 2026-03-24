@@ -31,7 +31,6 @@ public class JournalPrinterModel implements BasePrinterModel
 		return 1;
 	}
 
-	// TODO wahrscheilich löschen
 	/** Die Kopfzeile, wir linksbündig angezeigt.
 	 *  Die Seitenzahl wird automatisch rechts generiert */
 	public String getHeader(int number) {

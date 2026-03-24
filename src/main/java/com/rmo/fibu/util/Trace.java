@@ -1,6 +1,7 @@
 package com.rmo.fibu.util;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,8 +20,9 @@ public class Trace {
 	/** Stringbuffer für Message */
 	private static StringBuffer sBuffer = new StringBuffer(255);
 	/** Das File in das geschrieben wird */
-	private static FileWriter file = null;
-	private static BufferedWriter writer = null;
+	private static File file = null;
+	private static FileWriter fileWriter = null;
+	private static BufferedWriter bufWriter = null;
 	private static PrintWriter printWriter = null;
 	/**
 	 * Trace constructor comment.
@@ -46,24 +48,24 @@ public class Trace {
 	 */
 	public static void println(int level, String message) {
 		if (level <= Config.traceLevel) {
-			if (file == null) {
+			if (fileWriter == null) {
 				makeWriters();
 			}
 			try {
 				if (Config.traceTimestamp) {
 				    //writer.write(new Date().getTime() + " ");
-				    writer.write(DateFormat.getTimeInstance(DateFormat.MEDIUM ).format(new Date()) + " ");
+				    bufWriter.write(DateFormat.getTimeInstance(DateFormat.MEDIUM ).format(new Date()) + " ");
 				}
 				for (int i = 1; i<level; i++) {
-					writer.write("  ");
+					bufWriter.write("  ");
 				}
 				if (sBuffer.length() > 0) {
-					writer.write(sBuffer.toString());
+					bufWriter.write(sBuffer.toString());
 					sBuffer.delete(0, sBuffer.length());
 				}
-				writer.write(message);
-				writer.newLine();
-				writer.flush();
+				bufWriter.write(message);
+				bufWriter.newLine();
+				bufWriter.flush();
 			}
 			catch (IOException ex) {
 				System.out.println("Trace.makeFile: " + ex.getMessage());
@@ -71,19 +73,36 @@ public class Trace {
 		 }
 	}
 
+	/**
+	 * In den Trace schreiben
+	 * @return
+	 */
 	public static PrintWriter getPrintWriter() {
-		if (file == null) {
+		if (fileWriter == null) {
 			makeWriters();
 		}
 		return printWriter;
 	}
 
+	/**
+	 * Der absolute Path zum Trace
+	 * @return
+	 */
+	public static String getTracePath() {
+		if (file != null) {
+			return file.getAbsolutePath();
+		}
+		return ("null");
+	}
+
+
 	/** Initialisiert alle Writers */
 	private static void makeWriters() {
 		try {
-			file = new FileWriter("Trace.txt");
-			writer = new BufferedWriter(file);
-			printWriter = new PrintWriter(writer);
+			file = new File("Trace.txt");
+			fileWriter = new FileWriter(file);
+			bufWriter = new BufferedWriter(fileWriter);
+			printWriter = new PrintWriter(bufWriter);
 		}
 		catch (IOException ex) {
 			System.out.println("Trace.makeFile: " + ex.getMessage());
