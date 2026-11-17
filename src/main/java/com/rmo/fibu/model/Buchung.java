@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 import com.rmo.fibu.exception.BuchungValueException;
-import com.rmo.fibu.util.Datum;
+import com.rmo.fibu.util.DatumFibu;
 import com.rmo.fibu.util.Trace;
 
 /** Eine Buchung, wird für den Datenaustausch zwischen View und Model verwendet
@@ -12,7 +12,7 @@ import com.rmo.fibu.util.Trace;
 public class Buchung {
 	// Attribute
 	private long		mID = -1;			// die unique ID der Buchung
-	private	Datum		mDatum = null;
+	private	DatumFibu		mDatum = null;
 	private String		mBeleg = null;
 	private String		mBuchungText = null;
 	private double		mBetrag = 0;
@@ -26,7 +26,7 @@ public class Buchung {
     }
 
 	/** Konstruktor mit allen Datentypen */
-    public Buchung(long ID, Datum datum, String beleg, String buchungsText, int soll, int haben, double betrag) {
+    public Buchung(long ID, DatumFibu datum, String beleg, String buchungsText, int soll, int haben, double betrag) {
         mID = ID; // die ID von Access
 		mDatum = datum;
 		mBeleg = beleg;
@@ -128,9 +128,9 @@ public class Buchung {
 		return mBuchungText;
 	}
 
-	public Datum getDatum() {
+	public DatumFibu getDatum() {
 		if (mDatum == null) {
-			return new Datum();
+			return new DatumFibu();
 		}
  		return mDatum;
 	}
@@ -179,14 +179,14 @@ public class Buchung {
     /** setMethod with parsing */
     public void setDatum(String pValue) throws ParseException {
         if (mDatum == null) {
-			mDatum = new Datum();
+			mDatum = new DatumFibu();
         }
 		mDatum.setDatum(pValue);
     }
 
 	public void setDatum(Date pValue) {
         if (mDatum == null) {
-			mDatum = new Datum();
+			mDatum = new DatumFibu();
         }
 		mDatum.setDatum(pValue);
 	}

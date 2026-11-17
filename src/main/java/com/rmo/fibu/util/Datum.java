@@ -10,14 +10,14 @@ import java.util.Date;
  * Das Datum mit der richtigen Darstellung. Mit div. Umwandlungen zu
  * java.util.Date und java.sql.Date
  */
-public class Datum extends Date {
 
-	private static final long serialVersionUID = -5981032883781686216L;
+public class Datum extends Date {
+	
+	private static final long serialVersionUID = -784073266418097017L;
 
 	public Datum() {
 		super();
 	}
-
 
 	/**
 	 * Datum kann in der Form 25.7.01 übergeben werden. prüft das Format und ob das
@@ -34,17 +34,14 @@ public class Datum extends Date {
 	 * @exception ParseException falls nicht richtig formatiert oder nicht im
 	 *            Bereich der Buchhaltung liegt
 	 */
-	public void setDatum(String datum) throws ParseException {
+	public Date setDatum(String datum) throws ParseException {
 		ParsePosition pos = new ParsePosition(0);
 		Date date = DatumFormat.getDatumInstance().parse(datum, pos);
 		if (date == null) {
 			throw new ParseException("ungültiges Datum", 0);
 		}
-		if (date.compareTo(Config.sDatumVon) < 0 || date.compareTo(Config.sDatumBis) > 0) {
-			throw new ParseException(
-					"Datum nicht innerhalb " + Config.sDatumVon.toString() + "-" + Config.sDatumBis.toString(), 0);
-		}
 		setTime(date.getTime());
+		return date;
 	}
 
 	/**
@@ -83,4 +80,5 @@ public class Datum extends Date {
 		sb = DatumFormat.getDatumInstance().format(this, sb, new FieldPosition(DateFormat.SHORT));
 		return sb.toString();
 	}
+
 }

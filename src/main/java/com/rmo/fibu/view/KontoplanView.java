@@ -329,7 +329,7 @@ public class KontoplanView extends JFrame // , Observer, BuchungListener
 		 */
 		@Override
 		public Object getValueAt(int row, int col) {
-			Trace.println(7, "KontoModel.getValueAt(" + row + ',' + col + ')');
+			Trace.println(9, "KontoModel.getValueAt(" + row + ',' + col + ')');
 			try {
 				Konto lKonto = mKontoData.readAt(row);
 				switch (col) {

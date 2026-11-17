@@ -812,7 +812,7 @@ public class FibuView extends JFrame
         textArea.append("Ausgabe der Excel-Files in Default dir: '" + Config.sDefaultDir + "' \n");
         textArea.append("DB Url: " + Config.dbUrl + "\n");
         textArea.append("DB User: " + Config.dbUserName + "\n");
-
+        
         frame.add(new JScrollPane(textArea)); // Mit Scrollbalken
         frame.setSize(400, 300);
         frame.setVisible(true);

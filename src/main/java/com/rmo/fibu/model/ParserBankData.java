@@ -13,8 +13,9 @@ import com.rmo.fibu.util.ParserBank;
 import com.rmo.fibu.util.Trace;
 
 /**
- * Model der gespeicherten bank von denen CSV gelesen werden.
- * Auslesen als Iterator
+ * Model der gespeicherten bank von denen CSV gelesen werden. Auslesen als
+ * Iterator
+ * 
  * @author Ruedi
  *
  */
@@ -26,10 +27,8 @@ public class ParserBankData extends DataObject {
 	 * Das SQL Statement für die Erstellung
 	 */
 	public final static String CREATE_CSVBANK_V1 = "CREATE TABLE `" + TABLE_NAME + "` ("
-			 + "`CompanyID` int AUTO_INCREMENT PRIMARY KEY, "
-			 + "`CompanyName` varchar(20) NOT NULL, "
-			 + "`KontoNrDefault` varchar(6) DEFAULT NULL, "
-			 + "`DirPath` varchar(100) DEFAULT NULL );";
+			+ "`CompanyID` int AUTO_INCREMENT PRIMARY KEY, " + "`CompanyName` varchar(20) NOT NULL, "
+			+ "`KontoNrDefault` varchar(6) DEFAULT NULL, " + "`DirPath` varchar(100) DEFAULT NULL );";
 
 	private final static String ADD_COL_V2 = "ALTER TABLE " + TABLE_NAME
 			+ " ADD COLUMN TypeOfDoc SMALLINT(6) DEFAULT 1;";
@@ -37,29 +36,22 @@ public class ParserBankData extends DataObject {
 	private final static String SET_INIT_V2 = "UPDATE `pdfcompany` SET `TypeOfDoc`=1 WHERE `TypeOfDoc` is NULL;";
 
 	public final static String CREATE_CSVBANK_V2 = "CREATE TABLE `" + TABLE_NAME + "` ("
-			 + "`CompanyID` int AUTO_INCREMENT PRIMARY KEY, "
-			 + "`CompanyName` varchar(20) NOT NULL, "
-			 + "`KontoNrDefault` varchar(6) DEFAULT NULL, "
-			 + "`DirPath` varchar(100) DEFAULT NULL, "
-			 + "`TypeOfDoc` SMALLINT(6) NULL DEFAULT NULL );";
+			+ "`CompanyID` int AUTO_INCREMENT PRIMARY KEY, " + "`CompanyName` varchar(20) NOT NULL, "
+			+ "`KontoNrDefault` varchar(6) DEFAULT NULL, " + "`DirPath` varchar(100) DEFAULT NULL, "
+			+ "`TypeOfDoc` SMALLINT(6) NULL DEFAULT NULL );";
 
 	private final static String ADD_COL_V3 = "ALTER TABLE `" + TABLE_NAME + "`"
 			+ "ADD COLUMN `WordBefore` VARCHAR(25) NULL DEFAULT NULL AFTER `TypeOfDoc`, "
 			+ "ADD COLUMN `SpaltenArray` VARCHAR(20) NULL DEFAULT NULL AFTER `WordBefore`;";
 
 	public final static String CREATE_CSVBANK_V3 = "CREATE TABLE `" + TABLE_NAME + "` ("
-			 + "`CompanyID` int AUTO_INCREMENT PRIMARY KEY, "
-			 + "`CompanyName` varchar(20) NOT NULL, "
-			 + "`KontoNrDefault` varchar(6) DEFAULT NULL, "
-			 + "`DirPath` varchar(100) DEFAULT NULL, "
-			 + "`TypeOfDoc` SMALLINT(6) NULL DEFAULT NULL , "
-			 + "`WordBefore` VARCHAR(25) NULL DEFAULT NULL, "
-			 + "`SpaltenArray` VARCHAR(20) NULL DEFAULT NULL );";
+			+ "`CompanyID` int AUTO_INCREMENT PRIMARY KEY, " + "`CompanyName` varchar(20) NOT NULL, "
+			+ "`KontoNrDefault` varchar(6) DEFAULT NULL, " + "`DirPath` varchar(100) DEFAULT NULL, "
+			+ "`TypeOfDoc` SMALLINT(6) NULL DEFAULT NULL , " + "`WordBefore` VARCHAR(25) NULL DEFAULT NULL, "
+			+ "`SpaltenArray` VARCHAR(20) NULL DEFAULT NULL );";
 
-
-
-	private final int COLS_V2 = 5;		// Anzahl Cols in der Version 2
-	private final int COLS_V3 = 7;		// Anzahl Cols in der Version 3
+	private final int COLS_V2 = 5; // Anzahl Cols in der Version 2
+	private final int COLS_V3 = 7; // Anzahl Cols in der Version 3
 	// die Anzahl Columns in der DB
 	private int colsAnzahl = -1;
 
@@ -68,7 +60,6 @@ public class ParserBankData extends DataObject {
 	 * updated, da Probleme bei vielen Zugriffen
 	 */
 	private int mMaxRows;
-
 
 	/**
 	 * Enthält Connection zur DB. Wird in setupResultset gesetzt, bleibt während
@@ -87,8 +78,8 @@ public class ParserBankData extends DataObject {
 	private ResultSet mReadSetId;
 
 	/**
-	 * Der Set mit allen bank-Daten von dem gelesen wird. Ist ein scrollable
-	 * Set der von allen Methoden verwendet wird.
+	 * Der Set mit allen bank-Daten von dem gelesen wird. Ist ein scrollable Set der
+	 * von allen Methoden verwendet wird.
 	 */
 	private ResultSet mReadSetAll;
 
@@ -99,10 +90,9 @@ public class ParserBankData extends DataObject {
 		super();
 	}
 
-
 	/**
-	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
-	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
+	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind. Diese
+	 * Methode wird nach dem Start der Fibu aufgerufen.
 	 */
 	@Override
 	public void checkTableVersion() {
@@ -112,14 +102,12 @@ public class ParserBankData extends DataObject {
 
 				if (colsAnzahl < COLS_V2) {
 					addColumnV2();
-				}
-				else {
+				} else {
 					if (colsAnzahl < COLS_V3) {
 						addColumnV3();
 					}
 				}
-			}
-			else {
+			} else {
 				Statement stmt = getConnection().createStatement();
 				stmt.execute(CREATE_CSVBANK_V3);
 				stmt.close();
@@ -129,16 +117,13 @@ public class ParserBankData extends DataObject {
 		}
 	}
 
-
-
 	/**
-	 * Max. Anzahl Zeilen in der Tabelle berechnen Werden im mMaxRows
-	 * gespeichert.
+	 * Max. Anzahl Zeilen in der Tabelle berechnen Werden im mMaxRows gespeichert.
 	 */
 	public int getRowCount() {
 		try {
 			Statement stmt = getConnection().createStatement();
-			String lQuery = "SELECT Count(*) FROM " + TABLE_NAME +";";
+			String lQuery = "SELECT Count(*) FROM " + TABLE_NAME + ";";
 			ResultSet lResult = stmt.executeQuery(lQuery);
 			if (lResult.next()) {
 				mMaxRows = lResult.getInt(1);
@@ -151,10 +136,9 @@ public class ParserBankData extends DataObject {
 		return mMaxRows;
 	}
 
-
 	/**
-	 * Ein Eintrag für eine bank speichern, falls nicht vorhanden ist, wird
-	 * ein neues Tupel angelegt.
+	 * Ein Eintrag für eine bank speichern, falls nicht vorhanden ist, wird ein
+	 * neues Tupel angelegt.
 	 */
 	public void addData(ParserBank pCompany) throws FibuException {
 		try {
@@ -164,17 +148,42 @@ public class ParserBankData extends DataObject {
 				// wenn nicht gefunden, neues anlegen
 				addRow(pCompany);
 			}
-	} catch (java.sql.SQLException e) {
+		} catch (java.sql.SQLException e) {
 			throw new FibuException("PdfKeyword.add() \n Message: " + e.getCause());
 		}
 	}
 
+	
+	/**
+	 * Aendert die Attribute mit der CompanyID
+	 */
+	public void updateAt_neu(int row, ParserBank pCompany) throws SQLException {
+		Trace.println(7, "ParserBankData.updateAt(" + row + ")");
+		try {
+			String sql = "UPDATE " + TABLE_NAME + " SET CompanyID=?, CompanyName=?, KontoNrDefault=?, DirPath=?, "
+					+ "TypeOfDoc=?, WordBefore=?, SpaltenArray=? WHERE CompanyID=?";
+			PreparedStatement ps = getConnection().prepareStatement(sql);
+			
+			ps.setInt(1, pCompany.getBankID());
+			ps.setString(2, pCompany.getBankName());
+			ps.setString(3, pCompany.getKontoNrDefault());
+			ps.setString(4, pCompany.getDirPath());
+			ps.setInt(5, pCompany.getDocType());
+			ps.setString(6, pCompany.getWordBefore());
+			ps.setString(7, pCompany.getSpaltenArray());
+			ps.setInt(8, pCompany.getBankID());
+
+		} catch (java.sql.SQLException e) {
+			throw new SQLException("SQL: " + e.getSQLState() + " Message: " + e.getMessage());
+		}
+	}
 
 	/**
 	 * Aendert die Attribute der gewählten Zeile.
 	 */
 	public void updateAt(int row, ParserBank pCompany) throws FibuException {
-		Trace.println(7, "ParserBankData.updateAt(" + row +")");
+		//TODO löschen
+		Trace.println(7, "ParserBankData.updateAt(" + row + ")");
 
 		try {
 			setupReadSetAll();
@@ -189,8 +198,7 @@ public class ParserBankData extends DataObject {
 				mReadSetAll.updateString(7, pCompany.getSpaltenArray());
 				mReadSetAll.updateRow();
 			}
-		}
-		catch (java.sql.SQLException e) {
+		} catch (java.sql.SQLException e) {
 			// @todo rmo: SQL-Exception noch untersuchen?
 			throw new FibuException("SQL: " + e.getSQLState() + " Message: " + e.getMessage());
 		}
@@ -234,18 +242,17 @@ public class ParserBankData extends DataObject {
 		}
 	}
 
-
 	/**
-	 * Die ParserBank an der Position zurückgeben.
-	 *  Wenn nicht gefunden wird FibuException geworfen.
+	 * Die ParserBank an der Position zurückgeben. Wenn nicht gefunden wird
+	 * FibuException geworfen.
 	 *
 	 * @param row, erste row = 1
 	 * @return
 	 * @throws FibuException
 	 */
 	public ParserBank readAt(int row) throws FibuException {
-		Trace.println(7, "ParserBankData.readAt(" + row +")");
-		mReadSetAll = null;	// zurücksetzen, da nicht von Anfang liest
+		Trace.println(7, "ParserBankData.readAt(" + row + ")");
+		mReadSetAll = null; // zurücksetzen, da nicht von Anfang liest
 
 		try {
 			setupReadSetAll();
@@ -261,18 +268,32 @@ public class ParserBankData extends DataObject {
 		}
 	}
 
+	
+	/**
+	 * Das Tupel mit der ID löschen
+	 */
+	public void deleteRow(int id) throws SQLException {
+		String sql = "DELETE FROM " + TABLE_NAME + " WHERE CompanyID = ?";
+		PreparedStatement ps = getConnection().prepareStatement(sql);
+		ps.setInt(1, id);
+		ps.executeUpdate();
+		ps.close();
+	}
+
 	/**
 	 * Ein Tupel löschen
 	 */
 	public void deleteRow(ParserBank pCompany) throws SQLException {
-		mReadSetName =	getReadSetName(pCompany.getBankName());
+		mReadSetName = getReadSetName(pCompany.getBankName());
 		if (findRow(pCompany.getBankName())) {
-			mReadSetName.deleteRow();
+			// TODO hier richtiges Delete einbauen
+			deleteRow(pCompany.getBankID());
 		}
 	}
 
 	/**
 	 * Alle Einräge löschen
+	 * 
 	 * @param pCompany
 	 * @throws SQLException
 	 */
@@ -284,12 +305,11 @@ public class ParserBankData extends DataObject {
 		}
 	}
 
-
-
-	//----- private Methoden ------------------------------------------
+	// ----- private Methoden ------------------------------------------
 
 	/**
 	 * Die Daten einer bank lesen
+	 * 
 	 * @param pCompany
 	 * @return true wenn gefunden
 	 * @throws SQLException
@@ -305,6 +325,7 @@ public class ParserBankData extends DataObject {
 
 	/**
 	 * Die Daten einer bank über die ID
+	 * 
 	 * @param pCompany
 	 * @return true wenn gefunden
 	 * @throws SQLException
@@ -337,18 +358,16 @@ public class ParserBankData extends DataObject {
 		return lCompany;
 	}
 
-
 	/**
-	 * Eine neue Zeile (Row) in die Tabelle eintragen. Kopiert die Attribute
-	 * Objekt PdfKeyword in den ResultSet. Der SQL-String wird zusammengestellt.
+	 * Eine neue Zeile (Row) in die Tabelle eintragen. Kopiert die Attribute Objekt
+	 * PdfKeyword in den ResultSet. Der SQL-String wird zusammengestellt.
 	 */
 	private void addRow(ParserBank pCompany) throws SQLException {
 		Statement stmt = getConnection().createStatement();
 		StringBuffer lQuery = new StringBuffer("INSERT INTO PdfCompany VALUES (");
 		if (pCompany.getBankID() == 0) {
-			lQuery.append ("NULL, '");
-		}
-		else {
+			lQuery.append("NULL, '");
+		} else {
 			lQuery.append("'");
 			lQuery.append(pCompany.getBankID());
 			lQuery.append("', '");
@@ -390,13 +409,14 @@ public class ParserBankData extends DataObject {
 		updateCompany.setString(6, pCompany.getSpaltenArray());
 
 		updateCompany.executeUpdate();
+//		updateCompany.close();	
 	}
 
-
-	//----- Tabelle migrieren -----------------------------
+	// ----- Tabelle migrieren -----------------------------
 
 	/**
 	 * Die Anzahl Spalten der Tabelle.
+	 * 
 	 * @return
 	 */
 	private int getNumberOfCols() throws SQLException {
@@ -414,10 +434,11 @@ public class ParserBankData extends DataObject {
 
 	/**
 	 * Version 1 erweitern
+	 * 
 	 * @throws SQLException
 	 */
 	private void addColumnV2() throws SQLException {
-		Statement stmt = getConnection(). createStatement();
+		Statement stmt = getConnection().createStatement();
 		stmt.execute(ADD_COL_V2);
 		stmt.execute(SET_INIT_V2);
 		stmt.close();
@@ -425,18 +446,19 @@ public class ParserBankData extends DataObject {
 
 	/**
 	 * Version 2 erweitern
+	 * 
 	 * @throws SQLException
 	 */
 	private void addColumnV3() throws SQLException {
-		Statement stmt = getConnection(). createStatement();
+		Statement stmt = getConnection().createStatement();
 		stmt.execute(ADD_COL_V3);
 		stmt.close();
 	}
 
-	//--- SQL Statements ---------------------------------------------------
+	// --- SQL Statements ---------------------------------------------------
 	/**
-	 * Setzt das Statement (Connection zur DB) und den Scroll-Set, der für
-	 * Insert oder update verwendet werden kann.
+	 * Setzt das Statement (Connection zur DB) und den Scroll-Set, der für Insert
+	 * oder update verwendet werden kann.
 	 */
 	private synchronized void setupReadSetAll() throws SQLException {
 		if (mReadStmt == null) {
@@ -448,10 +470,10 @@ public class ParserBankData extends DataObject {
 	}
 
 	/**
-	 * Setzt das Statement (Connection zur DB) und den Scroll-Set, der für
-	 * Insert oder update verwendet werden kann.
+	 * Setzt das Statement (Connection zur DB) und den Scroll-Set, der für Insert
+	 * oder update verwendet werden kann.
 	 */
-	private synchronized ResultSet getReadSetName (String pCompany) throws SQLException {
+	private synchronized ResultSet getReadSetName(String pCompany) throws SQLException {
 		if (mReadStmt == null) {
 			mReadStmt = getConnection().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 		}
@@ -459,16 +481,15 @@ public class ParserBankData extends DataObject {
 	}
 
 	/**
-	 * Setzt das Statement (Connection zur DB) und den Scroll-Set, der für
-	 * Insert oder update verwendet werden kann.
+	 * Setzt das Statement (Connection zur DB) und den Scroll-Set, der für Insert
+	 * oder update verwendet werden kann.
 	 */
-	private synchronized ResultSet getReadSetId (int pCompanyId) throws SQLException {
+	private synchronized ResultSet getReadSetId(int pCompanyId) throws SQLException {
 		if (mReadStmt == null) {
 			mReadStmt = getConnection().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 		}
 		return mReadStmt.executeQuery("SELECT * FROM PdfCompany WHERE CompanyId = '" + pCompanyId + "'");
 	}
-
 
 	// ----- Iterator ---------------------------------------------
 
@@ -484,12 +505,13 @@ public class ParserBankData extends DataObject {
 
 		/**
 		 * Konstruktur, setzt den ReadSet.
+		 * 
 		 * @param companyId
 		 */
 		CsvCompanyIterator() {
 			try {
-				mReadStmt = getConnection()
-						.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+				mReadStmt = getConnection().createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,
+						ResultSet.CONCUR_UPDATABLE);
 				mReadSet = mReadStmt.executeQuery("SELECT * FROM PdfCompany ORDER BY CompanyID");
 				mReadSet.beforeFirst();
 			} catch (SQLException ex) {
@@ -497,8 +519,8 @@ public class ParserBankData extends DataObject {
 		}
 
 		/**
-		 * Iterator, auf nächsten Eintrag setzen.
-		 * return true wenn Eintrag vorhanden, sonst false.
+		 * Iterator, auf nächsten Eintrag setzen. return true wenn Eintrag vorhanden,
+		 * sonst false.
 		 */
 		@Override
 		public boolean hasNext() {
@@ -516,8 +538,8 @@ public class ParserBankData extends DataObject {
 		}
 
 		/**
-		 * Iterator, gibt den nächsten Eintrag zurück.
-		 * mReadSet muss mit hasNext auf diesen zeigen.
+		 * Iterator, gibt den nächsten Eintrag zurück. mReadSet muss mit hasNext auf
+		 * diesen zeigen.
 		 */
 		@Override
 		public ParserBank next() throws NoSuchElementException {

@@ -19,6 +19,12 @@ import com.rmo.fibu.util.Trace;
  */
 public class KontoData extends DataObject implements Serializable {
 	private static final long serialVersionUID = 6158252894613753607L;
+	
+	public final static String CREATE_KONTORAHMEN = "CREATE TABLE Kontorahmen ("
+			+ "KontoNr int(11) NOT NULL, KontoText varchar(50) DEFAULT NULL, "
+			+ "StartSaldo decimal(12,2) DEFAULT NULL, Saldo decimal(12,2) DEFAULT NULL, "
+			+ "IstSollKto char(1) DEFAULT b'0', PRIMARY KEY (KontoNr) );";
+
 
 	/**
 	 * Enthält Connection zur DB. Wird in setupResultset gesetzt, bleibt während
@@ -125,7 +131,7 @@ public class KontoData extends DataObject implements Serializable {
 	 * @return Konto an der position, null wenn nicht vorhanden
 	 */
 	public Konto readAt(int position) throws KontoNotFoundException {
-		Trace.println(7, "KontoData.readAt(" + position + ")");
+		 Trace.println(9, "KontoData.readAt(" + position + ")");
 		try {
 			setupReadSet();
 			if (mReadSet.absolute(position + 1)) {

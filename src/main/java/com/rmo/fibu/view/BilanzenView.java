@@ -318,7 +318,7 @@ public class BilanzenView extends JFrame { // implements Printable
 		 */
 		@Override
 		public Object getValueAt(int row, int col) {
-			Trace.println(7, "BilanzenView.BuchungModel.getValueAt(" + row + ',' + col + ')');
+			Trace.println(9, "BilanzenView.BuchungModel.getValueAt(" + row + ',' + col + ')');
 			if (row < mKonti.size()) {
 				KontoRow lRow = mKonti.elementAt(row);
 				switch (col) {

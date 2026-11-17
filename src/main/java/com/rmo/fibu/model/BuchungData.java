@@ -25,6 +25,20 @@ import com.rmo.fibu.util.Trace;
  */
 public class BuchungData extends DataObject implements Serializable {
 	private static final long serialVersionUID = -3172925095948099368L;
+	
+	public final static String CREATE_BUCHUNG = "CREATE TABLE buchungen ("
+			+ "ID int(11) NOT NULL AUTO_INCREMENT, Datum date DEFAULT NULL, "
+			+ "Beleg varchar(10) DEFAULT NULL, BuchungText varchar(50) DEFAULT NULL, "
+			+ "Soll int(11) NOT NULL, Haben int(11) NOT NULL, "
+			+ "Betrag decimal(12,2) DEFAULT NULL, PRIMARY KEY (ID), "
+			+ "INDEX fk_soll (Soll ASC), " + "INDEX fk_haben (Haben ASC), "
+			+ "CONSTRAINT fk_soll FOREIGN KEY (Soll) "
+			+ "REFERENCES kontorahmen (KontoNr ) "
+			+ "ON DELETE RESTRICT ON UPDATE NO ACTION, "
+			+ "CONSTRAINT fk_haben FOREIGN KEY (Haben) "
+			+ "REFERENCES kontorahmen (KontoNr) "
+			+ "ON DELETE RESTRICT ON UPDATE NO ACTION);";
+
 
 	/** Die Id der nächsten Buchung */
 	private long mNextBuchungId = -1;
@@ -91,8 +105,8 @@ public class BuchungData extends DataObject implements Serializable {
 	 * Max. Anzahl Zeilen von Buchungen (in der Tabelle und Temporäre).
 	 */
 	public int getRowCount() {
-		Trace.print(7, "BuchungData.getRowCont()");
-		Trace.println(7, " Tabel:" + getRowCountTable() + " new:" + getRowCountNew());
+		Trace.print(9, "BuchungData.getRowCont()");
+		Trace.println(9, " Tabel:" + getRowCountTable() + " new:" + getRowCountNew());
 		return getRowCountTable() + mNewBuchung.size();
 	}
 
@@ -120,7 +134,7 @@ public class BuchungData extends DataObject implements Serializable {
 	 * @exception BuchungNotFoundException
 	 */
 	public Buchung readAt(int position) throws BuchungNotFoundException, BuchungValueException {
-		Trace.println(7, "BuchungData.readAt(" + position + ")");
+		Trace.println(9, "BuchungData.readAt(" + position + ")");
 		if (position < getRowCountTable()) {
 			// wenn bereits gelesen
 			if (position == mPositionRead) {

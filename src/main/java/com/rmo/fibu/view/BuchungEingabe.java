@@ -33,7 +33,7 @@ import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.exception.KontoNotFoundException;
 import com.rmo.fibu.model.Buchung;
 import com.rmo.fibu.util.Config;
-import com.rmo.fibu.util.Datum;
+import com.rmo.fibu.util.DatumFibu;
 import com.rmo.fibu.util.Trace;
 import com.rmo.fibu.view.util.JFormattedTextFieldExt;
 import com.rmo.fibu.view.util.JTextFiledBold;
@@ -590,7 +590,7 @@ public class BuchungEingabe extends JInternalFrame {
 	private void datumFocusLost() {
 		Trace.println(5, "BuchungEingabe.datumFocusLost()");
 		try {
-			Datum datum = new Datum(mTfDatum.getText());
+			DatumFibu datum = new DatumFibu(mTfDatum.getText());
 			mTfDatum.setText(datum.toString());
 			mTfDatum.setBackground(Color.white);
 			// Testen, ob es dem letzten Datum entspricht

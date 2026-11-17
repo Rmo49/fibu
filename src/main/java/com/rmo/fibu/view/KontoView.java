@@ -538,7 +538,7 @@ public class KontoView extends JFrame
 		 */
 		@Override
 		public Object getValueAt(int row, int col) {
-			Trace.println(7, "KontoModel.getValueAt(" + row + ',' + col + ')');
+			Trace.println(9, "KontoView.getValueAt(" + row + ',' + col + ')');
 			try {
 				Konto lKonto = mKontoData.readAt(row);
 				switch (col) {

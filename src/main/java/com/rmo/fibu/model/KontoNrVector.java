@@ -20,10 +20,11 @@ public class KontoNrVector extends Vector<String> {
 
     /** Initialisiert die Daten, liest alle ein */
     private void init() {
-		Trace.println(4, "KontoNrVecor.init()");
+		Trace.print(4, "KontoNrVector.init()");
         KontoData lKontoData = (KontoData) DataBeanContext.getDataBean(KontoData.class);
         Konto lKonto = null;
         int max = lKontoData.getRowCount();
+        Trace.println(4, " rows: " + max);
         for (int i = 0; i < max; i++) {
             try {
                 lKonto = lKontoData.readAt(i);

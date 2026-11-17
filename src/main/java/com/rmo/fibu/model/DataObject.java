@@ -3,6 +3,7 @@ package com.rmo.fibu.model;
 import java.sql.Connection;
 
 import com.rmo.fibu.exception.FibuRuntimeException;
+import com.rmo.fibu.model.depot.DbConnectionDepot;
 
 /**
 Basis-Klasse aller DB-Model-Klassen, die Zugriff auf DB implementieren,
@@ -20,6 +21,11 @@ public abstract class DataObject {
 	/** Die Connection zu der DB */
 	protected Connection getConnection() throws FibuRuntimeException {
 		return DbConnection.getConnection();
+	}
+
+	/** Die Connection zu der DB */
+	protected Connection getConnectionDepot() throws FibuRuntimeException {
+		return DbConnectionDepot.getConnection();
 	}
 
 

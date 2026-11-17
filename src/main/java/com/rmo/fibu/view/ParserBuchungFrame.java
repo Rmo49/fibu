@@ -47,7 +47,7 @@ import com.rmo.fibu.util.CsvParserBase;
 import com.rmo.fibu.util.CsvParserMB;
 import com.rmo.fibu.util.CsvParserPost;
 import com.rmo.fibu.util.CsvParserRaiff;
-import com.rmo.fibu.util.Datum;
+import com.rmo.fibu.util.DatumFibu;
 import com.rmo.fibu.util.ParserBank;
 import com.rmo.fibu.util.ParserBase;
 import com.rmo.fibu.util.PdfParser;
@@ -58,11 +58,11 @@ import com.rmo.fibu.view.util.JButtonBold;
 import com.rmo.fibu.view.util.JLabelBold;
 
 /**
- * Wird über ParserKeywordFrame gestartet, oder direkt von MainFrame
- * aufgerufen. Das ausgewählte file wird im Konstruktur übergeben. Liest
- * Buchungen von CSV ein siehe datenEinlesen, schreibt in Tabelle. Wenn
- * "Buchungstext anpassen" dann wird der Text angepasst und die Kontonummern
- * eingetragen => changeAction Wenn "Speichern" dann saveAction
+ * Wird über ParserKeywordFrame gestartet, oder direkt von MainFrame aufgerufen.
+ * Das ausgewählte file wird im Konstruktur übergeben. Liest Buchungen von CSV
+ * ein siehe datenEinlesen, schreibt in Tabelle. Wenn "Buchungstext anpassen"
+ * dann wird der Text angepasst und die Kontonummern eingetragen => changeAction
+ * Wenn "Speichern" dann saveAction
  */
 public class ParserBuchungFrame extends JFrame {
 	private static final long serialVersionUID = 1201522139173678122L;
@@ -77,17 +77,17 @@ public class ParserBuchungFrame extends JFrame {
 	// file von dem gelesen werden soll
 	private File mFile = null;
 	// Datum von bis
-	private Datum mDateVon = null;
-	private Datum mDateBis = null;
+	private DatumFibu mDateVon = null;
+	private DatumFibu mDateBis = null;
 	// Prefix der eingefügt werden soll
 	private JTextField mBuchungPrefix = null;
 	private final Dimension prefixSize = new Dimension(10 * Config.windowTextSize, Config.windowTextSize + 12);
 	// die TextFelder für die Eingabe des Datums
 	private final Dimension mDatumSize = new Dimension(6 * Config.windowTextSize, Config.windowTextSize + 12);
 	private JTextField mTfDatumAb; // ab Datum
-	private Datum mDatumSelVon = null;
+	private DatumFibu mDatumSelVon = null;
 	private JTextField mTfDatumBis; // bis Datum
-	private Datum mDatumSelBis = null;
+	private DatumFibu mDatumSelBis = null;
 	private JComboBox<String> mKontoNr = null;
 	private JCheckBox mReplaceKtoNr = null;
 	private JRadioButton mSollRadio = null;
@@ -133,9 +133,9 @@ public class ParserBuchungFrame extends JFrame {
 		this.mFile = file;
 		this.mBank = bank;
 		this.mBankName = bank.getBankName();
-		this.mDateVon = new Datum();
+		this.mDateVon = new DatumFibu();
 		this.mDateVon.setDatum(von);
-		this.mDateBis = new Datum();
+		this.mDateBis = new DatumFibu();
 		this.mDateBis.setDatum(bis);
 
 		init();
@@ -266,18 +266,28 @@ public class ParserBuchungFrame extends JFrame {
 
 		JLabelBold labelDatum = new JLabelBold("ändern von: ");
 		buttons2.add(labelDatum);
-		mTfDatumAb = new JTextField(mDatumSelVon.toString());
-		mTfDatumAb.setFont(Config.fontText);
-		mTfDatumAb.setPreferredSize(mDatumSize);
-		buttons2.add(mTfDatumAb);
+		if (mDatumSelVon == null) {
+			JOptionPane.showMessageDialog(this, "Falsches Datum, siehe Trace", "Buchungen einlesen",
+					JOptionPane.ERROR_MESSAGE);
+		} else {
+			mTfDatumAb = new JTextField(mDatumSelVon.toString());
+			mTfDatumAb.setFont(Config.fontText);
+			mTfDatumAb.setPreferredSize(mDatumSize);
+			buttons2.add(mTfDatumAb);
+		}
 
 		// --- bis Datum
 		JLabelBold labelDatum2 = new JLabelBold("bis: ");
 		buttons2.add(labelDatum2);
-		mTfDatumBis = new JTextField(mDatumSelBis.toString());
-		mTfDatumBis.setFont(Config.fontText);
-		mTfDatumBis.setPreferredSize(mDatumSize);
-		buttons2.add(mTfDatumBis);
+		if (mDatumSelVon == null) {
+			JOptionPane.showMessageDialog(this, "Falsches Datum, siehe Trace", "Buchungen einlesen",
+					JOptionPane.ERROR_MESSAGE);
+		} else {
+			mTfDatumBis = new JTextField(mDatumSelBis.toString());
+			mTfDatumBis.setFont(Config.fontText);
+			mTfDatumBis.setPreferredSize(mDatumSize);
+			buttons2.add(mTfDatumBis);
+		}
 
 		JLabelBold label2 = new JLabelBold("Prefix: ");
 		buttons2.add(label2);
@@ -458,6 +468,7 @@ public class ParserBuchungFrame extends JFrame {
 		while (lIter.hasNext()) {
 			ParserKeyWord keyword = lIter.next();
 			pos = posSuchWort(buchungCsv.getText(), keyword.getSuchWort());
+			Trace.println(8, "suche: " + keyword.getSuchWort() + " pos:" + pos);
 			// Suchwort gefunden
 			if (pos >= 0) {
 				// wenn keine KontoNummer gesetzt, nur Text ändern
@@ -469,6 +480,7 @@ public class ParserBuchungFrame extends JFrame {
 					setKonto(buchungCsv, keyword);
 					buchungCsv.setText(textChange(buchungCsv.getText(), keyword.getTextNeu(), pos));
 				}
+				break;
 			}
 		}
 		// zum Schluss Länge noch prüfen
@@ -485,28 +497,45 @@ public class ParserBuchungFrame extends JFrame {
 	 * @return
 	 */
 	private int posSuchWort(String buchungText, String suchWort) {
-		if (suchWort.indexOf(" ") > 0) {
+		if (buchungText.contains(suchWort)) {
 			return buchungText.indexOf(suchWort);
-		}
-		int pos = 0;
-		int wortStart = 0;
-		boolean found = false;
-		String text = new String();
-		while (pos < buchungText.length()) {
-			if (buchungText.charAt(pos) == 32) {
-				text = buchungText.substring(wortStart, pos).toUpperCase();
-				found = text.startsWith(suchWort.toUpperCase());
-				if (!found) {
-					wortStart = ++pos;
-
-				} else {
-					return wortStart;
-				}
-			}
-			pos++;
 		}
 		return -1;
 	}
+
+	/**
+	 * Wort Suchen im Text gibt position zurück. Wenn nur ein Wort gesucht wird,
+	 * startet bei ganzen Wörtern. Wenn SuchWort aus mehreren Wörtern, dann wird der
+	 * gesamte String durchsucht.
+	 *
+	 * @param buchungText
+	 * @param suchWort
+	 * @return
+	 * TODO löschen
+	 */
+//	private int posSuchWort_alt(String buchungText, String suchWort) {
+//		if (suchWort.indexOf(" ") > 0) {
+//			return buchungText.indexOf(suchWort);
+//		}
+//		int pos = 0;
+//		int wortStart = 0;
+//		boolean found = false;
+//		String text = new String();
+//		while (pos < buchungText.length()) {
+//			if (buchungText.charAt(pos) == 32) {
+//				text = buchungText.substring(wortStart, pos).toUpperCase();
+//				found = text.startsWith(suchWort.toUpperCase());
+//				if (!found) {
+//					wortStart = ++pos;
+//
+//				} else {
+//					return wortStart;
+//				}
+//			}
+//			pos++;
+//		}
+//		return -1;
+//	}
 
 	/**
 	 * Die Kontonummer setzen wenn etwas gefunden im Text.
@@ -519,23 +548,19 @@ public class ParserBuchungFrame extends JFrame {
 		}
 	}
 
+	
 	/**
 	 * Den Text kürzen, falls sehr Lang
 	 */
 	private void textMaxLen(BuchungCsv buchungCsv, int pos) {
-		int maxLength = buchungCsv.getText().length();
-		if (pos < 0) {
-			pos = 0;
-		} else {
-			if (pos >= maxLength) {
-				pos = 0;
-			}
+		String s1 = buchungCsv.getText();
+		if (s1.length() > Config.sParserTextLen) {
+			s1 = s1.substring(0, Config.sParserTextLen);
+			buchungCsv.setText(s1);
 		}
-		if (maxLength > pos + Config.sParserTextLen) {
-			maxLength = pos + Config.sParserTextLen;
-		}
-		buchungCsv.setText(buchungCsv.getText().substring(pos, maxLength));
+
 	}
+
 
 	/**
 	 * Den Text der länge textLen löschen, falls keine Kontonummer angegeben. Für
@@ -558,6 +583,7 @@ public class ParserBuchungFrame extends JFrame {
 
 	/**
 	 * Den Text ersetzen, gemäss angaben im ParserKeyWord. Für Version 3 und höher.
+	 * Wenn pos >= 0, dann ist das die position des keywords, ab dieser Position änder 
 	 */
 	private String textChange(String buchungText, String keywordText, int pos) {
 		StringBuffer textNew = new StringBuffer(100);
@@ -578,9 +604,10 @@ public class ParserBuchungFrame extends JFrame {
 		if (posTag < 0) {
 			// kein Tag gefunden, wenn Eintrag in keyword dann diesen eingeben
 			if ((keywordText != null) && (keywordText.length() > 0)) {
+				textNew.append(buchungText.substring(0, pos));
 				textNew.append(keywordText);
 			} else {
-				textNew.append(buchungText.substring(pos));
+				textNew.append(buchungText);
 			}
 		} else if (posTag == 0) {
 			// Wurde kein Text vor dem Tag eingegeben, dann das erste Wort von der Buchung
@@ -634,8 +661,8 @@ public class ParserBuchungFrame extends JFrame {
 			von = mBuchungListIter.next().getDatum();
 		} catch (Exception ex) {
 			// keine Daten im Iterator
-			JOptionPane.showMessageDialog(this, "Keine Daten vorhanden, prüfe auch den Datums-Range", "Buchungen einlesen",
-					JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Keine Daten vorhanden, prüfe auch den Datums-Range",
+					"Buchungen einlesen", JOptionPane.INFORMATION_MESSAGE);
 			returnValue = false;
 		}
 		String bis = Config.sDatumBis.toString();
@@ -643,10 +670,10 @@ public class ParserBuchungFrame extends JFrame {
 			bis = mBuchungListIter.next().getDatum();
 		}
 		try {
-			mDatumSelVon = new Datum(von);
-			mDatumSelBis = new Datum(bis);
+			mDatumSelVon = new DatumFibu(von);
+			mDatumSelBis = new DatumFibu(bis);
 		} catch (ParseException ex) {
-			Trace.println(1, "ParserBuchungFrame.setDatumVonListe(), Probleme beim Datum lesen");
+			Trace.println(1, "ParserBuchungFrame.setDatumVonListe(), Fehler: " + ex.getMessage());
 		}
 		Trace.println(5, "ParserBuchungFrame.setDatumVonListe() : " + returnValue);
 		return returnValue;
@@ -685,8 +712,8 @@ public class ParserBuchungFrame extends JFrame {
 	 */
 	private boolean setSelectedDate() {
 		try {
-			mDatumSelVon = new Datum(mTfDatumAb.getText());
-			mDatumSelBis = new Datum(mTfDatumBis.getText());
+			mDatumSelVon = new DatumFibu(mTfDatumAb.getText());
+			mDatumSelBis = new DatumFibu(mTfDatumBis.getText());
 		} catch (ParseException ex) {
 			JOptionPane.showMessageDialog(this, "Datumformat falsch", "Datum", JOptionPane.INFORMATION_MESSAGE);
 			return false;
@@ -701,9 +728,9 @@ public class ParserBuchungFrame extends JFrame {
 	 * @return
 	 */
 	private boolean inRange(BuchungCsv csvBuchung) {
-		Datum datum = null;
+		DatumFibu datum = null;
 		try {
-			datum = new Datum(csvBuchung.getDatum());
+			datum = new DatumFibu(csvBuchung.getDatum());
 		} catch (ParseException ex) {
 			// TODO wenn falsches Datum Meldung
 		}
@@ -756,24 +783,6 @@ public class ParserBuchungFrame extends JFrame {
 		}
 	}
 
-	/**
-	 * Das eingegebenen Datums ab
-	 */
-//	private Date getSelectedDate() {
-//		Date datum = null;
-//		if (mTfDatumAb.getText().length() == 0) {
-//			mTfDatumAb.setText(Config.sDatumVon.toString());
-//		}
-//		DatumFormat df = DatumFormat.getDatumInstance();
-//		try {
-//			datum = df.parse(mTfDatumAb.getText());
-//			return datum;
-//		} catch (ParseException ex) {
-//			JOptionPane.showMessageDialog(this, ex.getMessage(),
-//					"Datum fehlerhaft", JOptionPane.ERROR_MESSAGE);
-//			return null;
-//		}
-//	}
 
 	// ------- speichern ---------------------
 
@@ -1067,7 +1076,7 @@ public class ParserBuchungFrame extends JFrame {
 		 */
 		@Override
 		public Object getValueAt(int row, int col) {
-			Trace.println(7, "CsvBuchungModel.getValueAt(" + row + ',' + col + ')');
+//			Trace.println(7, "ParserBuchungFrame.getValueAt(" + row + ',' + col + ')');
 			BuchungCsv lBuchung = mBuchungList.get(row);
 			switch (col) {
 			case 0:

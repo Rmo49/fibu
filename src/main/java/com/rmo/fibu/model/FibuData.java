@@ -15,6 +15,14 @@ import com.rmo.fibu.util.Trace;
  */
 public class FibuData extends DataObject implements Serializable {
 	private static final long serialVersionUID = -8821885201937153074L;
+	
+	// Create Statemend
+	public final static String CREATE_FIBUDATEN = "CREATE TABLE fibudaten ("
+			+ "ID int(11) NOT NULL, FibuName varchar(50) DEFAULT NULL, "
+			+ "FibuTitel varchar(50) DEFAULT NULL, DatumVon date DEFAULT NULL, "
+			+ "DatumBis date DEFAULT NULL, DatumFormat varchar(20) DEFAULT NULL ,"
+			+ "PRIMARY KEY (ID) );";
+
 	private static FibuData sFibuData = null;
 	private String mFibuTitel = null;
 	private String mFibuName = null;

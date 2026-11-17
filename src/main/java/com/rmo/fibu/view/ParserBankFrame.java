@@ -248,6 +248,7 @@ public class ParserBankFrame extends JFrame {
 				return;
 			}
 		}
+		JOptionPane.showMessageDialog(this, "Alles gespeichert", "Setup CSV / PDF", JOptionPane.NO_OPTION);
 	}
 
 

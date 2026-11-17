@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
@@ -17,6 +18,7 @@ import com.rmo.fibu.model.DataBeanContext;
 import com.rmo.fibu.model.DbConnection;
 import com.rmo.fibu.model.ParserKeyWord;
 import com.rmo.fibu.model.ParserKeywordData;
+import com.rmo.fibu.util.Config;
 
 /**
  * Test mit Keywords für CSV und PDF
@@ -24,7 +26,7 @@ import com.rmo.fibu.model.ParserKeywordData;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ParserKeywordDataTest {
 	static String dbName = "fibuTest";
-	static ParserKeywordData mData;
+	static ParserKeywordData mParserData;
 	
 	int bankID1 = 1;
 	int bankID2 = 2;
@@ -36,30 +38,54 @@ public class ParserKeywordDataTest {
 	
 	
 	@BeforeAll
-	static void setup () {
+	static void setup () throws Exception {
+		Config.readPropertyFile();
+		Config.setAllProperties();
+		Config.saveProperties();
 		DbHandling.deleteDb(dbName);
 		DbHandling.makeDb(dbName);
 		DbConnection.open(dbName);
 		
-		mData = (ParserKeywordData) DataBeanContext.getDataBean(ParserKeywordData.class);
-		
+		mParserData = (ParserKeywordData) DataBeanContext.getDataBean(ParserKeywordData.class);	
 	}
 	
-	//TODO Test mit Versionen der Tabelle
-	
+	@Test
+	@Order(0)
+	void oldTable () {
+		try {
+			Statement statement = DbConnection.getConnection().createStatement();
+			statement.execute("Drop Table " + ParserKeywordData.TABLE_NAME + ";");
+			// die alte Version anlegen
+			statement.execute(ParserKeywordData.CREATE_CSVKEYWORD);			
+		}
+		catch (SQLException ex) {
+			fail(ex.getMessage());
+		}
+	}
+
 	@Test
 	@Order(1)
+	void newTable () {
+		mParserData.checkTableVersion();
+		assertEquals(6, mParserData.getAnzahlCols());
+	}
+
+	
+	@Test
+	@Order(4)
 	void add1 () {
 		try {
-			mData.add(keyWord1);
+			mParserData.add(keyWord1);
 		}
 		catch (SQLException ex) {
 			fail(ex.getMessage());
 		}
 		try {
-			ParserKeyWord keyWord = mData.readAt(bankID1, 0);
+			ParserKeyWord keyWord = mParserData.readAt(bankID1, 0);
 			assertEquals(keyWord1.getBankId(), keyWord.getBankId());
 			assertEquals(keyWord1.getSuchWort(), keyWord.getSuchWort());
+			assertEquals(keyWord1.getKontoNr(), keyWord.getKontoNr());			
+			assertEquals(keyWord1.getSh(), keyWord.getSh());
 		}
 		catch (FibuException ex) {
 			assertNotNull(ex, ex.getMessage());
@@ -68,11 +94,11 @@ public class ParserKeywordDataTest {
 
 	
 	@Test
-	@Order(2)
+	@Order(5)
 	void löschenEinTupel() {
 		try {
-			ParserKeyWord keyWord = mData.readAt(bankID1, 0);
-			mData.deleteRow(keyWord.getId());
+			ParserKeyWord keyWord = mParserData.readAt(bankID1, 0);
+			mParserData.deleteRow(keyWord.getId());
 		}
 		catch (Exception ex) {
 			fail("probleme beim löschen");
@@ -81,13 +107,13 @@ public class ParserKeywordDataTest {
 	
 	
 	@Test
-	@Order(3)
+	@Order(6)
 	void add2() {
 		try {
-			mData.add(keyWord1);
-			mData.add(keyWord2);
-			mData.add(keyWord5);
-			mData.add(keyWord6);
+			mParserData.add(keyWord1);
+			mParserData.add(keyWord2);
+			mParserData.add(keyWord5);
+			mParserData.add(keyWord6);
 		}
 		catch (SQLException ex) {
 			fail(ex.getMessage());
@@ -95,10 +121,10 @@ public class ParserKeywordDataTest {
 	}
 	
 	@Test
-	@Order(5)
+	@Order(7)
 	void löschenBankRow() {
 		try {
-			mData.deleteAllRowsOfBank(bankID1);
+			mParserData.deleteAllRowsOfBank(bankID1);
 		}
 		catch (SQLException ex) {
 			fail("probleme beim löschen");
@@ -106,11 +132,11 @@ public class ParserKeywordDataTest {
 	}
 
 	@Test
-	@Order(6)
+	@Order(8)
 	void bankNochmalsLesen() {
-		int rows = mData.getRowCount(bankID1);
+		int rows = mParserData.getRowCount(bankID1);
 		assertEquals(0, rows);	
-		rows = mData.getRowCount(bankID2);
+		rows = mParserData.getRowCount(bankID2);
 		assertEquals(2, rows);	
 	}
 

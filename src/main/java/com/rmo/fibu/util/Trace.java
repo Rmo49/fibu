@@ -14,7 +14,8 @@ import java.util.Date;
 	Level 3: allg. Methoden, Variable (detailierter Ablauf)
 	Level 4: Kontroll-Output (mit Einstellungen)
 	Level 5: viel aufgerufenen Methoden der View-Schicht
-	Level 7: viel aufgerufene Methoden der Datenschicht mit Vars.
+	Level 7: viele Methoden zur Kontrolle der Eingabe
+	Level 9: viel aufgerufene Methoden der Datenschicht mit Vars.
  */
 public class Trace {
 	/** Stringbuffer für Message */

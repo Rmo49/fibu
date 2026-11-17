@@ -123,8 +123,8 @@ public class Config {
 	// Name der Buchhaltung die gerade geöffnet ist
 	public static String sFibuTitel;
 	// die Grenze der geöffneten Buchhaltung
-	public static Datum sDatumVon = new Datum();
-	public static Datum sDatumBis = new Datum();
+	public static DatumFibu sDatumVon = new DatumFibu();
+	public static DatumFibu sDatumBis = new DatumFibu();
 	public static String sDatumFormat1 = "dd.MM.yyyy";
 	/** Format für Beträge */
 	public static final DecimalFormat sDecimalFormat = new DecimalFormat("###,###,##0.00");
@@ -252,6 +252,11 @@ public class Config {
 			sFibuNames.addElement("FibuLeer");
 			mProperties.setProperty(sFibuNamesKey, "FibuLeer,");
 		}
+		
+		// --- db-connetion
+		dbUserName = mProperties.getProperty(dbUserNameKey, dbUserName);
+		dbPassword = mProperties.getProperty(dbPasswordKey, dbPassword);
+		dbUrl = mProperties.getProperty(dbUrlKey, dbUrl);
 
 		printerRandLinks = readNumber(printerRandLinksKey, printerRandLinks);
 		printerRandOben = readNumber(printerRandObenKey, printerRandOben);
@@ -302,11 +307,6 @@ public class Config {
 		// --- language settings
 		languageLanguage = mProperties.getProperty(languageKey, languageLanguage);
 		languageCountry = mProperties.getProperty(countryKey, languageCountry);
-
-		// --- db-connetion
-		dbUserName = mProperties.getProperty(dbUserNameKey, dbUserName);
-		dbPassword = mProperties.getProperty(dbPasswordKey, dbPassword);
-		dbUrl = mProperties.getProperty(dbUrlKey, dbUrl);
 	}
 
 	/** java.awt.Fonts initialisieren */
@@ -319,7 +319,7 @@ public class Config {
 	 * Alle Properites in das File schreiben
 	 */
 	public static void saveProperties() throws FibuException {
-		Trace.println(0, "Config.writeProperties()");
+		Trace.println(0, "Config.saveProperties()");
 		// zuerst alles in mProperties schreiben
 		mProperties.clear();
 		writeFibuValues();
@@ -793,11 +793,11 @@ public class Config {
 	 */
 	public static void checkArgs(String[] args) throws FibuException {
 		// ConfigFile öffnen
-		String configFilePath;
-		if (args.length > 0) {
-			configFilePath = args[0];
-		} else {
-			configFilePath = sConfigFileName;
+		String configFilePath = sConfigFileName;
+		if (args != null) {
+			if (args.length > 0) {
+				configFilePath = args[0];
+			}
 		}
 		checkConfigFile(configFilePath);
 	}
@@ -806,8 +806,12 @@ public class Config {
 	 * Prüft, ob das File vorhanden ist
 	 */
 	static void checkConfigFile(String configFilePath) throws FibuException {
-		Trace.println(0, "Config-Path = '" + sConfigFileName + "'");
+		Trace.println(0, "Config-File = '" + sConfigFileName + "'");
+		
 		sConfigFile = new File(configFilePath);
+		if (sConfigFile.exists()) {
+			Trace.println(0, "Config-Path = '" + sConfigFile.getAbsolutePath() + "'");
+		}
 		if (!sConfigFile.exists()) {
 			Trace.println(0, "ConfigFile nicht gefunden, Path: " + sConfigFile.getAbsolutePath());
 			new FibuException("ConfigFile nicht gefunden, Path: " + sConfigFile.getAbsolutePath());

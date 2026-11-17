@@ -29,6 +29,7 @@ public class DbHandling {
 		return 1;
 	}
 
+	
 	/**
 	 * DB anlegen
 	 * @param dbName

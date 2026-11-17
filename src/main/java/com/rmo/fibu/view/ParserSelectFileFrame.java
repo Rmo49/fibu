@@ -97,7 +97,6 @@ public class ParserSelectFileFrame extends JFrame {
 		mKeywordData = (ParserKeywordData) DataBeanContext.getDataBean(ParserKeywordData.class);
 
 		// die Version zurücksetzen, wenn das erstemal geöffnet
-		mKeywordData.resetVersion();
 		initView();
 		return true;
 	}

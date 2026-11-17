@@ -9,7 +9,7 @@ import java.util.Calendar;
 
 import com.rmo.fibu.exception.FibuException;
 import com.rmo.fibu.util.Config;
-import com.rmo.fibu.util.Datum;
+import com.rmo.fibu.util.DatumFibu;
 import com.rmo.fibu.util.Trace;
 
 /**
@@ -19,30 +19,7 @@ import com.rmo.fibu.util.Trace;
  */
 public class FibuDataBase {
 	// Create Statements
-	private final static String CREATE_FIBUDATEN = "CREATE TABLE fibudaten ("
-			+ "ID int(11) NOT NULL, FibuName varchar(50) DEFAULT NULL, "
-			+ "FibuTitel varchar(50) DEFAULT NULL, DatumVon date DEFAULT NULL, "
-			+ "DatumBis date DEFAULT NULL, DatumFormat varchar(20) DEFAULT NULL ,"
-			+ "PRIMARY KEY (ID) );";
 
-	private final static String CREATE_KONTORAHMEN = "CREATE TABLE Kontorahmen ("
-			+ "KontoNr int(11) NOT NULL, KontoText varchar(50) DEFAULT NULL, "
-			+ "StartSaldo decimal(12,2) DEFAULT NULL, Saldo decimal(12,2) DEFAULT NULL, "
-			+ "IstSollKto char(1) DEFAULT b'0', PRIMARY KEY (KontoNr) );";
-
-
-	private final static String CREATE_BUCHUNG = "CREATE TABLE buchungen ("
-			+ "ID int(11) NOT NULL AUTO_INCREMENT, Datum date DEFAULT NULL, "
-			+ "Beleg varchar(10) DEFAULT NULL, BuchungText varchar(50) DEFAULT NULL, "
-			+ "Soll int(11) NOT NULL, Haben int(11) NOT NULL, "
-			+ "Betrag decimal(12,2) DEFAULT NULL, PRIMARY KEY (ID), "
-			+ "INDEX fk_soll (Soll ASC), " + "INDEX fk_haben (Haben ASC), "
-			+ "CONSTRAINT fk_soll FOREIGN KEY (Soll) "
-			+ "REFERENCES kontorahmen (KontoNr ) "
-			+ "ON DELETE RESTRICT ON UPDATE NO ACTION, "
-			+ "CONSTRAINT fk_haben FOREIGN KEY (Haben) "
-			+ "REFERENCES kontorahmen (KontoNr) "
-			+ "ON DELETE RESTRICT ON UPDATE NO ACTION);";
 
 	/** Verbindung zu Data bean */
 	private static FibuData mFibuData = null;
@@ -64,9 +41,9 @@ public class FibuDataBase {
 			statement.execute(schemaName);
 			String useName = "USE " + fibuName + ";";
 			statement.execute(useName);
-			statement.execute(CREATE_FIBUDATEN);
-			statement.execute(CREATE_KONTORAHMEN);
-			statement.execute(CREATE_BUCHUNG);
+			statement.execute(FibuData.CREATE_FIBUDATEN);
+			statement.execute(KontoData.CREATE_KONTORAHMEN);
+			statement.execute(BuchungData.CREATE_BUCHUNG);
 			statement.execute(ParserBankData.CREATE_CSVBANK_V2);
 			statement.execute(ParserKeywordData.CREATE_CSVKEYWORD_V2);
 			statement.close();
@@ -105,11 +82,11 @@ public class FibuDataBase {
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 		try {
 			String newDatum = "01.01." + year;
-			Datum datumVon = new Datum();
+			DatumFibu datumVon = new DatumFibu();
 			datumVon.setNewDatum(newDatum);
 			Config.sDatumVon = datumVon;
 			newDatum = "31.12." + year;
-			Datum datumBis = new Datum();
+			DatumFibu datumBis = new DatumFibu();
 			datumBis.setNewDatum(newDatum);
 			Config.sDatumBis = datumBis;
 		}

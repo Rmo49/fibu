@@ -37,9 +37,11 @@ public class KontoDataTest {
 	@BeforeAll
 	public static void beforeClass() throws Exception {
 		Config.readPropertyFile();
+		Config.setAllProperties();
 		DbHandling.deleteDb(dbName);
 		DbHandling.makeDb(dbName);
 		DbConnection.open(dbName);
+		String schema = DbConnection.getConnection().getSchema();
 
 		mKontoData = (KontoData) DataBeanContext.getDataBean(KontoData.class);
 		mKonto1000 = new Konto(1000, "Konto 1000", 1, 1000, true);
@@ -152,7 +154,7 @@ public class KontoDataTest {
 
 	@AfterAll
 	public static void afterClass() {
-		DbHandling.deleteDb(dbName);
+		//DbHandling.deleteDb(dbName);
 	}
 
 	/**

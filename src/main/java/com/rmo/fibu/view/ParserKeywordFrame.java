@@ -36,7 +36,7 @@ import com.rmo.fibu.util.ParserBase;
 import com.rmo.fibu.util.Trace;
 
 /**
- * Liest CSV Keywords ein, schreibt diese in Tabelle.
+ * Liest CSV Keywords (Schlüsselworte) ein, schreibt diese in Tabelle.
  * Wenn: "CSV-datei selektieren":
  * Eine Auswahl von dateien anzeigen, wenn ein File selektiert, wird das file an
  * CsvReaderTableFrame weitergegeben.
@@ -106,7 +106,6 @@ public class ParserKeywordFrame extends JFrame {
 		mBankData = (ParserBankData) DataBeanContext.getDataBean(ParserBankData.class);
 
 		// die Version zurücksetzen, wenn das erstemal geöffnet
-		mKeywordData.resetVersion();
 		initView();
 		return true;
 	}
@@ -512,7 +511,7 @@ public class ParserKeywordFrame extends JFrame {
 		 */
 		@Override
 		public Object getValueAt(int row, int col) {
-			Trace.println(7, "ParserKeywordModel.getValueAt(" + row + ',' + col + ')');
+			Trace.println(9, "ParserKeywordModel.getValueAt(" + row + ',' + col + ')');
 			try {
 				ParserKeyWord lKeyword = mKeywordData.readAt(mBankId, row);
 				if (mKeywordData.getVersion() <= 2) {

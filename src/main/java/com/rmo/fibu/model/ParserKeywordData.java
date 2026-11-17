@@ -20,28 +20,25 @@ import com.rmo.fibu.util.Trace;
  */
 public class ParserKeywordData extends DataObject {
 
-	private final static String TABLE_NAME = "pdfkeyword";
+	public final static String TABLE_NAME = "pdfkeyword";
+
+	// TODO nur noch eine Version! Beim erstenmal lesen, die Tabelle anpassen.
 
 	public final static String CREATE_CSVKEYWORD = "CREATE TABLE `" + TABLE_NAME + "`("
-			+ " `ID` int(11) NOT NULL AUTO_INCREMENT, `CompanyID` int,"
-			+ " `SuchWort` varchar(20) NOT NULL,"
-			+ " `KontoNr` varchar(6) DEFAULT NULL,"
-			+ " `SH` varchar(2) DEFAULT NULL,"
+			+ " `ID` int(11) NOT NULL AUTO_INCREMENT, `CompanyID` int," + " `SuchWort` varchar(20) NOT NULL,"
+			+ " `KontoNr` varchar(6) DEFAULT NULL," + " `SH` varchar(2) DEFAULT NULL,"
 			+ " PRIMARY KEY (`ID`,`CompanyID`) );";
 //			+ " FOREIGN KEY (CompanyID) REFERENCES pdfcompany(CompanyID) );";
 
-	private final int COLS_V1 = 5;		// Anzahl Cols in der Version1
+	private final int COLS_V1 = 5; // Anzahl Cols in der Version1
 
 	private final static String ADD_COL_V2 = "ALTER TABLE `" + TABLE_NAME + "`"
 			+ "ADD COLUMN `textNeu` VARCHAR(20) NULL DEFAULT NULL AFTER `SH`;";
 
 	public final static String CREATE_CSVKEYWORD_V2 = "CREATE TABLE `" + TABLE_NAME + "`("
-			+ " `ID` int(11) NOT NULL AUTO_INCREMENT, `CompanyID` int,"
-			+ " `SuchWort` varchar(20) NOT NULL,"
-			+ " `KontoNr` varchar(6) DEFAULT NULL,"
-			+ " `SH` varchar(2) DEFAULT NULL,"
-			+ " `textNeu` VARCHAR(20) DEFAULT NULL,"
-			+ " PRIMARY KEY (`ID`,`CompanyID`) );";
+			+ " `ID` int(11) NOT NULL AUTO_INCREMENT, `CompanyID` int," + " `SuchWort` varchar(20) NOT NULL,"
+			+ " `KontoNr` varchar(6) DEFAULT NULL," + " `SH` varchar(2) DEFAULT NULL,"
+			+ " `textNeu` VARCHAR(20) DEFAULT NULL," + " PRIMARY KEY (`ID`,`CompanyID`) );";
 //			+ " FOREIGN KEY (CompanyID) REFERENCES pdfcompany(CompanyID) );";
 
 	/**
@@ -68,9 +65,9 @@ public class ParserKeywordData extends DataObject {
 	private int mAnzahlCols = 0;
 
 	/**
-	 * Die Version 1: 4, Version 2: 5, Version 3: 6
+	 * Die Version 1: 4, Version 2: 5, Version 3: 6 Cols
 	 */
-	private int mVersion = 0;
+	private int mVersion = 3;
 
 	/**
 	 * Model constructor comment.
@@ -89,8 +86,8 @@ public class ParserKeywordData extends DataObject {
 	}
 
 	/**
-	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind.
-	 * Diese Methode wird nach dem Start der Fibu aufgerufen.
+	 * Implementieren, wenn verschiedene Versionen der Tabelle vorhanden sind. Diese
+	 * Methode wird nach dem Start der Fibu aufgerufen.
 	 */
 	@Override
 	public void checkTableVersion() {
@@ -109,6 +106,7 @@ public class ParserKeywordData extends DataObject {
 
 	/**
 	 * Version 1 erweitern
+	 * 
 	 * @throws SQLException
 	 */
 	private void addColumnV2() throws SQLException {
@@ -116,7 +114,6 @@ public class ParserKeywordData extends DataObject {
 		stmt.execute(ADD_COL_V2);
 		stmt.close();
 	}
-
 
 	/**
 	 * Einen leeren Eintrag speichern, ein neues Tupel wird angelegt.
@@ -161,37 +158,19 @@ public class ParserKeywordData extends DataObject {
 	 * @throws FibuException
 	 */
 	public ParserKeyWord readAt(int companyId, int position) throws FibuException {
-		Trace.println(7, "ParserKeywordData.readAt()");
+		Trace.println(9, "ParserKeywordData.readAt()");
 		ParserKeyWord lKeyword = new ParserKeyWord();
 		lKeyword.setBankId(companyId);
 		try {
 			setupReadSet(companyId);
 			if (mResultSet.absolute(position + 1)) {
-				// erste Version: companyID, SuchWort, KontoNr, SH
-				if (mVersion == 1) {
-					lKeyword.setId(0);
-					lKeyword.setBankId(companyId);
-					lKeyword.setSuchWort(mResultSet.getString(2));
-					lKeyword.setKontoNr(mResultSet.getString(3));
-					lKeyword.setSh(mResultSet.getString(4));
-				}
-				// 2. Version: ID, companyID, SuchWort, KontoNr, SH
-				if (mVersion == 2) {
-					lKeyword.setId(mResultSet.getInt(1));
-					lKeyword.setBankId(companyId);
-					lKeyword.setSuchWort(mResultSet.getString(3));
-					lKeyword.setKontoNr(mResultSet.getString(4));
-					lKeyword.setSh(mResultSet.getString(5));
-				}
-				// 3. Version: ID, companyID, SuchWort, KontoNr, SH, TextNeu
-				if (mVersion == 3) {
-					lKeyword.setId(mResultSet.getInt(1));
-					lKeyword.setBankId(companyId);
-					lKeyword.setSuchWort(mResultSet.getString(3));
-					lKeyword.setKontoNr(mResultSet.getString(4));
-					lKeyword.setSh(mResultSet.getString(5));
-					lKeyword.setTextNeu(mResultSet.getString(6));
-				}
+				lKeyword.setId(mResultSet.getInt(1));
+				lKeyword.setBankId(companyId);
+				lKeyword.setSuchWort(mResultSet.getString(3));
+				lKeyword.setKontoNr(mResultSet.getString(4));
+				lKeyword.setSh(mResultSet.getString(5));
+				lKeyword.setTextNeu(mResultSet.getString(6));
+
 				return lKeyword;
 			} else {
 				throw new FibuException("Keyword an Position: " + position + " nicht gefunden");
@@ -207,49 +186,45 @@ public class ParserKeywordData extends DataObject {
 	public void updateAt(int position, ParserKeyWord pKeyword) throws FibuException {
 		Trace.println(7, "ParserKeywordData.updateAt()");
 		try {
-			setupReadSet(pKeyword.getBankId());
-			if (mResultSet.absolute(position + 1)) {
-				int i = 1;
-				if (mVersion >= 2) {
-					i++;
-				}
-//				mResultSet.updateInt(1, pKeyword.getId());
-				mResultSet.updateInt(i, pKeyword.getBankId());
-				mResultSet.updateString(++i, pKeyword.getSuchWort());
-				mResultSet.updateString(++i, pKeyword.getKontoNr());
-				mResultSet.updateString(++i, pKeyword.getSh());
-				if (mVersion >= 3) {
-					mResultSet.updateString(++i, pKeyword.getTextNeu());
-				}
-				mResultSet.updateRow();
-			} else {
-				throw new FibuException("Keyword an Position: " + position + " nicht gefunden");
-			}
+			String sql = "UPDATE " + TABLE_NAME + " SET CompanyID=?, SuchWort=?, KontoNr=?, SH=?, textNeu=? WHERE ID=?";
+			PreparedStatement ps = getConnection().prepareStatement(sql);
+
+			ps.setInt(1, pKeyword.getBankId());
+			ps.setString(2, pKeyword.getSuchWort());
+			ps.setString(3, pKeyword.getKontoNr());
+			ps.setString(4, pKeyword.getSh());
+			ps.setString(5, pKeyword.getTextNeu());
+			ps.setInt(6, pKeyword.getId());
+
+			ps.executeUpdate();
 		} catch (java.sql.SQLException e) {
 			throw new FibuException("Keyword an Position: " + position + " Message: " + e.getMessage());
 		}
 	}
 
+
 	/**
-	 * Das Tupel CsvKeyword ändern, der ResultSet steht bereits auf der richtigen Position
-	 * CompanyId und Suchwort stimmen.
+	 * Das Tupel CsvKeyword ändern mit der übergebenen ID.
 	 */
 	public void updateRow(ParserKeyWord pKeyword) throws SQLException {
-		Trace.println(7, "ParserKeywordData.update() " + pKeyword.getSuchWort());
+		Trace.println(7, "ParserKeywordData.update() " + pKeyword.getSuchWort());	
+		try {
+			String sql = "UPDATE " + TABLE_NAME + " SET CompanyID=?, SuchWort=?, KontoNr=?, SH=?, textNeu=? WHERE ID=?";
+			PreparedStatement ps = getConnection().prepareStatement(sql);
 
-			int i = 1;
-			if (mVersion >= 2) {
-				i++;
-			}
-			mResultSet.updateInt(i, pKeyword.getBankId());
-			mResultSet.updateString(++i, pKeyword.getSuchWort());
-			mResultSet.updateString(++i, pKeyword.getKontoNr());
-			mResultSet.updateString(++i, pKeyword.getSh());
-			if (mVersion >= 3) {
-				mResultSet.updateString(++i, pKeyword.getTextNeu());
-			}
-			mResultSet.updateRow();
+			ps.setInt(1, pKeyword.getBankId());
+			ps.setString(2, pKeyword.getSuchWort());
+			ps.setString(3, pKeyword.getKontoNr());
+			ps.setString(4, pKeyword.getSh());
+			ps.setString(5, pKeyword.getTextNeu());
+			ps.setInt(6, pKeyword.getId());
+
+			ps.executeUpdate();
+		} catch (java.sql.SQLException e) {
+			throw new SQLException("Keyword Update mit ID: " + pKeyword.getId() + " Message: " + e.getMessage());
+		}
 	}
+
 
 	/**
 	 * Das Tupel mit der ID löschen
@@ -275,34 +250,17 @@ public class ParserKeywordData extends DataObject {
 		mMaxRows = 0;
 	}
 
-	public void resetVersion() {
-		mVersion = 0;
-	}
-
 	/**
-	 * Die Version, abhängig von der Anzahl Felder in der DB
-	 * 1: companyID, SuchWort, KontoNr, SH
-	 * 2: ID, companyID, SuchWort, KontoNr, SH
-	 * 3: ID, companyID, SuchWort, KontoNr, SH, TextNeu
+	 * Die Version, abhängig von der Anzahl Felder in der DB 1: companyID, SuchWort,
+	 * KontoNr, SH 2: ID, companyID, SuchWort, KontoNr, SH 3: ID, companyID,
+	 * SuchWort, KontoNr, SH, TextNeu
+	 * 
 	 * @return die aktuelle Version
 	 */
 	public int getVersion() {
 		// wird nur das erstemal berechnet
-		if (mVersion == 0) {
-//			int cols = getAnzahlCols();
-			if (getAnzahlCols() <=4) {
-				mVersion = 1;
-			}
-			else if (getAnzahlCols() == 5) {
-				mVersion = 2;
-			}
-			else {
-				mVersion = 3;
-			}
-		}
 		return mVersion;
 	}
-
 
 	/**
 	 * Die Anzahl Felder in der DB
@@ -310,19 +268,18 @@ public class ParserKeywordData extends DataObject {
 	 * @return
 	 * @throws SQLException
 	 */
-	private int getAnzahlCols() {
-		if (mAnzahlCols == 0) {
-			try {
-				Statement stmt = getConnection().createStatement();
-				String lQuery = "SELECT * from " + TABLE_NAME + ";";
-				ResultSet rs = stmt.executeQuery(lQuery);
-				// wie viele columns
-				ResultSetMetaData rsmd = rs.getMetaData();
-				mAnzahlCols = rsmd.getColumnCount();
-			} catch (SQLException e) {
-				Trace.println(1, "error in: ParserKeywordData.getAnzahlCols: " + e.getMessage());
-				mAnzahlCols = 0;
-			}
+	public int getAnzahlCols() {
+//		if (mAnzahlCols == 0) {
+		try {
+			Statement stmt = getConnection().createStatement();
+			String lQuery = "SELECT * from " + TABLE_NAME + ";";
+			ResultSet rs = stmt.executeQuery(lQuery);
+			// wie viele columns
+			ResultSetMetaData rsmd = rs.getMetaData();
+			mAnzahlCols = rsmd.getColumnCount();
+		} catch (SQLException e) {
+			Trace.println(1, "error in: ParserKeywordData.getAnzahlCols: " + e.getMessage());
+			mAnzahlCols = 0;
 		}
 		return mAnzahlCols;
 	}
@@ -339,8 +296,8 @@ public class ParserKeywordData extends DataObject {
 		mResultSet.beforeFirst();
 		while (mResultSet.next()) {
 			if (mResultSet.getInt(2) == pKeyword.getBankId()) {
-				String such = mResultSet.getString(3);
-				System.out.println(such);
+//				String such = mResultSet.getString(3);
+//				System.out.println(such);
 				if (mResultSet.getString(3).equalsIgnoreCase(pKeyword.getSuchWort())) {
 					return true;
 				}
@@ -369,21 +326,18 @@ public class ParserKeywordData extends DataObject {
 		int id = 0;
 		Statement stmt = getConnection().createStatement();
 		StringBuffer lQuery = new StringBuffer(100);
-		// nur für erste Version ohne ID
-		if (mVersion == 1) {
-			lQuery.append("INSERT INTO PdfKeyword VALUES ('");
-		} else {
-			// die erste Column (ID) leer, da Autoincrement
-			if (pKeyword.getId() <= 0) {
-				lQuery.append("INSERT INTO PdfKeyword VALUES (null,'");
-			}
-			// wenn die ID bereits bekannt ist.
-			else {
-				lQuery.append("INSERT INTO PdfKeyword VALUES('");
-				lQuery.append(pKeyword.getId());
-				lQuery.append("', '");
-			}
+
+		// die erste Column (ID) leer, da Autoincrement
+		if (pKeyword.getId() <= 0) {
+			lQuery.append("INSERT INTO PdfKeyword VALUES (null,'");
 		}
+		// wenn die ID bereits bekannt ist.
+		else {
+			lQuery.append("INSERT INTO PdfKeyword VALUES('");
+			lQuery.append(pKeyword.getId());
+			lQuery.append("', '");
+		}
+
 		lQuery.append(pKeyword.getBankId());
 		lQuery.append("', '");
 		lQuery.append(pKeyword.getSuchWort());
@@ -391,10 +345,9 @@ public class ParserKeywordData extends DataObject {
 		lQuery.append(pKeyword.getKontoNr());
 		lQuery.append("', '");
 		lQuery.append(pKeyword.getSh());
-		if (mVersion >= 3) {
-			lQuery.append("', '");
-			lQuery.append(pKeyword.getTextNeu());
-		}
+		lQuery.append("', '");
+		lQuery.append(pKeyword.getTextNeu());
+
 		lQuery.append("')");
 		stmt.executeUpdate(lQuery.toString());
 		stmt.close();
@@ -486,17 +439,13 @@ public class ParserKeywordData extends DataObject {
 	 */
 	private void copyToKeyword(ResultSet pResult, ParserKeyWord pKeyword) throws SQLException {
 		int i = 1;
-		if (mVersion >= 2) {
-			pKeyword.setId(pResult.getInt(i));
-			i++;
-		}
-		pKeyword.setBankId(pResult.getInt(i));
+		pKeyword.setId(pResult.getInt(i));
+		pKeyword.setBankId(pResult.getInt(++i));
 		pKeyword.setSuchWort(pResult.getString(++i));
 		pKeyword.setKontoNr(pResult.getString(++i));
 		pKeyword.setSh(pResult.getString(++i));
-		if (mVersion >= 3) {
-			pKeyword.setTextNeu(pResult.getString(++i));
-		}
+		pKeyword.setTextNeu(pResult.getString(++i));
+
 	}
 
 }
